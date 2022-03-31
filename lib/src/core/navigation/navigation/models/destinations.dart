@@ -1,0 +1,1 @@
+enum NavigationDestinations {back, swipe, home, profile, settings, searchInterests, searchMembers, editProfile, session, scan, show, triggers}

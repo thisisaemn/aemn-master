@@ -1,0 +1,43 @@
+/*{"swipes_suggestion": [
+  {
+    "_id": "",
+    "_partition": "",
+    "tags": [],
+    "src": "lib/src/assets/sample_data/aemn-interest-0.png"
+  },
+  {
+    "_id": "",
+    "_partition": "",
+    "tags" : [
+      {"id" : "a1111", "name" : "food"}
+    ],
+    "src": "lib/src/assets/sample_data/aemn-interest-1.png"
+  },
+  {
+    "_id": "",
+    "_partition": "",
+    "tags" : [
+      {"id" : "ab34234", "name" : "fashion"}
+    ],
+    "src": "lib/src/assets/sample_data/aemn-interest-2.png"
+  },
+  {
+    "_id": "",
+    "_partition": "",
+    "tags": [],
+    "src": "lib/src/assets/sample_data/aemn-interest-3.png"
+  },
+  {
+    "_id": "",
+    "_partition": "",
+    "tags": [],
+    "src": "lib/src/assets/sample_data/aemn-interest-4.png"
+  },
+  {
+    "_id": "",
+    "_partition": "",
+    "tags": [],
+    "src": "lib/src/assets/sample_data/aemn-interest-5.png"
+  }
+]
+}*/

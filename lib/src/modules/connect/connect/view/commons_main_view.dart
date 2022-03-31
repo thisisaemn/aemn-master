@@ -1,0 +1,167 @@
+import 'package:aemn/src/modules/profile/profile.dart';
+import 'package:aemn/src/modules/connect/connect.dart';
+import 'package:connect_repository/connect_repository.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:interest_repository/interest_repository.dart';
+import 'package:user_repository/user_repository.dart';
+
+//SRC: https://www.raywenderlich.com/books/flutter-apprentice/v2.0/chapters/5-scrollable-widgets#toc-chapter-011-anchor-003
+
+class CommonsMainView extends StatelessWidget {
+  final Session session;
+
+  const CommonsMainView({
+    Key? key,
+    required this.session,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // 3
+    return profileList(context);
+  }
+
+  Widget listOfMembers(List<Member> members) {
+    List<Widget> list = []; //= List<Widget>();
+    for (var i = 0; i < members.length; i++) {
+      String content = members[i].username.toLowerCase();
+      if(i == 0){
+        content = members[i].username.toLowerCase() + " ∙ ";
+      }else if(i == members.length-1){
+        content = members[i].username.toLowerCase();
+      }else{
+        content = " ∙ " + members[i].username.toLowerCase() + " ∙ ";
+      }
+
+      list.add(
+          Container(
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  content,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    //decorationColor: Colors.black,
+                    //decorationStyle: TextDecorationStyle.double,
+                      fontSize: 25,
+                      //backgroundColor: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      shadows: [Shadow(blurRadius: 6.0)],
+                      /*backgroundColor: Colors.black54,*/
+                      letterSpacing: 7.0,
+                      wordSpacing: 5),
+                ),
+
+
+                /*Text(members[i].username.toLowerCase(),
+                    style: TextStyle(
+                      fontFamily: 'Open Sans',
+                      fontSize: 23.0,
+                      fontWeight: FontWeight.w300,
+                    )),*/
+              )
+          )
+      );
+    }
+
+    return Wrap(
+        spacing: 5.0, // gap between adjacent chips
+        runSpacing: 2.0, // gap between lines
+        children: list);
+  }
+
+
+  Widget usernameSection(){
+    if (session.members != null && session.members.length > 0) {
+
+      /*return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          listOfMembers(_session.members),
+        ],
+      );*/
+      List<Member> members = session.members;
+
+      return Container(
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+          height: 33,
+          child:ListView.builder(
+            itemCount: members.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              String content = members[index].username.toLowerCase();
+              if(index == 0 && members.length == 2){
+                content = members[index].username.toLowerCase() + " ∩ ";
+              }else if(index == members.length-1){
+                content = members[index].username.toLowerCase();
+              }else{
+                content = " ∩ " + members[index].username.toLowerCase() + " ∩ ";
+              }
+
+              return Text(
+                content,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  //decorationColor: Colors.black,
+                  //decorationStyle: TextDecorationStyle.double,
+                    fontSize: 25,
+                    //backgroundColor: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    shadows: [Shadow(blurRadius: 6.0)],
+                    /*backgroundColor: Colors.black54,*/
+                    letterSpacing: 7.0,
+                    wordSpacing: 5),
+              );
+            },
+          ));
+
+      //return Text('members');
+    }else return Container(child: Text(''),);
+  }
+
+
+  Widget profileList(BuildContext context){
+    return RefreshIndicator(
+        onRefresh: () {
+          //Set List to zero during loading, make loading connect
+          BlocProvider.of<ConnectBloc>(context).add(
+              Load());
+          return Future.delayed(Duration(milliseconds: 5000));
+        }, child: ListView(
+      scrollDirection: Axis.vertical,
+      children: [
+        SizedBox(height: 20),
+        usernameSection(),
+        /*Text(
+          profile.username,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            //decorationColor: Colors.black,
+            //decorationStyle: TextDecorationStyle.double,
+              fontSize: 30,
+              backgroundColor: Colors.white60,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              shadows: [Shadow(blurRadius: 6.0)],
+              /*backgroundColor: Colors.black54,*/
+              letterSpacing: 7.0,
+              wordSpacing: 5), ),*/
+        SizedBox(height: 0),
+        FactsListView(facts: session.commons.facts,),
+        //TodayRecipeListView(recipes: snapshot.data?.todayRecipes ?? []),
+        const SizedBox(height: 20),
+        InterestsListView(interests: session.commons.interests),
+        /*Container(
+            height: 400,
+            color: Colors.green,
+          ),*/
+      ],
+    ));
+  }
+
+
+}

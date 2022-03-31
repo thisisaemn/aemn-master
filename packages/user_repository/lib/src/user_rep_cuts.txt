@@ -1,0 +1,682 @@
+/*
+import 'dart:async';
+
+//import 'package:user_repository/src/models/models.dart';
+import 'package:copple_repository/copple_repository.dart';
+import 'package:interest_repository/interest_repository.dart';
+//import 'package:user_repository/src/models/keyvalue.dart';
+import 'package:uuid/uuid.dart';
+
+import 'models/models.dart';
+
+import 'package:cache/cache.dart';
+import 'package:http/http.dart' as http;
+import 'dart:async';
+import 'dart:convert';
+
+//SERVER Adress
+//const SERVER_IP = 'http://localhost:5000';
+const SERVER_IP = 'http://192.168.178.35:5000';
+
+
+//*class /* UserRepository {
+  UserRepository({CacheClient? cache,}): _cache = cache ?? CacheClient();
+  final CacheClient _cache;
+  User currentUser = User.anonymous; //Initial value of User
+  Profile currentProfile = Profile.generic;
+  Session currentSession = Session.generic;
+  Commons currentCommons = Commons.generic;
+
+
+  final StreamController<User> userController = StreamController<User>();
+  Stream<User> userStream = Stream();
+
+  final StreamController<Profile> profileController = StreamController<Profile>();
+  Stream<Profile> profileStream;
+
+  final StreamController<Session> sessionController = StreamController<Session>();
+  Stream<Profile> sessionStream;
+
+  final StreamController<Commons> commonsController = StreamController<Commons>();
+  Stream<Commons> commonsStream;
+
+  /// Stream of [User] which will emit the current user when
+  /// the authentication state changes.
+  ///
+  /// Emits [User.empty] if the user is not authenticated.
+  Stream<User> get user {
+    /*return _firebaseAuth.authStateChanges().map((firebaseUser) {
+      final user = firebaseUser == null ? User.empty : firebaseUser.toUser;
+      _cache.write(key: userCacheKey, value: user);
+      return user;
+    });*/
+
+    userStream = userController.stream;
+    final user = User.empty;
+    _cache.write(key: userCacheKey, value: user);
+    controller.add(user);
+    return userStream;
+  }
+
+
+
+  //am not really sure abt this stream thing.
+  //can mongodb notify... but nah to bothersome. it should be requested then delivered... right?
+  Stream<Profile> get profile async* {
+    await getProfile();
+    //yield AuthenticationStatus.unauthenticated;
+    yield* _controller.stream;
+  }
+
+  /*
+  @override
+  void initState(){
+    await getUser();
+    await getProfile();
+  }
+
+  */
+
+
+  Future<User> getUser() async {  //did the not have a stream or smth similar as a return type?
+    var token = await _cache.storage.read(key: 'jwt');
+    print(token.toString());
+
+    var resUser = await http.get(
+      //Uri(path: "$SERVER_IP/login"),
+        Uri.parse("$SERVER_IP/getUser"),
+        headers: {
+          "content-type" : "application/json",
+          "authorization" : "Bearer $token"
+        }
+    );
+    //print(resProfile.body);
+    //print(jsonDecode(resProfile.body)["profile"]);
+
+    var _user = await User.fromJson(jsonDecode(resUser.body)["user"]);
+
+    //print('here $_profile');
+    if (_user == null) return User.anonymous;
+    _cache.write(key: "user", value: _user);
+    currentUser = _user;
+    return _user;
+
+  }
+
+  Future<Profile> getProfile() async {  //did the not have a stream or smth similar as a return type?
+    var token = await _cache.storage.read(key: 'jwt');
+    //print(token.toString());
+
+    var resProfile = await http.get(
+      //Uri(path: "$SERVER_IP/login"),
+        Uri.parse("$SERVER_IP/getProfile"),
+        headers: {
+          "content-type" : "application/json",
+          "authorization" : "Bearer $token"
+        }
+    );
+
+    //print(resProfile.body);
+    //print(jsonDecode(resProfile.body)["profile"]);
+
+    var _profile = await Profile.fromJson(jsonDecode(resProfile.body)["profile"]);
+
+    //print('here $_profile');
+    if (_profile == null) {
+      return Future.delayed(
+        const Duration(milliseconds: 300),
+            () => _profile=Profile.generic, //_user = User(id: const Uuid().v4()),
+      );
+    }
+    _cache.write(key: "profile", value: _profile);
+    currentProfile = _profile;
+    return _profile;
+
+  }
+
+  Future<bool> addInterestToProfile({
+    required String interestId
+  }) async {
+    var token = await _cache.storage.read(key: 'jwt');
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+    var body = {
+      "interestId": interestId
+    };
+
+
+    //
+    print("Send API Request to add interest with id $interestId");
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/addInterestToProfile'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      print(resBody["msg"]);
+      return true; //return true if successful
+    }
+
+    return false;
+  }
+
+
+  Future<bool> changeInterestIntensity({
+    required String interestId,
+    required int interestIntensity
+  }) async {
+    var token = await _cache.storage.read(key: 'jwt');
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+    var body = {
+      "interestId": interestId,
+      "interestIntensity": interestIntensity
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/changeInterestIntensity'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      print(resBody["msg"]);
+      return true; //return true if successful
+    }
+
+    return false;
+  }
+
+  Future<bool> deleteInterest({
+    required String interestId
+  }) async {
+    var token = await _cache.storage.read(key: 'jwt');
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+    var body = {
+      "interestId": interestId,
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/deleteInterest'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      print(resBody["msg"]);
+      return true; //return true if successful
+    }
+
+    return false;
+  }
+
+
+  Future<bool> addFactToProfile({
+    required KeyValue keyValue
+  }) async {
+    var token = await _cache.storage.read(key: 'jwt');
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+    var body = {
+      "factId": keyValue.id,
+      "factKey": keyValue.key,
+      "factValue": keyValue.value
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/addFactToProfile'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      print(resBody["msg"]);
+      return true; //return true if successful
+    }
+
+    return false;
+  }
+
+
+  /*
+  Future<bool> changeFact({
+    required KeyValue keyValue
+  }) async {
+    var token = await _cache.storage.read(key: 'jwt');
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+    var body = {
+      "factId": keyValue.id,
+      "factKey": keyValue.key,
+      "factValue": keyValue.value
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/changeFact'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      print(resBody["msg"]);
+      return true; //return true if successful
+    }
+
+    return false;
+  }*/
+
+  Future<bool> deleteFact({
+    required String factId
+  }) async {
+    var token = await _cache.storage.read(key: 'jwt');
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+    var body = {
+      "factId": factId,
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/deleteFact'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      print(resBody["msg"]);
+      return true; //return true if successful
+    }
+
+    return false;
+  }
+
+  ///HOW TO DO THIS METHOD THE MOST SECURE....
+  Future<Profile> getCommonProfile() async {  //did the not have a stream or smth similar as a return type?
+    var token = await _cache.storage.read(key: 'jwt');
+    //print(token.toString());
+
+    var resProfile = await http.get(
+      //Uri(path: "$SERVER_IP/login"),
+        Uri.parse("$SERVER_IP/getProfile"),
+        headers: {
+          "content-type" : "application/json",
+          "authorization" : "Bearer $token"
+        }
+    );
+
+    //print(resProfile.body);
+    //print(jsonDecode(resProfile.body)["profile"]);
+
+    var _profile = await Profile.fromJson(jsonDecode(resProfile.body)["profile"]);
+
+    //print('here $_profile');
+    if (_profile != null) return _profile;
+    return Future.delayed(
+      const Duration(milliseconds: 300),
+          () => _profile=Profile.generic, //_user = User(id: const Uuid().v4()),
+    );
+  }
+
+
+  Future<List<Profile>> searchProfiles({
+    required String key
+  }) async {  //did the not have a stream or smth similar as a return type?
+    var token = await _cache.storage.read(key: 'jwt');
+    //print(token.toString());
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+
+    var body = {
+      "key": key
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/getProfiles'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    var profileArray = [Profile.generic];
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      var jsonProfileArray = resBody["searchResult"];
+      profileArray = (jsonProfileArray as List<dynamic>)
+          .map((e) => Profile.fromJson(e as Map<String, dynamic>))
+          .toList();
+      print(profileArray);
+
+    }
+
+    return profileArray;
+  }
+
+  Future<List<Member>> searchMembers({
+    required String key
+  }) async {  //did the not have a stream or smth similar as a return type?
+    var token = await _cache.storage.read(key: 'jwt');
+    //print(token.toString());
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+
+    var body = {
+      "key": key
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/searchMembers'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+
+    List<Member> memberArray = [];
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      var jsonProfileArray = resBody["searchResult"];
+      memberArray = (jsonProfileArray as List<dynamic>)
+          .map((e) => Member.fromJson(e as Map<String, dynamic>))
+          .toList();
+      print(memberArray);
+    }
+
+    return memberArray;
+  }
+
+
+  //Send Message
+  Future<bool> sendMessage({
+    required Message msg
+  }) async {  //did the not have a stream or smth similar as a return type?
+    var token = await _cache.storage.read(key: 'jwt');
+    //print(token.toString());
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+
+    var body = {
+      "msg": msg
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/sendMsg'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      print(resBody["msg"]);
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> inviteToNewSession({
+    required String inviteeId,
+    required String inviteeUsername,
+    required String senderId,
+    required String senderUsername
+  }) async {  //did the not have a stream or smth similar as a return type?
+    var token = await _cache.storage.read(key: 'jwt');
+    //print(token.toString());
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+
+    var body = {
+      "receiverId": inviteeId,
+      "receiverUsername":inviteeUsername,
+      "senderId":senderId,
+      "senderUsername":senderUsername
+
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/inviteToNewSession'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      print(resBody["msg"]);
+      print(resBody["sessionId"]);
+      return true;
+    }
+
+    return false;
+  }
+
+
+  Future<Session> getSession() async {  //did the not have a stream or smth similar as a return type?
+    var token = await _cache.storage.read(key: 'jwt');
+    //print(token.toString());
+
+
+    await getUser();
+    var sessionId = "";
+    if(currentUser.currentSession != ""){ //Check whteher valid id
+      sessionId = currentUser.currentSession;
+    }
+    print("trying to get session with id $sessionId");
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+
+    var body = {
+      "sessionId": sessionId,
+    };
+
+    var res = await http.post(
+      //Uri(path: "$SERVER_IP/login"),
+        Uri.parse("$SERVER_IP/getSession"),
+        headers: header,
+        body: jsonEncode(body)
+    );
+
+    //print(resProfile.body);
+    //print(jsonDecode(resProfile.body)["profile"]);
+
+    if(res.statusCode == 200) {
+      var _session = await Session.fromJson(jsonDecode(res.body)["session"]);
+
+      //print('here $_profile');
+      if (_session == null) {
+        return Future.delayed(
+          const Duration(milliseconds: 300),
+              () =>
+          _session = Session.generic, //_user = User(id: const Uuid().v4()),
+        );
+      }
+      _cache.write(key: "session", value: _session);
+      currentSession = _session;
+      return _session;
+    }
+    return Session.generic;
+
+  }
+
+  Future<bool> enterSession({required String sessionId}) async {  //did the not have a stream or smth similar as a return type?
+    var token = await _cache.storage.read(key: 'jwt');
+    //print(token.toString());
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token",
+      "sessionId": sessionId,
+    };
+
+    var body = {
+      "sessionId": sessionId,
+      "username": currentUser.username,
+    };
+
+    print("trying to enter session with id $sessionId");
+
+    var res = await http.post(
+      //Uri(path: "$SERVER_IP/login"),
+      Uri.parse("$SERVER_IP/enterSession"),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    //print(resProfile.body);
+    //print(jsonDecode(resProfile.body)["profile"]);
+    /*
+    var _session = await Session.fromJson(jsonDecode(res.body)["session"]);
+
+    //print('here $_profile');
+    if (_session == null) {
+      return false;
+    }
+    _cache.write(key: "session", value: _session);
+    currentSession = _session;*/
+    //print(res.body.msg);
+    if(res.statusCode == 200) {
+      await getSession();
+      return true;
+    }
+    return false;
+
+  }
+
+  Future<Commons> getCommons() async {  //did the not have a stream or smth similar as a return type?
+    var token = await _cache.storage.read(key: 'jwt');
+    //print(token.toString());
+
+    User user = await getUser();
+    var commonsId = "";
+    if(user.currentSession != "" && currentSession.commonsId != ""){ //Check whteher valid id
+      commonsId = currentSession.commonsId;
+    }
+
+    print("tryna get commons with id " + commonsId);
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token",
+      "commonsId": commonsId,
+    };
+
+    var body = {
+      "commonsId": commonsId,
+      "username": currentUser.username,
+    };
+
+    var res = await http.post(
+      //Uri(path: "$SERVER_IP/login"),
+      Uri.parse("$SERVER_IP/getCommons"),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    //print(resProfile.body);
+    //print(jsonDecode(resProfile.body)["profile"]);
+
+    if(res.statusCode == 200) {
+      var _commons = await Commons.fromJson(jsonDecode(res.body)["commons"]);
+
+      //print('here $_profile');
+      if (_commons == null) {
+        return Future.delayed(
+          const Duration(milliseconds: 300),
+              () =>
+          _commons = Commons.generic, //_user = User(id: const Uuid().v4()),
+        );
+      }
+
+      currentSession = await getSession();
+      currentCommons = _commons;
+
+      _cache.write(key: "commons", value: currentCommons);
+      return _commons;
+    }
+    return Commons.generic;
+
+  }
+
+
+
+  Future<bool> quitSession() async {  //did the not have a stream or smth similar as a return type?
+    var token = await _cache.storage.read(key: 'jwt');
+    //print(token.toString());
+
+
+    getUser();
+    var sessionId = "";
+    if(currentUser.currentSession != ""){ //Check whteher valid id
+      sessionId = currentUser.currentSession;
+    }
+
+    var res = await http.get(
+      //Uri(path: "$SERVER_IP/login"),
+        Uri.parse("$SERVER_IP/quitSession"),
+        headers: {
+          "content-type" : "application/json",
+          "authorization" : "Bearer $token",
+          "sessionId": sessionId
+        }
+    );
+
+    //print(resProfile.body);
+    //print(jsonDecode(resProfile.body)["profile"]);
+
+    if(res.statusCode == 200) {
+      var _session = await Session.fromJson(jsonDecode(res.body)["session"]);
+
+      //print('here $_profile');
+      if (_session == null) {
+        return false;
+      }
+      _cache.write(key: "session", value: _session);
+      currentSession = _session;
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  List<Object> get props => [_cache, currentUser, currentProfile];
+}
+*/
