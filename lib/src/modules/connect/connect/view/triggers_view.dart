@@ -23,26 +23,29 @@ class TriggersView extends StatelessWidget {
       return SafeArea(child: Text("Error: No session has been passed."));
     }
 
-    return BlocBuilder<ConnectBloc, ConnectState>(
-        builder: (BuildContext context, ConnectState state){
-          //if (profileNavigationState is ProfileShowing) {
+
           return BlocBuilder<ConnectBloc, ConnectState>(
               builder: (context, state) {
+                print("state changed");
                 if(state is GotTrigger){
-                  if(session != null){
-                    return SessionMainView(session: session!, commons: session!.commons,);
-                  }else{
-                    return SafeArea(child: Text("Error: No session has been passed."));
-                  }
-                }else if(state is GettingTrigger){
-                  return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
+                  return TriggersMainView (session: session, trigger: context.select((ConnectBloc bloc) => bloc.trigger,),);
+                }else if(state is GettingSessionFailed){
+                  return Center(child:Text("Getting trigger failed, triggers_view"));
                 } else{
-                  return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
+                  return Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,));
                 }
               }
           );
         }
-    );
+
+  Widget contentForState(BuildContext context, ConnectState state,){
+    if(state is GotTrigger){
+      return TriggersMainView (session: session, trigger: context.select((ConnectBloc bloc) => bloc.trigger,),);
+    }else if(state is GettingSessionFailed){
+      return Scaffold(body:Center(child:Text("Getting trigger failed, triggers_view")));
+    } else{
+      return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
+    }
   }
 
 }

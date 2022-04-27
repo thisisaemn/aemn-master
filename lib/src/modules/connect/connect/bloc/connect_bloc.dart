@@ -199,14 +199,14 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
   }
 
   Future<void> _onGetTrigger (GetTrigger event, Emitter<ConnectState> emit) async {
-    emit(GettingTrigger());
+    emit(GettingTrigger(session:event.session));
 
     trigger = await _tryGetTrigger(session: event.session);
 
-    if(trigger != null){
+    if(trigger == null){
       emit(GettingTriggerFailed());
     }else {
-      emit(GotTrigger());
+      emit(GotTrigger(trigger: trigger!));
     }
   }
 
@@ -284,6 +284,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
 
   Future<Trigger?> _tryGetTrigger({required Session session}) async {
     try {
+      print("try get trigger");
       return connectRepository.getTrigger(session: session);
     } on Exception {
       print('failed getting trigger, connect bloc');

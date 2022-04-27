@@ -12,9 +12,10 @@ import 'package:aemn/src/modules/profile/profile.dart';
 
 
 class TriggersMainView extends StatefulWidget {
-  Session session;
+  Session? session;
+  Trigger? trigger;
 
-  TriggersMainView({required this.session});
+  TriggersMainView({required this.session, required this.trigger});
 
   @override
   State<StatefulWidget> createState() => _TriggersMainView();
@@ -31,8 +32,9 @@ class _TriggersMainView extends State<TriggersMainView> {
     if (widget.session == null) {
       _session = Session.generic;
     } else {
-      _session = widget.session;
+      _session = widget.session!;
     }
+
   }
 
   @override
@@ -44,16 +46,13 @@ class _TriggersMainView extends State<TriggersMainView> {
 
   Widget triggersBody () {
     if(_trigger != null){
-      return TriggersMainView(session: _session);
+      return trigger(_trigger!);
     }else{
-      BlocProvider.of<ConnectBloc>(context).add(
-        GetTrigger(session: _session),
-      );
-      return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
+      return Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,));
     }
   }
 
-  Widget trigger(){
+  Widget trigger(Trigger trigger){
     return Container(child: Text("trigger", style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.w600),), alignment: Alignment.center,);
   }
 }

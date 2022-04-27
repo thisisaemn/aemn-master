@@ -1,7 +1,14 @@
 part of 'connect_bloc.dart';
 
 @immutable
-abstract class ConnectState {}
+abstract class ConnectState {
+
+  const ConnectState();
+
+  @override
+  List<Object> get props => [];
+
+}
 
 class ConnectInitial extends ConnectState {}
 
@@ -126,11 +133,21 @@ class GettingSessionFailed extends ConnectState{
 }
 
 class GettingTrigger extends ConnectState{
+  final Session session;
 
+  GettingTrigger({required this.session});
+
+  @override
+  List<Object> get props => [session];
 }
 
 class GotTrigger extends ConnectState{
+  final Trigger trigger;
 
+  GotTrigger({required this.trigger});
+
+  @override
+  List<Object> get props => [trigger];
 }
 
 class GettingTriggerFailed extends ConnectState{
