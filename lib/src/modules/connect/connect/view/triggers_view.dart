@@ -22,17 +22,18 @@ class TriggersView extends StatelessWidget {
     }else{
       return SafeArea(child: Text("Error: No session has been passed."));
     }
-
-
           return BlocBuilder<ConnectBloc, ConnectState>(
               builder: (context, state) {
-                print("state changed");
+                print("we are in trigger view state changed");
                 if(state is GotTrigger){
+                  print('we are in trigger view got trigger');
+                  print(context.select((ConnectBloc bloc) => bloc.trigger,));
                   return TriggersMainView (session: session, trigger: context.select((ConnectBloc bloc) => bloc.trigger,),);
                 }else if(state is GettingSessionFailed){
                   return Center(child:Text("Getting trigger failed, triggers_view"));
                 } else{
-                  return Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,));
+                  print('triggers view else');
+                  return Text('else'); //Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,));
                 }
               }
           );

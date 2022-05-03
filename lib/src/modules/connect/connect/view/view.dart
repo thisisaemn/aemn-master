@@ -9,6 +9,8 @@ export 'session_view.dart';
 
 export 'sessions_overview_view.dart';
 
+export 'commons_view.dart';
+
 export 'commons_main_view.dart';
 
 export 'triggers_view.dart';

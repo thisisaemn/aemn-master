@@ -2,88 +2,54 @@ part of 'connect_bloc.dart';
 
 @immutable
 abstract class ConnectState {
-
   const ConnectState();
 
   @override
   List<Object> get props => [];
-
 }
 
 class ConnectInitial extends ConnectState {}
 
-class Loading extends ConnectState{
+class Loading extends ConnectState{}
 
-}
+class Loaded extends ConnectState{}
 
-class Loaded extends ConnectState{
+class LoadingFailed extends ConnectState{}
 
-}
+class Connecting extends Loading{}
 
-class Connecting extends ConnectState{
+class Connected extends Loaded{}
 
-}
+class ConnectingFailed extends LoadingFailed{}
 
-class Connected extends ConnectState{
+class Sent extends Loaded{}
 
-}
+class Sending extends Loading{}
 
-class LoadingFailed extends ConnectState{
+class SendingFailed extends LoadingFailed{}
 
-}
+class InvitingToNewSession extends Loading{}
 
-class ConnectingFailed extends ConnectState{
+class InvitedToNewSession extends Loaded{}
 
-}
+class InvitingToNewSessionFailed extends LoadingFailed{}
 
-class Sent extends ConnectState{
+class QuittingSession extends Loading{}
 
-}
+class QuittedSession extends Loaded{}
 
-class Sending extends ConnectState{
+class QuittingSessionFailed extends LoadingFailed{}
 
-}
-
-class SendingFailed extends ConnectState{
-
-}
-
-class InvitedToNewSession extends ConnectState{
-
-}
-
-class InvitingToNewSession extends ConnectState{
-
-}
-
-class InvitingToNewSessionFailed extends ConnectState{
-
-}
-
-class QuitingSession extends ConnectState{
-
-}
-
-class QuittedSession extends ConnectState{
-
-}
-
-class QuittingSessionFailed extends ConnectState{
-
-}
-
-
-class JoiningSession extends ConnectState{
+class JoiningSession extends Loading{
   final String sessionId;
 
   JoiningSession({required this.sessionId});
 
   @override
   List<Object> get props => [sessionId];
-
 }
 
-class JoinedSession extends ConnectState{
+class JoinedSession extends Loaded{
   final String sessionId;
 
   JoinedSession({required this.sessionId});
@@ -92,47 +58,38 @@ class JoinedSession extends ConnectState{
   List<Object> get props => [sessionId];
 }
 
-class JoiningSessionFailed extends ConnectState{
+class JoiningSessionFailed extends LoadingFailed{}
 
-}
-
-
-class EnteringSession extends ConnectState{
+class EnteringSession extends Loading{
   final Session session;
+  final options option; //whether commons, triggers
 
-  EnteringSession({required this.session});
+  EnteringSession({required this.session, required this.option});
 
   @override
   List<Object> get props => [session];
 
 }
 
-class EnteredSession extends ConnectState{
+class EnteredSession extends Loaded{
   final Session session;
+  final options option; //whether commons, triggers
 
-  EnteredSession({required this.session});
+  EnteredSession({required this.session, required this.option});
 
   @override
-  List<Object> get props => [session];
+  List<Object> get props => [session, option];
 }
 
-class EnteringSessionFailed extends ConnectState{
+class EnteringSessionFailed extends LoadingFailed{}
 
-}
+class GettingSession extends Loading{}
 
-class GettingSession extends ConnectState{
+class GotSession extends Loaded{}
 
-}
+class GettingSessionFailed extends LoadingFailed{}
 
-class GotSession extends ConnectState{
-
-}
-
-class GettingSessionFailed extends ConnectState{
-
-}
-
-class GettingTrigger extends ConnectState{
+class GettingTrigger extends Loading{
   final Session session;
 
   GettingTrigger({required this.session});
@@ -141,7 +98,7 @@ class GettingTrigger extends ConnectState{
   List<Object> get props => [session];
 }
 
-class GotTrigger extends ConnectState{
+class GotTrigger extends Loaded{
   final Trigger trigger;
 
   GotTrigger({required this.trigger});
@@ -150,8 +107,6 @@ class GotTrigger extends ConnectState{
   List<Object> get props => [trigger];
 }
 
-class GettingTriggerFailed extends ConnectState{
-
-}
+class GettingTriggerFailed extends LoadingFailed{}
 
 

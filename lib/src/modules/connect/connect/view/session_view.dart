@@ -10,6 +10,7 @@ import 'package:aemn/src/modules/connect/connect.dart';
 
 class SessionView extends StatelessWidget {
   Session? session;
+
   /*@override
   initState(){
     BlocProvider.of<ProfileBloc>(context).add(
@@ -30,14 +31,15 @@ class SessionView extends StatelessWidget {
     );*/
     print("now in sessionview the session is");
     print(session);
-    return BlocBuilder<ConnectBloc, ConnectState>(
-        builder: (BuildContext context, ConnectState state){
+    //return BlocBuilder<ConnectBloc, ConnectState>(
+       // builder: (BuildContext context, ConnectState state){
           //if (profileNavigationState is ProfileShowing) {
           return BlocBuilder<ConnectBloc, ConnectState>(
               builder: (context, state) {
                 if(state is Loaded){
                   if(session != null){
-                    return SessionMainView(session: session!, commons: session!.commons,);
+                    //return SessionMainView(session: session!);
+                    return Container();
                   }else{
                     return SafeArea(child: Text("Error: No session has been passed."));
                   }
@@ -48,8 +50,8 @@ class SessionView extends StatelessWidget {
                 }
               }
           );
-        }
-    );
+        //}
+    //);
   }
 
 }

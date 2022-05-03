@@ -12,6 +12,7 @@ class Load extends ConnectEvent{
 
 }
 
+
 class Connect extends ConnectEvent{
   final String sessionId;
 
@@ -61,10 +62,11 @@ class JoinSession extends ConnectEvent{
 class EnterSession extends ConnectEvent{
   //final String sessionId;
   final Session session;
+  final options option;
 
-  EnterSession({required this.session});
+  EnterSession({required this.session, required this.option});
 
-  List<Object> get props => [session];
+  List<Object> get props => [session, option];
 
 }
 

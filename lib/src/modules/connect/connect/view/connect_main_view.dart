@@ -49,13 +49,13 @@ class _HomeLandingViewState extends State<HomeLandingView> {
     if (isInSession) {
       return ElevatedButton(
         //Hier eigentlich nur navigation when session existiert
-        child: Text("enter session egain"),
+        child: Text("enter session again"),
         //Icon(Icons.door_back_door_outlined, semanticLabel: "enter session",),
         onPressed: /*() => BlocProvider.of<ConnectBloc>(context).add(EnterSession(sessionId: "")),*/
             () => BlocProvider.of<NavigationBloc>(context).add(
           NavigationRequested(
               destination: NavigationDestinations
-                  .session), //Sollte hier iwo nicht die session id mitgegeben werden?
+                  .commons), //Sollte hier iwo nicht die session id mitgegeben werden?
         ),
         //tooltip: 'enter session',
       );

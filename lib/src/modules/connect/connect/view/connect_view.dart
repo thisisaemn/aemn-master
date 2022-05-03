@@ -10,29 +10,41 @@ class ConnectView extends StatelessWidget{
     BlocProvider.of<ConnectBloc>(context).add(
       Load(),
     );
+    BlocProvider.of<ConnectBloc>(context).add(
+      Connect(sessionId: ''),
+    );
+
     return BlocBuilder<ConnectBloc, ConnectState>(
       builder: (BuildContext context, ConnectState state){
-        if(state is Loaded){
+        if(state is Connected){
           return HomeLandingScreen();
-        }else if(state is Loading){
-          return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
         } else if(state is EnteredSession){
           print('session has been passed');
-          print((state as EnteredSession).session);
-          BlocProvider.of<NavigationBloc>(context).add(
-            NavigationRequested(
-                destination: NavigationDestinations.session, session: (state as EnteredSession).session), //Sollte hier iwo nicht die session id mitgegeben werden? //Va jz da mehrere sessions mgl sind.
-          );
+          //print((state as EnteredSession).session);
+          //Sollte session nicht awaited werden?
+
+          if((state as EnteredSession).option == options.triggers){
+            BlocProvider.of<NavigationBloc>(context).add(
+              NavigationRequested(
+                  destination: NavigationDestinations.triggers, session: (state as EnteredSession).session), //Sollte hier iwo nicht die session id mitgegeben werden? //Va jz da mehrere sessions mgl sind.
+            );
+          }else{
+            BlocProvider.of<NavigationBloc>(context).add(
+              NavigationRequested(
+                  destination: NavigationDestinations.commons, session: (state as EnteredSession).session), //Sollte hier iwo nicht die session id mitgegeben werden? //Va jz da mehrere sessions mgl sind.
+            );
+          }
+
           //return SessionView(session: (state as EnteredSession).session);
-          return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
+          //return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
         }else if(state is QuittedSession || state is JoinedSession){
           BlocProvider.of<ConnectBloc>(context).add(
             Load(),
           );
+          //return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
+        }//else{
           return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
-        }else{
-          return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
-        }
+        //}
       },
     );
   }

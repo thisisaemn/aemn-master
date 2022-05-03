@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:aemn/src/modules/connect/connect.dart';
 import 'package:aemn/src/modules/profile/bloc/profile_bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:connect_repository/connect_repository.dart';
@@ -18,7 +19,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
         user = userRepository.currentUser,
         super(Loading()){
     on<Load>(_onLoad);
-    //on<Connect>(_onConnect);
+    on<Connect>(_onConnect);
     on<Send>(_onSend);
     on<QuitSession>(_onQuitSession);
     on<InviteToNewSession>(_onInviteToNewSession);
@@ -41,6 +42,9 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
   final ConnectRepository connectRepository;
 
   Trigger? trigger;
+  /*
+  StreamController<Trigger?> triggerStreamController = StreamController<Trigger?>();
+  Stream<Trigger?> triggerStream = triggerStreamController.stream;*/
 
 /*
   //Just for testing...
@@ -63,6 +67,20 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       emit(Loaded());
     }
     emit(Loaded());
+
+  }
+
+  Future<void> _onConnect (Connect event, Emitter<ConnectState> emit) async {
+    emit(Connecting());
+
+    User? u = await _tryLoadUser();
+    if(u == null){
+      emit(ConnectingFailed());
+    }else{
+      user = u;
+      emit(Connected());
+    }
+    emit(Connected());
 
   }
 
@@ -93,7 +111,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
   }
 
   Future<void> _onQuitSession (QuitSession event, Emitter<ConnectState> emit) async {
-    emit(QuitingSession());
+    emit(QuittingSession());
 
     bool success = false;
 
@@ -137,7 +155,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
   /*maybe differentiate join and enter session*/
 
   Future<void> _onEnterSession (EnterSession event, Emitter<ConnectState> emit) async {
-    emit(EnteringSession(session: event.session));
+    emit(EnteringSession(session: event.session, option: event.option));
 
     //bool success = await _trySendMsg(event.msg);
     bool success = false;
@@ -153,7 +171,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     if(!success){
       emit(EnteringSessionFailed());
     }else {
-      emit(EnteredSession(session: event.session));
+      emit(EnteredSession(session: event.session, option: event.option));
     }
   }
 

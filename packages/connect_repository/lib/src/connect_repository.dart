@@ -29,6 +29,16 @@ class ConnectRepository {
   }
 
   /*
+  StreamController<Trigger?> triggerStreamController = StreamController<Trigger?>();
+
+  Stream<Trigger?> get triggerStream async* {
+    Trigger? t = await getTrigger(session: session);
+    yield
+    yield* triggerStreamController.stream;
+  }*/
+
+
+  /*
   Future<void> logIn({
     required String username,
     required String password,

@@ -1,3 +1,4 @@
+import 'package:aemn/src/core/navigation/navigation/navigation.dart';
 import 'package:aemn/src/modules/profile/profile.dart';
 import 'package:aemn/src/modules/connect/connect.dart';
 import 'package:connect_repository/connect_repository.dart';

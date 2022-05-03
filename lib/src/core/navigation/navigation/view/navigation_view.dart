@@ -165,10 +165,12 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
               case(NavigationDestinations.profile): return ProfileScreen();
               case(NavigationDestinations.editProfile):  return ProfileEditScreen();
               case(NavigationDestinations.scan):  return ScanIdScreen(text: 'test');
-              case(NavigationDestinations.show):  return ShowIdScreen(code: 'the QR Code Masterkey',);
-              case(NavigationDestinations.session):  return SessionView(session: state.session);
-              //case(NavigationDestinations.triggers):  return SessionView(session: state.session);
-              //default: return HomeLandingScreen();
+              case(NavigationDestinations.show):  return ShowIdScreen(code: "userId bruh",);
+              //case(NavigationDestinations.session):  return SessionView(session: state.session);
+              case(NavigationDestinations.triggers):  return SessionMainView(session: state.session, sessionBody: TriggersView(session: state.session));
+              case(NavigationDestinations.commons):  return SessionMainView(session: state.session, sessionBody:CommonsView(session: state.session));
+
+            //default: return HomeLandingScreen();
             }
           }
 

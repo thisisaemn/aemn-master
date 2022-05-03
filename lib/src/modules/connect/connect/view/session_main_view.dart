@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:aemn/src/core/navigation/navigation/navigation.dart';
+import 'package:aemn/src/utils/utils.dart';
 
 import 'package:user_repository/user_repository.dart';
 import 'package:interest_repository/interest_repository.dart';
@@ -14,9 +15,9 @@ import 'package:aemn/src/modules/profile/profile.dart';
 
 class SessionMainView extends StatefulWidget {
   Session session;
-  Commons commons;
+  Widget sessionBody;
 
-  SessionMainView({required this.session, required this.commons});
+  SessionMainView({required this.session, required this.sessionBody});
 
   @override
   State<StatefulWidget> createState() => _SessionMainView();
@@ -26,6 +27,7 @@ class _SessionMainView extends State<SessionMainView> {
 
   late Session _session;
   bool _triggersMode = false;
+  late Widget _sessionBody;
 
   @override
   void initState() {
@@ -34,6 +36,7 @@ class _SessionMainView extends State<SessionMainView> {
       _session = Session.generic;
     } else {
       _session = widget.session;
+      _sessionBody = widget.sessionBody;
     }
   }
 
@@ -42,25 +45,12 @@ class _SessionMainView extends State<SessionMainView> {
     return Scaffold(
         appBar: AppBar(
             elevation:0,
-            leading: Builder(
-
-              ////NOT CLEAN!!!!!!!
-              builder: (BuildContext context) {
-                return IconButton(
-                  icon: const Icon(Icons.arrow_back_ios,size:18,),
-                  onPressed: () => BlocProvider.of<NavigationBloc>(context).add(
-                    NavigationRequested(destination: NavigationDestinations.back),
-                  ),
-                  tooltip: 'Back',
-                );
-              },
-            ),
+            leading: BuilderBackButton(),
             actions: <Widget>[
               IconButton(
                   icon: Icon(Icons.cancel_outlined, size: 18,),
                   tooltip: 'quit',
                   onPressed: () {
-                    //////COPPLED NAVIGATION???
                     BlocProvider.of<ConnectBloc>(context).add( //This nav flow is not accurate
                         QuitSession(sessionId: _session.id)
                     );
@@ -69,8 +59,8 @@ class _SessionMainView extends State<SessionMainView> {
                     );
                   })
             ]),
-        body:sessionBody(),
-        floatingActionButton: ElevatedButton(
+        body: _sessionBody,
+        /*floatingActionButton: ElevatedButton(
           onPressed: () => {
             setState(() {
               _triggersMode = !_triggersMode;
@@ -80,17 +70,17 @@ class _SessionMainView extends State<SessionMainView> {
             ),*/
           },
           child: _triggersMode ? Text("commons") : Text("triggers"),
-        ),
+        ),*/
     );
   }
 
-  Widget sessionBody () {
+  /*Widget sessionBody () {
     if(_triggersMode){
       return TriggersView(session: _session);
     }else{
       return CommonsMainView(session: _session);
     }
-  }
+  }*/
 
 
 
