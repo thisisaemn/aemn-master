@@ -21,7 +21,7 @@ class Commons extends Equatable{
 
   const Commons ({required this.id, required this.partition, required this.facts, required this.interests, required this.triggers});
 
-  static const generic = Commons(id: '00000000', partition: '=00000000', facts: [KeyValue(id: "00000000",key: "species", value: "human"),], interests: [Interest(interestModel: InterestModel(id: "00000000", partition: "=00000000", icon: "2342", name: "aemn", tags: [Tag(id: "000000000", name: "aemn")]), intensity: 1000)], triggers: [Trigger(id: "id" , mainContent: "How's the weather?", mainContentLink: '',facts: [KeyValue(id: "00000000",key: "species", value: "human"),], interests: [Interest(interestModel: InterestModel(id: "00000000", partition: "=00000000", icon: "2342", name: "aemn", tags: [Tag(id: "000000000", name: "aemn")]), intensity: 1000)])]);
+  static const generic = Commons(id: '00000000', partition: '=00000000', facts: [KeyValue(id: "00000000",key: "species", value: "human"),], interests: [Interest(interestModel: InterestModel(id: "00000000", partition: "=00000000", icon: "2342", name: "aemn", tags: [Tag(id: "000000000", name: "aemn")]), intensity: 1000)], triggers: [Trigger(id: "id" , mainContent: "How's the weather?", mainContentLink: '',facts: [KeyValue(id: "00000000",key: "species", value: "human"),], interests: [InterestModel(id: "00000000", partition: "=00000000", icon: "2342", name: "aemn", tags: [Tag(id: "000000000", name: "aemn")])])]);
 
   @override
   List<Object> get props => [id, partition, facts, interests, triggers];

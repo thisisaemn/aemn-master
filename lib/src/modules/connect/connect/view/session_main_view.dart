@@ -1,3 +1,4 @@
+
 import 'package:aemn/src/modules/connect/connect.dart';
 
 import 'package:connect_repository/connect_repository.dart';
@@ -11,6 +12,8 @@ import 'package:user_repository/user_repository.dart';
 import 'package:interest_repository/interest_repository.dart';
 
 import 'package:aemn/src/modules/profile/profile.dart';
+
+//This is the Sessions 'Frame', containig app bar for both the commons and triggers view option
 
 
 class SessionMainView extends StatefulWidget {
@@ -26,8 +29,7 @@ class SessionMainView extends StatefulWidget {
 class _SessionMainView extends State<SessionMainView> {
 
   late Session _session;
-  bool _triggersMode = false;
-  late Widget _sessionBody;
+  late Widget _sessionBody; //triggers or commons body
 
   @override
   void initState() {

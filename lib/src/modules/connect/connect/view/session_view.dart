@@ -1,4 +1,7 @@
+/*
 import 'package:aemn/src/modules/connect/connect.dart';
+ */
+/*
 import 'package:connect_repository/connect_repository.dart';
 import 'package:flutter/material.dart';
 
@@ -55,3 +58,4 @@ class SessionView extends StatelessWidget {
   }
 
 }
+*/

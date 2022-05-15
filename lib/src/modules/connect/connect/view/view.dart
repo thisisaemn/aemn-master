@@ -16,3 +16,7 @@ export 'commons_main_view.dart';
 export 'triggers_view.dart';
 
 export 'triggers_main_view.dart';
+
+export 'triggers_overviewTrigger_view.dart';
+
+export 'triggers_detailedTrigger_view.dart';

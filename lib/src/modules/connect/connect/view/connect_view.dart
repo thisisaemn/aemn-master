@@ -19,7 +19,7 @@ class ConnectView extends StatelessWidget{
         if(state is Connected){
           return HomeLandingScreen();
         } else if(state is EnteredSession){
-          print('session has been passed');
+         // print('session has been passed');
           //print((state as EnteredSession).session);
           //Sollte session nicht awaited werden?
 

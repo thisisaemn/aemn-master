@@ -1,3 +1,7 @@
+/*
+  This was the drawer, not included anymore
+ */
+/*
 import 'package:aemn/src/modules/connect/connect.dart';
 import 'package:connect_repository/connect_repository.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +31,8 @@ class _SessionsOverviewView extends State<SessionsOverviewView> {
 
   @override
   Widget build(BuildContext context) {
-    List<Session?>? sessions =
-        context.select((ConnectBloc bloc) => bloc.user.sessions);
+    List<Session?>? sessions = [];
+        //context.select((ConnectBloc bloc) => bloc.user.sessions);
     print(context.select((ConnectBloc bloc) => bloc.user));
 
     if (sessions != null) {
@@ -128,7 +132,7 @@ class _SessionsOverviewView extends State<SessionsOverviewView> {
               ),
               onPressed: () {
                 BlocProvider.of<ConnectBloc>(context).add(
-                    EnterSession(session: pSession, option: options.triggers));
+                    EnterSession(sessionId: pSession.id, option: options.triggers));
               },
               child: Container(
                   child: Column(children: [
@@ -136,6 +140,8 @@ class _SessionsOverviewView extends State<SessionsOverviewView> {
                 Text('triggers', style: TextStyle(fontSize: 10.0))
               ])))
         ]),
+        textColor: Colors.black,
+        collapsedTextColor: Colors.black,
         controlAffinity: ListTileControlAffinity.leading,
         children: [
           ElevatedButton(
@@ -144,7 +150,7 @@ class _SessionsOverviewView extends State<SessionsOverviewView> {
               ),
               onPressed: () {
                 BlocProvider.of<ConnectBloc>(context).add(
-                    EnterSession(session: pSession, option: options.commons));
+                    EnterSession(sessionId: pSession.id, option: options.commons));
               },
               child: Container(
                   child:
@@ -156,17 +162,18 @@ class _SessionsOverviewView extends State<SessionsOverviewView> {
   }
 
   Widget membersList(List<String> members){
-
-    return //Expanded(child:
-    ListView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-      itemCount: members.length,
-      itemBuilder: (BuildContext context, int index) {
-          return Text(members[index]);
-      },
-    //)
+    var membersUsernameTxt = <Text>[];
+    members.forEach((element) {
+      membersUsernameTxt.add(
+        Text(element)
+      );
+    });
+    return Column(
+      children: membersUsernameTxt,
     );
   }
 
 
 }
+
+ */

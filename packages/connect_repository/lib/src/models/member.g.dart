@@ -13,7 +13,7 @@ Member _$MemberFromJson(Map<String, dynamic> json) => Member(
     );
 
 Map<String, dynamic> _$MemberToJson(Member instance) => <String, dynamic>{
-      '_id': instance.id,
+      'id': instance.id,
       'username': instance.username,
       'active': instance.active,
     };

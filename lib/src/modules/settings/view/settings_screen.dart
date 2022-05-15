@@ -6,6 +6,9 @@ import 'package:aemn/src/app/app.dart';
 
 //import 'package:aemn/src/assets/sample_data/aemn-interest-0.png';
 
+//this might be helpful
+//https://stackoverflow.com/questions/67960222/how-to-get-a-pop-up-window-for-flutter-web-app
+
 class SettingsScreen extends StatelessWidget {
   final String text;
 

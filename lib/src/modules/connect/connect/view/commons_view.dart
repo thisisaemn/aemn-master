@@ -18,8 +18,8 @@ class CommonsView extends StatelessWidget {
     BlocProvider.of<ConnectBloc>(context).add(
       Load(),
     );
-    print("now in sessionview the session is");
-    print(session);
+    //print("now in sessionview the session is");
+    //print(session);
     return BlocBuilder<ConnectBloc, ConnectState>(
         builder: (context, state) {
           if(state is Loaded){

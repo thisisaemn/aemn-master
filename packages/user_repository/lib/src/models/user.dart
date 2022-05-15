@@ -14,7 +14,7 @@ class User extends Equatable{
   final String email;
   final String username;
 
-  List<Session?> sessions;
+  List<String> sessions;
 
   List<Message> box;
 

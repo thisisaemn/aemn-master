@@ -20,8 +20,8 @@ InterestModel _$InterestModelFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$InterestModelToJson(InterestModel instance) =>
     <String, dynamic>{
-      'id': instance.id,
-      'partition': instance.partition,
+      '_id': instance.id,
+      '_partition': instance.partition,
       'icon': instance.icon,
       'name': instance.name,
       'tags': instance.tags,

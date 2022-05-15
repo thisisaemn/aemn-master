@@ -13,11 +13,13 @@ import 'package:aemn/src/modules/profile/profile.dart';
 
 //Pageination missing
 
+//This page does also have to deal with the management of triggers.
+
 class TriggersMainView extends StatefulWidget {
   Session? session;
-  Trigger? trigger;
+  List<Trigger?>? triggers;
 
-  TriggersMainView({required this.session, required this.trigger});
+  TriggersMainView({required this.session, required this.triggers});
 
   @override
   State<StatefulWidget> createState() => _TriggersMainView();
@@ -33,7 +35,7 @@ class TriggersMainView extends StatefulWidget {
 class _TriggersMainView extends State<TriggersMainView> {
 
   late Session _session;
-  Trigger? _trigger;
+  List<Trigger?>? _triggers;
 
   @override
   void initState() {
@@ -43,110 +45,54 @@ class _TriggersMainView extends State<TriggersMainView> {
     } else {
       _session = widget.session!;
     }
-    if (widget.trigger != null) {
-      _trigger = widget.trigger;
+    if (widget.triggers != null) {
+      _triggers = widget.triggers;
+    }else{
+      //generateTriggers() ...
+      _triggers = [];
     }
 
   }
 
   @override
   Widget build(BuildContext context) {
+    _triggers = [context.select((ConnectBloc bloc) => bloc.trigger,), context.select((ConnectBloc bloc) => bloc.trigger,)];
     return Scaffold(
       body: triggersBody(),
     );
   }
 
   Widget triggersBody () {
-    if(_trigger != null){
-      return triggers(_trigger!);
+    if(_triggers != null){
+      return triggers(_triggers!);
     }else{
-      print("we'Re in triggers main view");
+      //print("we'Re in triggers main view");
       return Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,));
     }
   }
 
-  Widget triggers(Trigger trigger){
+  PageController pageController = PageController();
+
+  Widget triggers(List<Trigger?> triggers){
     //return Container(child: Text(trigger.mainContent, style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.w600),), alignment: Alignment.center,);
    //https://stackoverflow.com/questions/66111911/swipe-effect-of-tiktok-how-to-scroll-vertically-in-full-screen
+    if(_triggers == null){
+      return Container();
+    }
     return PageView.builder(
+      controller: pageController,
        scrollDirection: Axis.vertical,
-       itemCount: 2,
+       itemCount: _triggers!.length,
        itemBuilder: (context, index) {
          try {
-           return Container(child: TriggerOverviewWidget(trigger), alignment: Alignment.center,);
+           if(_triggers![index]== null){
+             return Container();
+           }
+           return OverviewTrigger(trigger: _triggers![index]!,);
          } catch (e) {
            print(e);
            return Container();
          }
        });
-
   }
-
-  Widget TriggerOverviewWidget(Trigger trigger){
-    //return Container(child: Text(trigger.mainContent, style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.w600),), alignment: Alignment.center,);
-    //https://api.flutter.dev/flutter/widgets/Stack-class.html
-    return SizedBox(
-      width: MediaQuery.of (context).size.width,
-      height: MediaQuery.of (context).size.height,
-      child: Stack(
-        children: <Widget>[
-          Container(
-            width: MediaQuery.of (context).size.width,
-            height: MediaQuery.of (context).size.height,
-            //color: Colors.white,
-            child: TriggerWidget(trigger),
-          ),
-          Container(
-            padding: const EdgeInsets.all(5.0),
-            alignment: Alignment.bottomCenter,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.center,
-                end: Alignment.bottomCenter,
-                colors: <Color>[
-                  Colors.black.withAlpha(0),
-                  Colors.black.withAlpha(0),
-                  Colors.black26
-                ],
-              ),
-            ),
-            child: Row(
-              //crossAxisAlignment: CrossAxisAlignment.baseline,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                    width: MediaQuery.of (context).size.width * 0.12,
-                    height: MediaQuery.of (context).size.height * 0.12,
-                    alignment: Alignment.bottomLeft,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        IconButton(icon: Icon(Icons.refresh), onPressed: () => {}),
-                      ],
-                    )
-                ),
-                Container(
-                    width: MediaQuery.of (context).size.width * 0.12,
-                    height: MediaQuery.of (context).size.height * 0.12,
-                    alignment: Alignment.bottomLeft,
-                    child: Column(
-                      children: [
-                        IconButton(icon: Icon(Icons.keyboard_arrow_up), onPressed: () => {}),
-                        IconButton(icon: Icon(Icons.keyboard_arrow_down), onPressed: () => {}),
-                      ],
-                    )
-                ),
-              ],
-            )
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget TriggerWidget(Trigger trigger){
-    return Container(child: Text(trigger.mainContent, style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.w600),), alignment: Alignment.center,);;
-  }
-
-
 }

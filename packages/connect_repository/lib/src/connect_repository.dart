@@ -98,7 +98,7 @@ class ConnectRepository {
       memberArray = (jsonProfileArray as List<dynamic>)
           .map((e) => Member.fromJson(e as Map<String, dynamic>))
           .toList();
-      print(memberArray);
+      //print(memberArray);
     }
 
     return memberArray;
@@ -129,7 +129,7 @@ class ConnectRepository {
 
     if(res.statusCode == 200){
       var resBody = await json.decode(res.body);
-      print(resBody["msg"]);
+      //print(resBody["msg"]);
       return true;
     }
 
@@ -166,8 +166,8 @@ class ConnectRepository {
 
     if(res.statusCode == 200){
       var resBody = await json.decode(res.body);
-      print(resBody["msg"]);
-      print(resBody["sessionId"]);
+      //print(resBody["msg"]);
+      //print(resBody["sessionId"]);
       return true;
     }
 
@@ -229,11 +229,43 @@ class ConnectRepository {
   }*/
 
 
+  /**
+   * Returns session if user is member
+   */
+  Future<Session?> getSession({required String sessionId}) async {
+    var token = await _cache.storage.read(key: 'jwt');
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+
+    var body = {
+      "sessionId": sessionId,
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/getSession'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    //Response Dealing
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      //print(resBody["session"]);
+      Session session = await Session.fromJson(resBody["session"]);
+      return session;
+    }
+
+    return null;
+  }
+
+
   //Returns the session the user is in
   Future<Session> getSessions() async {  //did the not have a stream or smth similar as a return type?
     /*var token = await _cache.storage.read(key: 'jwt');
     //print(token.toString());
-
 
     await getUser();
     var sessionId = "";
@@ -297,7 +329,7 @@ class ConnectRepository {
       "username": username,
     };
 
-    print("trying to join session with id $sessionId");
+    //print("trying to join session with id $sessionId");
 
     var res = await http.post(
       //Uri(path: "$SERVER_IP/login"),
@@ -340,7 +372,7 @@ class ConnectRepository {
       "sessionId": sessionId,
     };
 
-    print("trying to eval session with id $sessionId");
+    //print("trying to eval session with id $sessionId");
 
     var res = await http.post(
       //Uri(path: "$SERVER_IP/login"),
@@ -428,7 +460,7 @@ class ConnectRepository {
       "sessionId": sessionId,
     };
 
-    print("trying to eval session with id $sessionId");
+    //print("trying to eval session with id $sessionId");
 
     var res = await http.post(
       //Uri(path: "$SERVER_IP/login"),
@@ -445,40 +477,165 @@ class ConnectRepository {
 
   }
 
-
+  /**
+   * Returns one Trigger based on the session.
+   * Would it make sense to get more than one trigger?
+   * Should history of triggers and the voting of them in the context play
+   * a role?
+   */
   Future<Trigger?> getTrigger({required Session session}) async {  //did the not have a stream or smth similar as a return type?
-    /*
+    //print(session.commons);
+    //print('now the triggerbase:');
+    //print(await getTriggerBaseInterests(commons: session.commons));
+
+    List<InterestModel>? interestModels = await getTriggerBaseInterests(commons: session.commons);
+
+    if(interestModels == null){
+      //maybe completely random trigger request.
+      return null;
+    }
+
     var token = await _cache.storage.read(key: 'jwt');
-    //print(token.toString());
 
     var header = {
       "content-type" : "application/json",
       "authorization" : "Bearer $token",
-      "sessionId": sessionId,
     };
 
     var body = {
-      "sessionId": sessionId,
+      "interestsModels": interestModels,
+      "facts": session.commons.facts
     };
-
-    print("trying to eval session with id $sessionId");
 
     var res = await http.post(
       //Uri(path: "$SERVER_IP/login"),
-      Uri.parse("$SERVER_IP/quitSession"),
+      Uri.parse("$SERVER_IP/getTrigger"),
       headers: header,
       body: jsonEncode(body),
     );
 
     if(res.statusCode == 200) {
-      //await getSession();
-      return true;
+      var resBody = await json.decode(res.body);
+      //print(resBody);
+      Trigger trigger = await Trigger.fromJson(resBody["trigger"]);
+      print(trigger.mainContent);
+      //trigger.mainContentLink = trigger.mainContent.
+      return trigger;
     }
-    return false;
-     */
 
-    return Trigger(id: "id" , mainContent: "How's the weather?", mainContentLink: '',facts: [KeyValue(id: "00000000",key: "species", value: "human"),], interests: [Interest(interestModel: InterestModel(id: "00000000", partition: "=00000000", icon: "2342", name: "aemn", tags: [Tag(id: "000000000", name: "aemn")]), intensity: 1000)]);
+    return Trigger(id: "id" , mainContent: "How's the weather?", mainContentLink: '',facts: [KeyValue(id: "00000000",key: "species", value: "human"),], interests: [InterestModel(id: "00000000", partition: "=00000000", icon: "2342", name: "aemn", tags: [Tag(id: "000000000", name: "aemn")])]);
 
   }
+
+  //Generate random interest combinations.
+  /**
+   * Returns a Trigger Base: this is used to find related content and recommend a trigger.
+   * Does the return type make sense?
+   *
+   * How should the history of previous trigger bases take into account?
+   * Should there be a variable storing the triggerbase and the rating of it?
+   * The rating should also influence the intensity of the interests in the commons
+   * Argh.
+   *
+   * The tags should be weighted and the trigger base kinda meaningful.
+   * How do we achieve that?
+   *
+   * Would it make sense for now to keep the trigger base 'homogenous'?
+   * Meaning, that only related tags should be put into the base
+   * example: Business and Industry, StartUps and Entrepreneurship. -Since the tags suggest a relation between these interests?
+   *
+   * This would mean we would take each interest from commons, see whether they have tags, check whether the tags are included in commons and if so put them in the trigger base.
+   * But would this make sense? this is just sm sorta groupby isn't it.
+   *
+   * Example: Queen
+   *    Queen is related to a musician, music, rockband, songs, bohemian rhapsody, disruption ...
+   *    If we would throuw all these into a pot and request a trigger, the most limiting thing would be queen itself or bohemian rhapsody right?
+   *    How do we expect to generate content based on that.
+   *
+   * ....
+   *
+   * Before I get helpless, we'll start with the suggested offer until I find a better alternative.
+   *
+   * So to summarize:
+   * 1. We're going to group by the interests in commons by tags, this will return all trigger bases
+   * 2. We're going to iterate through all these triggerbases and return one;
+   *    so we need a variable storing the index of the current triggerBase, also a way to rate it and an opportunity to get back at it if wished
+   * 3. If there is the desire to switch into comlete random mode, this could alsobe realized by generating random trigger bases
+   *    We'd get random integer values, and use them as indexes to get random combinations, the amount of random tags that should be included can also be determined by a andom int
+   *
+   */
+  Future<List<InterestModel>?> getTriggerBaseInterests({required Commons commons}) async {
+    List<List<InterestModel>>? tempAllTriggerBaseTags = await getAllTriggerBaseTags(commons: commons);
+    if(tempAllTriggerBaseTags != null){
+      currentIndexInAllTriggerBaseTags++;
+      allTriggerBaseTags = tempAllTriggerBaseTags;
+      //ratingAndIndexOfAllTriggerBaseTags = List.generate(2, (index) => List.filled(allTriggerBaseTags.length, 0, growable: false));
+      ratingAndIndexOfAllTriggerBaseTags = List.generate(allTriggerBaseTags!.length, (i) => 0,);
+      if(currentIndexInAllTriggerBaseTags>-1 && currentIndexInAllTriggerBaseTags<allTriggerBaseTags!.length){
+        return allTriggerBaseTags![currentIndexInAllTriggerBaseTags];
+      }else{
+        currentIndexInAllTriggerBaseTags=0;
+        return allTriggerBaseTags![currentIndexInAllTriggerBaseTags];
+      }
+    }
+    return null;
+  }
+
+  List<List<InterestModel>>? allTriggerBaseTags;
+  //Only the rating stored, the index eq to the index in the other list
+  List<int>? ratingAndIndexOfAllTriggerBaseTags;
+  int currentIndexInAllTriggerBaseTags = -1;
+
+  //returns all trigger bases for the interests in commons
+  //would this not be rendundant?
+  //the hierachy/relationship of tags does not have to be linear
+  //is there therefore a way to eliminate the redundancy properly?
+  Future<List<List<InterestModel>>?> getAllTriggerBaseTags({required Commons commons}) async{
+    List<List<InterestModel>> allTriggerBases = [];
+    List<Interest> interests = commons.interests;
+
+    for(int i= 0; i<interests.length; i++){
+      if(interests[i].intensity>0){
+      List<InterestModel>? res = await getOneTriggerBaseInterest(commons: commons, interest: interests[i]);
+      if(res != null /*&& res.length>0 */){
+        //print(res);
+        allTriggerBases.add(res);
+        //print(allTriggerBases);
+      }}
+    }
+
+
+    if (allTriggerBases.length < 1) {
+      return null;
+    }
+
+    return allTriggerBases;
+  }
+
+  Future<List<InterestModel>?> getOneTriggerBaseInterest({required Commons commons, required Interest interest}) async{
+    List<InterestModel> triggerBase = [];
+
+    interest.interestModel.tags.forEach((tag) {
+      commons.interests.forEach((element) {
+        if(element.interestModel.id == tag.id){
+          triggerBase.add(element.interestModel);
+         // break;
+        }
+      });
+    });
+
+    if(triggerBase.length == 0){
+      return null;
+    }
+
+    return triggerBase;
+  }
+
+  //Fact matching and according content.
+
+  //Modify triggers based on facts. Mostly the way they are conveyed.
+
+
+
 
 }

@@ -1,0 +1,2 @@
+##when generating the seriazable things
+flutter pub run build_runner build

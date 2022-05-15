@@ -42,6 +42,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
   final ConnectRepository connectRepository;
 
   Trigger? trigger;
+  List<Trigger?>? triggers;
   /*
   StreamController<Trigger?> triggerStreamController = StreamController<Trigger?>();
   Stream<Trigger?> triggerStream = triggerStreamController.stream;*/
@@ -155,23 +156,29 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
   /*maybe differentiate join and enter session*/
 
   Future<void> _onEnterSession (EnterSession event, Emitter<ConnectState> emit) async {
-    emit(EnteringSession(session: event.session, option: event.option));
+    emit(EnteringSession(sessionId: event.sessionId, option: event.option));
 
     //bool success = await _trySendMsg(event.msg);
     bool success = false;
 
 
-
     //if(userRepository.user.contains() != event.sessionId || userRepository.currentUser.currentSession != event.sessionId){
       //success = await _tryEnterSession(sessionId: event.session.id);
-      success = await _tryEvaluateCommons(sessionId: event.session.id);
+      success = await _tryEvaluateCommons(sessionId: event.sessionId);
       await _tryLoadUser();
     //}
+
+    Session? session = await _tryGetSession(sessionId: event.sessionId);
+
+    if (session != null) {
+      success = true;
+    }else{success= false;
+    };
 
     if(!success){
       emit(EnteringSessionFailed());
     }else {
-      emit(EnteredSession(session: event.session, option: event.option));
+      emit(EnteredSession(session: session!, option: event.option));
     }
   }
 
@@ -186,7 +193,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     //if(userRepository.user.contains() != event.sessionId || userRepository.currentUser.currentSession != event.sessionId){
     success = await _tryJoinSession(sessionId: event.sessionId);
     await _tryEvaluateCommons(sessionId: event.sessionId);
-    await _tryLoadUser();
+    User? user = await _tryLoadUser();
     //}
 
     if(!success){
@@ -194,6 +201,16 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     }else {
       emit(JoinedSession(sessionId: event.sessionId));
     }
+
+    //After joining a session enter it automatically
+    if(user != null){
+      //Session? pSession =  await _tryGetSession(sessionId: event.sessionId);//user.sessions.where((element) => element?.id ==event.sessionId).first;
+      //if(pSession != null) {
+        this.add(EnterSession(sessionId: event.sessionId, option: options.triggers));
+      //}
+    }
+
+
   }
 
   Future<void> _onGetSession (GetSession event, Emitter<ConnectState> emit) async {
@@ -237,7 +254,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       //await userRepository.getUser();
       return userRepository.getUser();
     } on Exception {
-      print('failed loading box, connect bloc');
+      //print('failed loading box, connect bloc');
       return null;
     }
   }
@@ -248,7 +265,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
 
       return userRepository.currentUser.box;
     } on Exception {
-      print('failed loading box, connect bloc');
+      //print('failed loading box, connect bloc');
       return null;
     }
   }
@@ -257,7 +274,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     try {
       return connectRepository.joinSession(sessionId: sessionId, username: user.username);
     } on Exception {
-      print('failed entering session, connect bloc');
+      //print('failed entering session, connect bloc');
       return false;
     }
   }
@@ -267,7 +284,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       final success = await connectRepository.sendMessage(msg: msg);
       return success;
     } on Exception {
-      print('failed sending request, connect bloc');
+      ////print('failed sending request, connect bloc');
       return false;
     }
   }
@@ -277,7 +294,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       final success = await connectRepository.inviteToNewSession(inviteeId: inviteeId, inviteeUsername:inviteeUsername, senderId:senderId,  senderUsername:senderUsername);
       return success;
     } on Exception {
-      print('failed sending request, connect bloc');
+      ////print('failed sending request, connect bloc');
       return false;
     }
   }
@@ -286,7 +303,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     try {
       return connectRepository.quitSession(sessionId: sessionId);
     } on Exception {
-      print('failed quitting session, connect bloc');
+      ////print('failed quitting session, connect bloc');
       return false;
     }
   }
@@ -295,17 +312,27 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     try {
       return connectRepository.evaluateCommons(sessionId: sessionId);
     } on Exception {
-      print('failed evl commons, connect bloc');
+      ////print('failed evl commons, connect bloc');
       return false;
     }
   }
 
   Future<Trigger?> _tryGetTrigger({required Session session}) async {
     try {
-      print("try get trigger");
+      ////print("try get trigger");
       return connectRepository.getTrigger(session: session);
     } on Exception {
-      print('failed getting trigger, connect bloc');
+      ////print('failed getting trigger, connect bloc');
+      return null;
+    }
+  }
+
+  Future<Session?> _tryGetSession({required String sessionId}) async {
+    try {
+      ////print("try get trigger");
+      return connectRepository.getSession(sessionId: sessionId);
+    } on Exception {
+      ////print('failed getting trigger, connect bloc');
       return null;
     }
   }

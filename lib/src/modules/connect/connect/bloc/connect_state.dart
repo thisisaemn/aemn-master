@@ -61,13 +61,13 @@ class JoinedSession extends Loaded{
 class JoiningSessionFailed extends LoadingFailed{}
 
 class EnteringSession extends Loading{
-  final Session session;
+  final String sessionId;
   final options option; //whether commons, triggers
 
-  EnteringSession({required this.session, required this.option});
+  EnteringSession({required this.sessionId, required this.option});
 
   @override
-  List<Object> get props => [session];
+  List<Object> get props => [sessionId, option];
 
 }
 

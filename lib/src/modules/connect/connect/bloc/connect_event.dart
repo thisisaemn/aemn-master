@@ -60,13 +60,13 @@ class JoinSession extends ConnectEvent{
 }
 
 class EnterSession extends ConnectEvent{
-  //final String sessionId;
-  final Session session;
+  final String sessionId;
+  //final Session session;
   final options option;
 
-  EnterSession({required this.session, required this.option});
+  EnterSession({required this.sessionId, required this.option});
 
-  List<Object> get props => [session, option];
+  List<Object> get props => [sessionId, option];
 
 }
 

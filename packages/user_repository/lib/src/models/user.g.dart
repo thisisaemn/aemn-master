@@ -14,15 +14,13 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       box: (json['box'] as List<dynamic>)
           .map((e) => Message.fromJson(e as Map<String, dynamic>))
           .toList(),
-      sessions: (json['sessions'] as List<dynamic>)
-          .map((e) =>
-              e == null ? null : Session.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      sessions:
+          (json['sessions'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
-      'id': instance.id,
-      'partition': instance.partition,
+      '_id': instance.id,
+      '_partition': instance.partition,
       'email': instance.email,
       'username': instance.username,
       'sessions': instance.sessions,

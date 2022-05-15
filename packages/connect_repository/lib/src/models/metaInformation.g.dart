@@ -8,11 +8,12 @@ part of 'metaInformation.dart';
 
 MetaInformation _$MetaInformationFromJson(Map<String, dynamic> json) =>
     MetaInformation(
-      senderId: json['senderId'] as String,
-      senderUsername: json['senderUsername'] as String,
-      receiverId: json['receiverId'] as String,
-      receiverUsername: json['receiverUsername'] as String,
-      sessionId: json['sessionId'] as String,
+      senderId: json['senderId'] as String?,
+      senderUsername: json['senderUsername'] as String?,
+      receiverId: json['receiverId'] as String?,
+      receiverUsername: json['receiverUsername'] as String?,
+      sessionId: json['sessionId'] as String?,
+      sessionName: json['sessionName'] as String?,
     );
 
 Map<String, dynamic> _$MetaInformationToJson(MetaInformation instance) =>
@@ -22,4 +23,5 @@ Map<String, dynamic> _$MetaInformationToJson(MetaInformation instance) =>
       'receiverId': instance.receiverId,
       'receiverUsername': instance.receiverUsername,
       'sessionId': instance.sessionId,
+      'sessionName': instance.sessionName,
     };
