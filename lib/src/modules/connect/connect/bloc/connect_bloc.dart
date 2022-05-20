@@ -17,6 +17,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
   ConnectBloc({required this.userRepository, required this.connectRepository})
       : assert(userRepository != null),
         user = userRepository.currentUser,
+        triggers = [],
         super(Loading()){
     on<Load>(_onLoad);
     on<Connect>(_onConnect);
@@ -27,6 +28,8 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     on<JoinSession>(_onJoinSession);
     on<GetSession>(_onGetSession);
     on<GetTrigger>(_onGetTrigger);
+    on<GetTriggers>(_onGetTriggers);
+    on<ResetTriggers>(_onResetTriggers);
     /*
     _userSubscription = userRepository.user.listen(
           (user) => add(Load()),
@@ -42,7 +45,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
   final ConnectRepository connectRepository;
 
   Trigger? trigger;
-  List<Trigger?>? triggers;
+  List<Trigger?> triggers = [];
   /*
   StreamController<Trigger?> triggerStreamController = StreamController<Trigger?>();
   Stream<Trigger?> triggerStream = triggerStreamController.stream;*/
@@ -233,16 +236,45 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     }
   }
 
-  Future<void> _onGetTrigger (GetTrigger event, Emitter<ConnectState> emit) async {
+  Future<bool> _onGetTrigger (GetTrigger event, Emitter<ConnectState> emit) async {
     emit(GettingTrigger(session:event.session));
 
     trigger = await _tryGetTrigger(session: event.session);
 
     if(trigger == null){
       emit(GettingTriggerFailed());
+      return false;
     }else {
+      print(trigger);
+      triggers.add(trigger);
       emit(GotTrigger(trigger: trigger!));
+      return true;
     }
+  }
+
+  Future<void> _onGetTriggers (GetTriggers event, Emitter<ConnectState> emit) async {
+    emit(GettingTriggers(session:event.session));
+    //Don't know if additional states are necessary
+    print(triggers);
+    try{
+        for (int i = 0; i < 2; i++) {
+          Trigger? t = await _tryGetTrigger(session: event.session);
+          if(t != null){
+            triggers.add(t);
+          }
+        }
+        if(triggers.length > 0) {
+        emit(GotTriggers());
+      }else{
+          emit(GettingTriggersFailed());
+        }
+    }catch(e){
+      emit(GettingTriggersFailed());
+    }
+  }
+
+  Future<void> _onResetTriggers (ResetTriggers event, Emitter<ConnectState> emit) async {
+    triggers = [];
   }
 
   //////////////////////////

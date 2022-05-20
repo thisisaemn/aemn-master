@@ -26,12 +26,12 @@ class TriggersView extends StatelessWidget {
     ///return List<Trigger> (length around 10) and forward it to the view
     ///react to feedback on triggers
     BlocProvider.of<ConnectBloc>(context).add(
-      GetTrigger(session: session!),
+      GetTriggers(session: session!),
     );
     //
     return BlocBuilder<ConnectBloc, ConnectState>(builder: (context, state) {
       //print("we are in trigger view state changed");
-      if (state is GotTrigger) {
+      if (state is GotTriggers) {
         //print('we are in trigger view got trigger');
         /*print(context.select(
           (ConnectBloc bloc) => bloc.trigger,
@@ -41,7 +41,7 @@ class TriggersView extends StatelessWidget {
             triggers: context.select(
               (ConnectBloc bloc) => bloc.triggers,
             ) /*trigger: context.select((ConnectBloc bloc) => bloc.trigger,),*/);
-      } else if (state is GettingSessionFailed) {
+      } else if (state is GettingTriggersFailed) {
         return Center(child: Text("Getting trigger failed, triggers_view"));
       } else {
         //print('triggers view else');

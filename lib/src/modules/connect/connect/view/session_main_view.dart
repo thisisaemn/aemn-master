@@ -35,7 +35,7 @@ class _SessionMainView extends State<SessionMainView> {
   void initState() {
     super.initState();
     if (widget.session == null) {
-      _session = Session.generic;
+      _session = Session(id: "00000000", partition: "=00000000", name: "", members: [Member(id: "00000000", username: "aemn", active: false)], commons: Commons.generic, triggers: []);;
     } else {
       _session = widget.session;
       _sessionBody = widget.sessionBody;

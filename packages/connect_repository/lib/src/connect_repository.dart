@@ -58,7 +58,7 @@ class ConnectRepository {
   void dispose() => _controller.close();
 */
 
-  Session get session {
+  /*Session get session {
     return Session.generic;
   }
 
@@ -66,7 +66,7 @@ class ConnectRepository {
   Session get currentSession {
     return Session.generic;
     ///return _cache.read<User>(key: userCacheKey) ?? User.anonymous;
-  }
+  }*/
 
   Future<List<Member>> searchMembers({
     required String key
@@ -310,7 +310,7 @@ class ConnectRepository {
       currentSession = _session;
       return _session;
     }*/
-    return Session.generic;
+    return Session(id: "00000000", partition: "=00000000", name: "", members: [Member(id: "00000000", username: "aemn", active: false)], commons: Commons.generic, triggers: []);
 
   }
 

@@ -87,4 +87,18 @@ class GetTrigger extends ConnectEvent{
   List<Object> get props => [session];
 }
 
+class GetTriggers extends ConnectEvent{
+  final Session session;
+
+  GetTriggers({required this.session});
+
+  List<Object> get props => [session];
+}
+
+class ResetTriggers extends ConnectEvent{
+
+  ResetTriggers();
+
+  List<Object> get props => [];
+}
 

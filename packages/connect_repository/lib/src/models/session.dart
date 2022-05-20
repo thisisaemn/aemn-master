@@ -17,12 +17,15 @@ class Session extends Equatable{
 
   final Commons commons;
 
-  const Session({required this.id, required this.partition,required this.name, required this.members, required this.commons});
+  List<Trigger?> triggers = [];
 
-  static const generic = Session(id: "00000000", partition: "=00000000", name: "", members: [Member(id: "00000000", username: "aemn", active: false)], commons: Commons.generic);
+  Session({required this.id, required this.partition,required this.name, required this.members, required this.commons, required this.triggers});
+  //const Session({required this.id, required this.partition,required this.name, required this.members, required this.commons, required this.triggers});
+
+  //static const generic = Session(id: "00000000", partition: "=00000000", name: "", members: [Member(id: "00000000", username: "aemn", active: false)], commons: Commons.generic, triggers: []);
 
   @override
-  List<Object> get props => [id, partition, name, members, commons];
+  List<Object> get props => [id, partition, name, members, commons, triggers];
 
   /*
   static Weather fromJson(dynamic json) {

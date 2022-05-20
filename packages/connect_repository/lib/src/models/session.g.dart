@@ -14,6 +14,7 @@ Session _$SessionFromJson(Map<String, dynamic> json) => Session(
           .map((e) => Member.fromJson(e as Map<String, dynamic>))
           .toList(),
       commons: Commons.fromJson(json['commons'] as Map<String, dynamic>),
+      triggers: [],
     );
 
 Map<String, dynamic> _$SessionToJson(Session instance) => <String, dynamic>{

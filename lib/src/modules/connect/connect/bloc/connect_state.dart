@@ -109,4 +109,24 @@ class GotTrigger extends Loaded{
 
 class GettingTriggerFailed extends LoadingFailed{}
 
+class GettingTriggers extends Loading{
+  final Session session;
+
+  GettingTriggers({required this.session});
+
+  @override
+  List<Object> get props => [session];
+}
+
+class GotTriggers extends Loaded{
+  //final Trigger trigger;
+
+  GotTriggers(); //{required this.trigger});
+
+  //@override
+  //List<Object> get props => [trigger];
+}
+
+class GettingTriggersFailed extends LoadingFailed{} //give error msg with it right
+
 

@@ -41,7 +41,7 @@ class _TriggersMainView extends State<TriggersMainView> {
   void initState() {
     super.initState();
     if (widget.session == null) {
-      _session = Session.generic;
+      _session = Session(id: "00000000", partition: "=00000000", name: "", members: [Member(id: "00000000", username: "aemn", active: false)], commons: Commons.generic, triggers: []);
     } else {
       _session = widget.session!;
     }
@@ -56,7 +56,7 @@ class _TriggersMainView extends State<TriggersMainView> {
 
   @override
   Widget build(BuildContext context) {
-    _triggers = [context.select((ConnectBloc bloc) => bloc.trigger,), context.select((ConnectBloc bloc) => bloc.trigger,)];
+    //_triggers = [context.select((ConnectBloc bloc) => bloc.trigger,), context.select((ConnectBloc bloc) => bloc.trigger,)];
     return Scaffold(
       body: triggersBody(),
     );
@@ -71,28 +71,54 @@ class _TriggersMainView extends State<TriggersMainView> {
     }
   }
 
-  PageController pageController = PageController();
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  PageController _pageController = PageController();
 
   Widget triggers(List<Trigger?> triggers){
     //return Container(child: Text(trigger.mainContent, style: TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.w600),), alignment: Alignment.center,);
    //https://stackoverflow.com/questions/66111911/swipe-effect-of-tiktok-how-to-scroll-vertically-in-full-screen
-    if(_triggers == null){
+   _triggers = context.select(
+         (ConnectBloc bloc) => bloc.triggers,
+   );
+   if(_triggers == null){
       return Container();
     }
-    return PageView.builder(
-      controller: pageController,
-       scrollDirection: Axis.vertical,
-       itemCount: _triggers!.length,
-       itemBuilder: (context, index) {
-         try {
-           if(_triggers![index]== null){
-             return Container();
-           }
-           return OverviewTrigger(trigger: _triggers![index]!,);
-         } catch (e) {
-           print(e);
-           return Container();
-         }
-       });
+    return RefreshIndicator(child:  PageView.builder(
+        controller: _pageController,
+        scrollDirection: Axis.vertical,
+        itemCount: _triggers!.length,
+        itemBuilder: (context, index) {
+          try {
+            print(_pageController.page);
+            double p = _pageController.page != null ? _pageController.page! : 0;
+            int roundedP = p.round();
+            print(roundedP);
+            print(_triggers!.length-(_triggers!.length/3).round());
+            if(roundedP == (_triggers!.length-(_triggers!.length/3)).round()){
+              print("last");
+              BlocProvider.of<ConnectBloc>(context).add(
+                GetTriggers(session: _session),
+              );
+              //Get back to the page they were currently on
+            }
+            if(_triggers![index]== null){
+              print("this trigger is null");
+              return Container();
+            }
+            return OverviewTrigger(trigger: _triggers![index]!,);
+          } catch (e) {
+            print(e);
+            return Container();
+          }
+        }), onRefresh: () {
+      BlocProvider.of<ConnectBloc>(context).add(ResetTriggers(),);
+      BlocProvider.of<ConnectBloc>(context).add(GetTriggers(session: _session),);
+      return Future.delayed(Duration(milliseconds: 1));});
+
   }
 }

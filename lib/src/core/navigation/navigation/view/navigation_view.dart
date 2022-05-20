@@ -1,4 +1,3 @@
-
 import 'package:aemn/src/modules/settings/settings.dart';
 import 'package:aemn/src/modules/connect/connect.dart';
 import 'package:connect_repository/connect_repository.dart';
@@ -22,28 +21,34 @@ class AppPage extends StatelessWidget {
   static Route route() {
     return MaterialPageRoute<void>(builder: (_) => AppPage());
   }
+
   static Page page() => /*const*/ MaterialPage<void>(child: AppPage());
 
   //late final UserRepository userRepository;
 
   @override
   Widget build(BuildContext context) {
-    UserRepository userRepository = context.read<AuthenticationRepository>().userRepository;//= UserRepository(cache: context.read<AuthenticationRepository>().cache);
+    UserRepository userRepository = context
+        .read<AuthenticationRepository>()
+        .userRepository; //= UserRepository(cache: context.read<AuthenticationRepository>().cache);
     return MultiBlocProvider(
         providers: [
           BlocProvider(
-              create: (context) => NavigationBloc(userRepository: userRepository )),
+              create: (context) =>
+                  NavigationBloc(userRepository: userRepository)),
         ],
-        child: NavigationScreenView(cache: context.read<AuthenticationRepository>().cache, userRepository: userRepository));
+        child: NavigationScreenView(
+            cache: context.read<AuthenticationRepository>().cache,
+            userRepository: userRepository));
   }
 }
-
 
 class NavigationScreenView extends StatefulWidget {
   final CacheClient cache;
   final UserRepository userRepository;
 
-  NavigationScreenView({required this.cache, required this.userRepository}) : super();
+  NavigationScreenView({required this.cache, required this.userRepository})
+      : super();
 
   @override
   _NavigationScreenViewState createState() => _NavigationScreenViewState();
@@ -65,8 +70,10 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
     } else {
       _cache = widget.cache;
       _interestRepository = InterestRepository();
-      _userRepository = widget.userRepository;//UserRepository(cache: CacheClient());
-      _swipeRepository = SwipeRepository(cache: _cache, interestRepository: _interestRepository);
+      _userRepository =
+          widget.userRepository; //UserRepository(cache: CacheClient());
+      _swipeRepository = SwipeRepository(
+          cache: _cache, interestRepository: _interestRepository);
       _connectRepository = ConnectRepository();
 
       _userRepository.getUser();
@@ -74,54 +81,58 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
     }
   }
 
-
-  MultiBlocProvider blocProviderUserAndSwipeBloc(BuildContext context, Widget tChild) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) =>
-                ProfileBloc(
-                    userRepository: _userRepository) /*this.userRepository*/,),
-          BlocProvider(
-            create: (context) => SwipeBloc(swipeRepository: _swipeRepository, userRepository: _userRepository,),
-          ),
-          BlocProvider(
-            create: (context) => ConnectBloc(userRepository: _userRepository, connectRepository: _connectRepository),
-          ),
-          BlocProvider(
-            create: (context) => SearchBloc(userRepository: _userRepository, interestRepository: _interestRepository, connectRepository: _connectRepository),
-          ),
-
-        ],
-        child: tChild);
+  MultiBlocProvider blocProviderUserAndSwipeBloc(
+      BuildContext context, Widget tChild) {
+    return MultiBlocProvider(providers: [
+      BlocProvider(
+        create: (context) => ProfileBloc(
+            userRepository: _userRepository) /*this.userRepository*/,
+      ),
+      BlocProvider(
+        create: (context) => SwipeBloc(
+          swipeRepository: _swipeRepository,
+          userRepository: _userRepository,
+        ),
+      ),
+      BlocProvider(
+        create: (context) => ConnectBloc(
+            userRepository: _userRepository,
+            connectRepository: _connectRepository),
+      ),
+      BlocProvider(
+        create: (context) => SearchBloc(
+            userRepository: _userRepository,
+            interestRepository: _interestRepository,
+            connectRepository: _connectRepository),
+      ),
+    ], child: tChild);
   }
 
   NavigationDestinations giveDestinationByIndex(int index) {
-    if(index ==0) {
+    if (index == 0) {
       return NavigationDestinations.swipe;
-    }else if(index == 1){
+    } else if (index == 1) {
       return NavigationDestinations.home;
-    }else if(index==2){
+    } else if (index == 2) {
       return NavigationDestinations.profile;
-    }else{
+    } else {
       return NavigationDestinations.home;
     }
   }
 
   int giveIndexByDestination(NavigationDestinations destination) {
-    if(destination == NavigationDestinations.swipe) {
+    if (destination == NavigationDestinations.swipe) {
       return 0;
-    }else if(destination == NavigationDestinations.home){
+    } else if (destination == NavigationDestinations.home) {
       return 1;
-    }else if(destination==NavigationDestinations.profile){
+    } else if (destination == NavigationDestinations.profile) {
       return 2;
-    }else{
+    } else {
       return 1;
     }
   }
 
-
-  Scaffold scaffoldNavigationScreenView(BuildContext context){
+  Scaffold scaffoldNavigationScreenView(BuildContext context) {
     return Scaffold(
       body: BlocBuilder<NavigationBloc, NavigationState>(
         builder: (BuildContext context, NavigationState state) {
@@ -156,26 +167,49 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
           print(state.session);
 
           if (state is DestinationLoaded || state is DestinationLoading) {
-            switch(state.currentDestination){
-              case(NavigationDestinations.home):  return  ConnectView();
-              case(NavigationDestinations.swipe):  return SwipeView();
-              case(NavigationDestinations.settings):  return  SettingsScreen(text: 'test');
-              case(NavigationDestinations.searchInterests):  return  SearchInterestsScreen();
-              case(NavigationDestinations.searchMembers):  return SearchMembersScreen();
-              case(NavigationDestinations.profile): return ProfileScreen();
-              case(NavigationDestinations.editProfile):  return ProfileEditScreen();
-              case(NavigationDestinations.scan):  return ScanIdScreen(text: 'test');
-              case(NavigationDestinations.show):  return ShowIdScreen(code: "userId bruh",);
+            switch (state.currentDestination) {
+              case (NavigationDestinations.home):
+                return ConnectView();
+              case (NavigationDestinations.swipe):
+                return SwipeView();
+              case (NavigationDestinations.settings):
+                return SettingsScreen(text: 'test');
+              case (NavigationDestinations.searchInterests):
+                return SearchInterestsScreen();
+              case (NavigationDestinations.searchMembers):
+                return SearchMembersScreen();
+              case (NavigationDestinations.profile):
+                return ProfileScreen();
+              case (NavigationDestinations.editProfile):
+                return ProfileEditScreen();
+              case (NavigationDestinations.scan):
+                return ScanIdScreen(text: 'test');
+              case (NavigationDestinations.show):
+                return ShowIdScreen(
+                  code: "userId bruh",
+                );
               //case(NavigationDestinations.session):  return SessionView(session: state.session);
-              case(NavigationDestinations.triggers):  return SessionMainView(session: state.session, sessionBody: TriggersView(session: state.session));
-              case(NavigationDestinations.commons):  return SessionMainView(session: state.session, sessionBody:CommonsView(session: state.session));
+              case (NavigationDestinations.triggers):
+                {
+                  BlocProvider.of<ConnectBloc>(context).add(
+                    ResetTriggers(),
+                  );
+                  /*BlocProvider.of<ConnectBloc>(context).add(
+                    GetTriggers(session: state.session,),
+                  );*/
+                  return SessionMainView(
+                      session: state.session,
+                      sessionBody: TriggersView(session: state.session));
+                }
+                ;
+              case (NavigationDestinations.commons):
+                return SessionMainView(
+                    session: state.session,
+                    sessionBody: CommonsView(session: state.session));
 
-            //default: return HomeLandingScreen();
+              //default: return HomeLandingScreen();
             }
           }
-
-
-
 
           /*
           if (state is HomeDestinationLoaded) {
@@ -234,51 +268,50 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
             return SessionScreen();
           }*/
 
-          return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
+          return Scaffold(
+              body: Center(
+                  child: CircularProgressIndicator.adaptive(
+            backgroundColor: Colors.amber,
+          )));
         },
       ),
-      bottomNavigationBar:
-      BlocBuilder<NavigationBloc, NavigationState>(
+      bottomNavigationBar: BlocBuilder<NavigationBloc, NavigationState>(
           builder: (BuildContext context, NavigationState state) {
-            return BottomNavigationBar(
-              backgroundColor: Colors.white,
-              elevation: 0,
-              iconSize: 18,
-              unselectedFontSize: 10,
-              selectedFontSize: 10.5,
-              unselectedItemColor: Colors.black,
-              selectedItemColor: Colors.amber,
-              selectedLabelStyle: TextStyle(color: Colors.black),
-              currentIndex:
-              giveIndexByDestination(context.select((NavigationBloc bloc) => bloc.currentDestination)),
-              items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.favorite),
-                  label: 'Swipe',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.account_tree_sharp),
-                  label: 'Connect',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  label: 'Profile',
-                ),
-              ],
-              onTap: (index) => context
-                  .read<NavigationBloc>()
-                  .add(NavigationRequested(destination: giveDestinationByIndex(index))),
-            );
-          }),
+        return BottomNavigationBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          iconSize: 18,
+          unselectedFontSize: 10,
+          selectedFontSize: 10.5,
+          unselectedItemColor: Colors.black,
+          selectedItemColor: Colors.amber,
+          selectedLabelStyle: TextStyle(color: Colors.black),
+          currentIndex: giveIndexByDestination(
+              context.select((NavigationBloc bloc) => bloc.currentDestination)),
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite),
+              label: 'Swipe',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_tree_sharp),
+              label: 'Connect',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+          ],
+          onTap: (index) => context.read<NavigationBloc>().add(
+              NavigationRequested(destination: giveDestinationByIndex(index))),
+        );
+      }),
     );
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
-    return blocProviderUserAndSwipeBloc(context, scaffoldNavigationScreenView(context));
+    return blocProviderUserAndSwipeBloc(
+        context, scaffoldNavigationScreenView(context));
   }
-
 }
