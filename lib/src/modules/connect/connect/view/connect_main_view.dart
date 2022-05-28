@@ -230,12 +230,13 @@ class _HomeLandingViewState extends State<HomeLandingView> {
 
   Widget pressToJoinTxt(
       {required List<String> sessions, required String sessionId}) {
-    if (!userJoinedSession(sessions: sessions, sessionId: sessionId)) {
+    if (userJoinedSession(sessions: sessions, sessionId: sessionId)) {
       return Container();
     }
     return Text("press to join", style: TextStyle(fontSize: 12, color: Colors.grey),);
   }
 
+  //sessions the user is already part of
   Widget JoinSessionBtn(
       {required Message msg, required List<String> sessions}) {
     String sessionId;
@@ -245,12 +246,22 @@ class _HomeLandingViewState extends State<HomeLandingView> {
       sessionId = msg.meta.sessionId!;
     }
 
+    String sessionName;
+    if (msg.meta.sessionName?.isEmpty ?? true) {
+      sessionName = "";
+    } else {
+      sessionName = msg.meta.sessionName!;
+    }
+
+    print(sessionName);
+
+
     return ElevatedButton(
       style: ButtonStyle(
         elevation: MaterialStateProperty.all(0.2),
       ),
       child: Column(children: [
-        Text(msg.subject),
+        Text(msg.subject + " "+ sessionName),
         pressToJoinTxt(sessions: sessions, sessionId: sessionId),
       ]),
       onPressed: () {
@@ -303,6 +314,14 @@ class _HomeLandingViewState extends State<HomeLandingView> {
       sessionId = msg.meta.sessionId!;
     }
 
+    String sessionName;
+
+    if (msg.meta.sessionName?.isEmpty ?? true) {
+      sessionName = "";
+    } else {
+      sessionName = msg.meta.sessionName!;
+    }
+
     return ExpansionTile(
       controlAffinity: ListTileControlAffinity.leading,
       textColor: Colors.black,
@@ -323,7 +342,8 @@ class _HomeLandingViewState extends State<HomeLandingView> {
             Expanded(child:
                 Container(
                   margin: EdgeInsets.fromLTRB(50, 0, 5, 0),
-                child: invitationDetailsWidget(msg: msg))
+                //child: invitationDetailsWidget(msg: msg)
+                )
             ),
             enterSessionCommonsBtn(sessions: sessions, sessionId: sessionId)
           ],

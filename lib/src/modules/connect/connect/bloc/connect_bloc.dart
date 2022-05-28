@@ -238,16 +238,26 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
 
   Future<bool> _onGetTrigger (GetTrigger event, Emitter<ConnectState> emit) async {
     emit(GettingTrigger(session:event.session));
-
+    //print("ALLLLOOO");
     trigger = await _tryGetTrigger(session: event.session);
 
     if(trigger == null){
-      emit(GettingTriggerFailed());
+      if(event.index == null){
+        emit(GettingTriggerFailed());
+      }else{
+        emit(GettingTriggerFailed(index: event.index));
+      }
       return false;
     }else {
-      print(trigger);
-      triggers.add(trigger);
-      emit(GotTrigger(trigger: trigger!));
+      if(event.index == null){
+        print(trigger);
+        triggers.add(trigger);
+        emit(GotTrigger(trigger: trigger!));
+      }else{
+        print(trigger);
+        triggers.add(trigger);
+        emit(GotTrigger(trigger: trigger!, index: event.index));
+      }
       return true;
     }
   }
@@ -257,11 +267,13 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     //Don't know if additional states are necessary
     print(triggers);
     try{
-        for (int i = 0; i < 2; i++) {
-          Trigger? t = await _tryGetTrigger(session: event.session);
+        for (int i = 0; i < 1; i++) {
+          /*Trigger? t = await _tryGetTrigger(session: event.session);
           if(t != null){
             triggers.add(t);
-          }
+          }*/
+
+          await GetTrigger(session: event.session, index: triggers.length);
         }
         if(triggers.length > 0) {
         emit(GotTriggers());

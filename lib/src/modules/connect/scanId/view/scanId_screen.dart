@@ -43,7 +43,6 @@ class _QRViewExampleState extends State<QRViewExample> {
   void initState() {
     super.initState();
     result = Barcode(null, BarcodeFormat.qrcode, null);
-
   }
 
   // In order to get hot reload to work we need to pause the camera if the platform
@@ -61,15 +60,18 @@ class _QRViewExampleState extends State<QRViewExample> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          elevation: 0,
+            elevation: 0,
             leading: Builder(
               ////NOT CLEAN!!!!!!!
               builder: (BuildContext context) {
                 return IconButton(
-                  icon: const Icon(Icons.arrow_back_ios, size: 18,),
-                  onPressed: () =>
-                      BlocProvider.of<NavigationBloc>(context).add(
-                    NavigationRequested(destination: NavigationDestinations.back),
+                  icon: const Icon(
+                    Icons.arrow_back_ios,
+                    size: 18,
+                  ),
+                  onPressed: () => BlocProvider.of<NavigationBloc>(context).add(
+                    NavigationRequested(
+                        destination: NavigationDestinations.back),
                   ),
                   tooltip: 'back',
                 );
@@ -85,31 +87,30 @@ class _QRViewExampleState extends State<QRViewExample> {
                 },
               )
             ]),
-        body: Stack(
-          alignment: const Alignment(0.6, 0.6),
-          children: [
-            Expanded(
-              child: _buildQrView(context),
-            ),
-            Expanded(
-              //flex: 1,
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    //if (result != null)
-                      Text(
-                          'Barcode Type: ${describeEnum(result.format)}\nData: ${result.code}')
-                    //else
-                      //Text('Scan a code'),
-                  ],
-                ),
-              ),
-            )
-          ],
-        ));
+        body: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: Stack(
+              alignment: const Alignment(0.6, 0.6),
+              children: [
+                _buildQrView(context),
+                 FittedBox(
+                    fit: BoxFit.contain,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        //if (result != null)
+                        Text(
+                            'Barcode Type: ${describeEnum(result.format)}\nData: ${result.code}')
+                        //else
+                        //Text('Scan a code'),
+                      ],
+                    ),
+                  ),
+
+              ],
+            )));
   }
 
   Widget _buildQrView(BuildContext context) {
@@ -137,14 +138,13 @@ class _QRViewExampleState extends State<QRViewExample> {
       this.controller = controller;
     });
     controller.scannedDataStream.listen((scanData) {
-      if(scanData.code != null && scanData.code!.split(',').length ==2){
+      if (scanData.code != null && scanData.code!.split(',').length == 2) {
         List<String> c = scanData.code!.split(',');
         String username = c[0];
         String userId = c[1];
-        if(userId != ""){
+        if (userId != "") {
           BlocProvider.of<ConnectBloc>(context).add(
-              InviteToNewSession(inviteeUsername: username, inviteeId: userId)
-          );
+              InviteToNewSession(inviteeUsername: username, inviteeId: userId));
         }
       }
 

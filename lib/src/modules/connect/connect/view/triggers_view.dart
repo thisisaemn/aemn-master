@@ -25,8 +25,11 @@ class TriggersView extends StatelessWidget {
     ///Create different interests/facts combinations 'trigger base' and request content based on that
     ///return List<Trigger> (length around 10) and forward it to the view
     ///react to feedback on triggers
-    BlocProvider.of<ConnectBloc>(context).add(
+   /* BlocProvider.of<ConnectBloc>(context).add(
       GetTriggers(session: session!),
+    );*/
+    BlocProvider.of<ConnectBloc>(context).add(
+      GetTrigger(session: session!),
     );
     //
     return BlocBuilder<ConnectBloc, ConnectState>(builder: (context, state) {
@@ -47,7 +50,12 @@ class TriggersView extends StatelessWidget {
         //print('triggers view else');
         /*return Text(
             'else, yet another error, detected in triggers_view'); */
-        return Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,));
+        //return Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,));
+        return TriggersMainView(
+            session: session,
+            triggers: context.select(
+            (ConnectBloc bloc) => bloc.triggers,
+      ));
       }
     });
   }

@@ -91,10 +91,10 @@ class _TriggersMainView extends State<TriggersMainView> {
     return RefreshIndicator(child:  PageView.builder(
         controller: _pageController,
         scrollDirection: Axis.vertical,
-        itemCount: _triggers!.length,
+        itemCount: _triggers!.length + 2,
         itemBuilder: (context, index) {
           try {
-            print(_pageController.page);
+           /* print(_pageController.page);
             double p = _pageController.page != null ? _pageController.page! : 0;
             int roundedP = p.round();
             print(roundedP);
@@ -105,20 +105,40 @@ class _TriggersMainView extends State<TriggersMainView> {
                 GetTriggers(session: _session),
               );
               //Get back to the page they were currently on
-            }
-            if(_triggers![index]== null){
+            }*/
+
+            print(_triggers!.length);
+            print(index);
+            print(_triggers!.length <= index);
+            print(_triggers);
+
+            if((!(BlocProvider.of<ConnectBloc>(context).state is GettingTrigger) && _triggers!.length <= index) || _triggers![index]== null){
               print("this trigger is null");
-              return Container();
+              BlocProvider.of<ConnectBloc>(context).add(GetTrigger(session: _session, index: index),);
+              //return Container();
+              return Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,));
             }
-            return OverviewTrigger(trigger: _triggers![index]!,);
+
+            if(BlocProvider.of<ConnectBloc>(context).state is GettingTrigger){
+              return Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,));
+            }
+
+            if(BlocProvider.of<ConnectBloc>(context).state is GotTrigger){
+              return /*Column(children: [Text("$index index, " + (_triggers!.length.toString()) + " length"),*/OverviewTrigger(trigger: _triggers![index]!,)/*])*/;
+            }
+            return Container();
+
+
           } catch (e) {
             print(e);
             return Container();
           }
         }), onRefresh: () {
       BlocProvider.of<ConnectBloc>(context).add(ResetTriggers(),);
-      BlocProvider.of<ConnectBloc>(context).add(GetTriggers(session: _session),);
-      return Future.delayed(Duration(milliseconds: 1));});
+      // BlocProvider.of<ConnectBloc>(context).add(GetTriggers(session: _session),);
+      BlocProvider.of<ConnectBloc>(context).add(GetTrigger(session: _session),);
+      return Future.delayed(Duration(milliseconds: 1));
+    });
 
   }
 }

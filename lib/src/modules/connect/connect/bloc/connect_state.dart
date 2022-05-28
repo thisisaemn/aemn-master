@@ -91,8 +91,9 @@ class GettingSessionFailed extends LoadingFailed{}
 
 class GettingTrigger extends Loading{
   final Session session;
+  int? index = -1;
 
-  GettingTrigger({required this.session});
+  GettingTrigger({required this.session, this.index});
 
   @override
   List<Object> get props => [session];
@@ -100,14 +101,22 @@ class GettingTrigger extends Loading{
 
 class GotTrigger extends Loaded{
   final Trigger trigger;
+  int? index = -1;
 
-  GotTrigger({required this.trigger});
+  GotTrigger({required this.trigger, this.index});
 
   @override
   List<Object> get props => [trigger];
 }
 
-class GettingTriggerFailed extends LoadingFailed{}
+class GettingTriggerFailed extends LoadingFailed{
+  int? index = -1;
+
+  GettingTriggerFailed({this.index});
+
+  @override
+  List<Object> get props => [];
+}
 
 class GettingTriggers extends Loading{
   final Session session;

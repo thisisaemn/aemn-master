@@ -81,14 +81,16 @@ class GetSession extends ConnectEvent{
 
 class GetTrigger extends ConnectEvent{
   final Session session;
+  int? index;
 
-  GetTrigger({required this.session});
+  GetTrigger({required this.session, this.index});
 
   List<Object> get props => [session];
 }
 
 class GetTriggers extends ConnectEvent{
   final Session session;
+
 
   GetTriggers({required this.session});
 

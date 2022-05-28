@@ -186,7 +186,7 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
                 return ScanIdScreen(text: 'test');
               case (NavigationDestinations.show):
                 return ShowIdScreen(
-                  code: "userId bruh",
+                  code: _userRepository.currentUser.id,
                 );
               //case(NavigationDestinations.session):  return SessionView(session: state.session);
               case (NavigationDestinations.triggers):

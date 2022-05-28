@@ -492,7 +492,8 @@ class ConnectRepository {
 
     if(interestModels == null){
       //maybe completely random trigger request.
-      return null;
+      //return null;
+      interestModels = [];
     }
 
     var token = await _cache.storage.read(key: 'jwt');
@@ -522,10 +523,15 @@ class ConnectRepository {
       //trigger.mainContentLink = trigger.mainContent.
       return trigger;
     }
+    await Future.delayed(
+      const Duration(milliseconds: 3000)
+    );
 
-    return Trigger(id: "id" , mainContent: "How's the weather?", mainContentLink: '',facts: [KeyValue(id: "00000000",key: "species", value: "human"),], interests: [InterestModel(id: "00000000", partition: "=00000000", icon: "2342", name: "aemn", tags: [Tag(id: "000000000", name: "aemn")])]);
+    return Trigger(id: "id" , mainContent: ""+ (counterTest++).toString() + ": How's the weather?", mainContentLink: '',facts: [KeyValue(id: "00000000",key: "species", value: "human"),], interests: [InterestModel(id: "00000000", partition: "=00000000", icon: "2342", name: "aemn", tags: [Tag(id: "000000000", name: "aemn")])]);
 
   }
+
+  int counterTest = 0;
 
   //Generate random interest combinations.
   /**
@@ -600,7 +606,7 @@ class ConnectRepository {
       if(res != null /*&& res.length>0 */){
         //print(res);
         allTriggerBases.add(res);
-        //print(allTriggerBases);
+        print(allTriggerBases);
       }}
     }
 
@@ -613,17 +619,24 @@ class ConnectRepository {
   }
 
   Future<List<InterestModel>?> getOneTriggerBaseInterest({required Commons commons, required Interest interest}) async{
-    List<InterestModel> triggerBase = [];
+    List<InterestModel> triggerBase = [interest.interestModel];
 
+    //Sollte das nicht eig rekursiv sein? die tags der tags etc?
+    //gerade wird nur geprüft, ob der tag auch ein interesse is
     interest.interestModel.tags.forEach((tag) {
       commons.interests.forEach((element) {
-        if(element.interestModel.id == tag.id){
+        //print("element: "+element.toString());
+       // print("tag: " + tag.toString());
+       // print(element.interestModel.id.contains(tag.id));
+        if(element.interestModel.id.toString() == tag.id.toString()){
           triggerBase.add(element.interestModel);
          // break;
         }
       });
     });
 
+    //print("the trigger base, connect repository line 628");
+    //print(triggerBase);
     if(triggerBase.length == 0){
       return null;
     }
