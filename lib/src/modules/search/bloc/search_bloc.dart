@@ -18,6 +18,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc({required this.userRepository, required this.interestRepository, required this.connectRepository}) : super(SearchInitial()){
     on<SearchInterestsKey>(_onSearchInterestsKey);
     on<SearchMembersKey>(_onSearchMembersKey);
+    on<ResetInterestsSearchResults>(_onResetInterestsSearchResults);
   }
 
   final InterestRepository interestRepository;
@@ -25,15 +26,38 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   final ConnectRepository connectRepository;
 
 
+  //Look into the interest repository for further information on pagen
+  int pagen = 0;
+
   Future<void> _onSearchInterestsKey(SearchInterestsKey event, Emitter<SearchState> emit) async {
     //Stream<InterestModel> results = await _tryGetInterestsSearchResults(event.key);
     emit(SearchRequestSent());
     emit(Searching());
     String searchKey = event.key ?? "";
-    List<InterestModel>? results = await _tryGetInterestsSearchResults(searchKey);
+    String lastId = "000000000000000000000000";
+    if(resultsInterests.length>0){
+      lastId = resultsInterests[resultsInterests.length-1].id;
+    }
+    print(resultsInterests);
+    print(lastId);
+
+    if(event.isInitialSearch){
+      pagen = 0;
+    }
+    List<InterestModel>? results = await _tryGetInterestsSearchResults(key: searchKey, pPagen: pagen, lastId: lastId);
     if(results != null){
       //this.add(ProfileLoad());
-      resultsInterests = results;
+      if(results.length >0) {
+        pagen++;
+        if (event.isInitialSearch) {
+          resultsInterests = results;
+        } else {
+          resultsInterests.addAll(results);
+        }
+      }else{
+
+      }
+
       emit(SearchResultsReturned());
 
     }else{
@@ -48,10 +72,15 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     emit(SearchRequestSent()); //Should states for different searches be different?
     emit(Searching());
     String searchKey = event.key ?? "";
-    List<Member>? results = await _tryGetMembersSearchResults(searchKey);
+    String lastId = "000000000000000000000000";
+
+    if(resultsMembers.length>0){
+      lastId = resultsInterests[resultsInterests.length-1].id;
+    }
+
+    List<Member>? results = await _tryGetMembersSearchResults(key: searchKey , lastId: lastId);
     if(results != null){
       //this.add(ProfileLoad());
-
       resultsMembers = results;
       emit(SearchResultsReturned());
     }else{
@@ -87,21 +116,36 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   }
    */
 
+
+  Future<void> _onResetInterestsSearchResults(SearchEvent ResetInterestSearchResults, Emitter<SearchState> emit) async {
+    emit(ResettingSearchResults());
+
+    resultsInterests = [];
+
+    emit(ResettedSearchResults());
+
+    // emit(FailedResettingSearchResults());
+  }
+
+
+
+  ///////// Repo calls ///////
+
   //Future<Stream<InterestModel>> _tryGetInterestsSearchResults(String key) async {
-  Future<List<InterestModel>?> _tryGetInterestsSearchResults(String key) async {
+  Future<List<InterestModel>?> _tryGetInterestsSearchResults({required String key, required int pPagen, required String lastId}) async {
     try {
       //final profile = await interestRepository.getProfile();
-      final result = await interestRepository.searchInterests(key: key) ;
+      final result = await interestRepository.searchInterests(key: key, pagen: pPagen, lastId: lastId) ;
       return result;
     } on Exception {
       return null; //Should null be possible
     }
   }
 
-  Future<List<Member>?> _tryGetMembersSearchResults(String key) async {
+  Future<List<Member>?> _tryGetMembersSearchResults({required String key, required String lastId}) async {
     try {
       //final profile = await interestRepository.getProfile();
-      final result = await connectRepository.searchMembers(key: key) ;
+      final result = await connectRepository.searchMembers(key: key, lastId: lastId);
       return result;
     } on Exception {
       return null; //Should null be possible

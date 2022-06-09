@@ -26,8 +26,11 @@ class ProfileBloc
     on<ChangeInterestIntensity>(_onChangeInterestIntensity);
     on<DeleteInterest>(_onDeleteInterest);
     on<AddFact>(_onAddFact);
-    //on<ChangeFact>(_onChangeFact);
+    on<UpsertFact>(_onUpsertFact);
     on<DeleteFact>(_onDeleteFact);
+    //on<DeletedUser>(_onDeleteUser);
+    //on<ChangePassword>(_onChangePassword);
+
     //on<>(_on);
    // _profileStatusSubscription = _userRepository.profile.listen(
         //  (status) => add(ProfileUpdated()),
@@ -35,9 +38,9 @@ class ProfileBloc
     /*_userSubscription = userRepository.user.listen(
           (user) => add(UserLoad(user)),
     );*/
-    _profileSubscription = userRepository.profile.listen(
+    /*_profileSubscription = userRepository.profile.listen(
           (profile) => add(ProfileLoad(/*profile*/)),
-    );
+    );*/
   }
 
   late final StreamSubscription<User> _userSubscription;
@@ -170,7 +173,7 @@ class ProfileBloc
   }
 
   Future<void> _onDeleteInterest(DeleteInterest event, Emitter<ProfileState> emit) async {
-    print("tryna change intensity of interest");
+    print("tryna delete of interest");
 
     bool success = await _tryDeleteInterest(interestId: event.interestId);
     if(success){
@@ -198,7 +201,7 @@ class ProfileBloc
   }*/
 
   Future<void> _onAddFact(AddFact event, Emitter<ProfileState> emit) async {
-    print("tryna change intensity of interest");
+    print("tryna add interest");
 
     bool success = await _tryAddFact(keyValue: event.keyValue);
     if(success){
@@ -223,9 +226,37 @@ class ProfileBloc
   }
 
   Future<void> _onDeleteFact(DeleteFact event, Emitter<ProfileState> emit) async {
-    print("tryna change intensity of interest");
+    print("tryna delete fact");
 
     bool success = await _tryDeleteFact(factId: event.factId);
+    if(success){
+      //ProfileLoad();
+      emit(ProfileLoading());
+
+      //OnProfileLoad Method
+
+      Profile? pProfile = await _tryGetProfile();
+      //print(profile);
+
+      if(pProfile!=null){
+        //print(profile!.facts);
+        profile = pProfile;
+        emit(ProfileLoaded());
+      }else{
+        emit(ProfileLoadingFailed());
+      }
+    }else{
+      print("Trouble Loading the profile");
+    }
+  }
+
+  Future<void> _onUpsertFact(UpsertFact event, Emitter<ProfileState> emit) async {
+    print("profile_bloc, l 251; tryna upsert fact");
+
+
+    bool success = await _tryUpsertFact(keyValue: event.keyValue);
+
+
     if(success){
       //ProfileLoad();
       emit(ProfileLoading());
@@ -310,16 +341,17 @@ class ProfileBloc
 
 
 
-  /*
-  Future<bool> _tryUpsertFact() async {
+
+  Future<bool> _tryUpsertFact({required KeyValue keyValue}) async {
     try{
       //Call method in user Repository to updert fact.
-      return true;
+      final success = userRepository.upsertFactOfProfile(keyValue: keyValue);
+      return success;
     }on Exception {
       print("An Exception occured trying to upsert a fact");
       return false;
     }
-  }*/
+  }
 
   Future<bool> _tryAddFact({required KeyValue keyValue}) async {
     try{
@@ -332,9 +364,9 @@ class ProfileBloc
     }
   }
 
-  /*Future<bool> _tryChangeFact({required KeyValue keyValue}) async {
+  /*Future<bool> _tryUpdateFact({required KeyValue keyValue}) async {
     try{
-      final success = userRepository.changeFact(keyValue: keyValue);
+      final success = userRepository.updateFact(keyValue: keyValue);
       return success;
     }on Exception{
       print("failed updating fact");

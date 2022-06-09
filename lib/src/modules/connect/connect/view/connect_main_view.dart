@@ -247,6 +247,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
     }
 
     String sessionName;
+    //print("the session name is " + msg.meta.sessionName!);
     if (msg.meta.sessionName?.isEmpty ?? true) {
       sessionName = "";
     } else {
@@ -414,8 +415,12 @@ class _HomeLandingViewState extends State<HomeLandingView> {
         },
         onDismissed: (direction) {
           //and delete msg
-          BlocProvider.of<ConnectBloc>(context).add(QuitSession(sessionId: ''));
-        });
+          BlocProvider.of<ConnectBloc>(context).add(DeleteMsg(msgId: item.id));
+          if(item.meta.sessionId != null) {
+            BlocProvider.of<ConnectBloc>(context).add(
+                ExitSession(sessionId: item.meta.sessionId!));
+          }
+          });
   }
 
   //Dieses Dialogue ist sehr provisorisch apparently

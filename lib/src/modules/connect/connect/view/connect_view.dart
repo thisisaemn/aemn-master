@@ -37,7 +37,7 @@ class ConnectView extends StatelessWidget{
 
           //return SessionView(session: (state as EnteredSession).session);
           //return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
-        }else if(state is QuittedSession || state is JoinedSession){
+        }else if(state is ExitedSession || state is JoinedSession){
           BlocProvider.of<ConnectBloc>(context).add(
             Load(),
           );

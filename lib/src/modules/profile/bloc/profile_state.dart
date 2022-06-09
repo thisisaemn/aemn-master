@@ -67,4 +67,29 @@ class ProfileShowing extends ProfileState {
 
 */
 
+///
+///
 
+class ChangingPassword extends ProfileState {
+
+}
+
+class ChangedPassword extends ProfileState {
+
+}
+
+class ChangingPasswordFailed extends ProfileState {
+
+}
+
+class DeletingUser extends ProfileState {
+
+}
+
+class DeletedUser extends ProfileState {
+
+}
+
+class DeletingUserFailed extends ProfileState {
+
+}

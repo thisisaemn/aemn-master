@@ -22,12 +22,21 @@ class Connect extends ConnectEvent{
 
 }
 
-class Send extends ConnectEvent{
+class SendMsg extends ConnectEvent{
   final Message msg;
 
-  Send({required this.msg});
+  SendMsg({required this.msg});
 
   List<Object> get props => [msg];
+
+}
+
+class DeleteMsg extends ConnectEvent{
+  final String msgId;
+
+  DeleteMsg({required this.msgId});
+
+  List<Object> get props => [msgId];
 
 }
 
@@ -41,12 +50,29 @@ class InviteToNewSession extends ConnectEvent{
 
 }
 
-class QuitSession extends ConnectEvent{
+class ExitSession extends ConnectEvent{
   final String sessionId;
 
-  QuitSession({required this.sessionId});
+  ExitSession({required this.sessionId});
 
   List<Object> get props => [sessionId];
+}
+
+class KillSession extends ConnectEvent{
+  final String sessionId;
+
+  KillSession({required this.sessionId});
+
+  List<Object> get props => [sessionId];
+}
+
+class ChangeSessionName extends ConnectEvent{
+  final String sessionId;
+  final String sessionName;
+
+  ChangeSessionName({required this.sessionId, required this.sessionName});
+
+  List<Object> get props => [sessionId, sessionName];
 }
 
 class JoinSession extends ConnectEvent{

@@ -50,16 +50,16 @@ class _SessionMainView extends State<SessionMainView> {
             leading: BuilderBackButton(),
             actions: <Widget>[
               IconButton(
-                  icon: Icon(Icons.cancel_outlined, size: 18,),
-                  tooltip: 'quit',
+                  icon: Icon(Icons.exit_to_app , size: 18,),
+                  tooltip: 'Exit',
                   onPressed: () {
                     BlocProvider.of<ConnectBloc>(context).add( //This nav flow is not accurate
-                        QuitSession(sessionId: _session.id)
+                        ExitSession(sessionId: _session.id)
                     );
                     BlocProvider.of<NavigationBloc>(context).add(
                       NavigationRequested(destination: NavigationDestinations.back),
                     );
-                  })
+                  }),
             ]),
         body: _sessionBody,
         /*floatingActionButton: ElevatedButton(

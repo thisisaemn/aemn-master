@@ -30,6 +30,29 @@ class InterestRepository {
     );
   }*/
 
+  /**
+   * Search Interests is missing pageination and partial search
+   * to solve pageination i will introduce a local variable pagen
+   * it will store the amt of times loadMore has been called
+   *
+   * When search Interests is called for the first time pagen will be set to 0
+   * Every time loadMore is called it will be increased by one
+   *
+   * The pagen information will be forwarded to the database
+   *
+   * if k=100 results are awaited with each return, then the for loop might look like this
+   * for(int i = (pagen * k); i < (pagen + 1) * k ; i++){
+   *    finalResult.append( listOfSortedDbDocs[i]);
+   * }
+   *
+   * listOfSortedDbDocs implies that the Documents of the Collection will first be sorted by _id
+   * the finalResult is what is to be expected to be returned
+   *
+   */
+
+  /*
+  //original search interests method
+
   Future<List<InterestModel>> searchInterests({
     required String key
   }) async {
@@ -54,6 +77,38 @@ class InterestRepository {
           .map((e) => InterestModel.fromJson(e as Map<String, dynamic>))
           .toList();
       print(interestArray);
+
+    }
+
+    return interestArray;
+  }*/
+
+  Future<List<InterestModel>> searchInterests({
+    required String key, required pagen, required lastId
+  }) async {
+    var header = {
+      "content-type" : "application/json"
+    };
+    var body = {
+      "key": key,
+      "pagen": pagen,
+      "lastId" : lastId
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/searchInterest'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+    var interestArray = [InterestModel.generic];
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      var jsonInterestArray = resBody["searchResult"];
+      interestArray = (jsonInterestArray as List<dynamic>)
+          .map((e) => InterestModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+      //print(interestArray);
 
     }
 

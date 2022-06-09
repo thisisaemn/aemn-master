@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:aemn/src/core/navigation/navigation/navigation.dart';
 
 class SearchInterestsScreen extends StatefulWidget {
-  SearchInterestsScreen({Key? key, }) : super();
-
+  SearchInterestsScreen({
+    Key? key,
+  }) : super();
 
   @override
   State<StatefulWidget> createState() => _SearchInterestsScreenState();
@@ -21,10 +22,12 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _listViewController = new ScrollController()..addListener(_scrollListener); //..addListener(_loadMore);
   }
 
   void dispose() {
     _controller.dispose();
+    _listViewController.dispose(); //.removeListener(_loadMore);
     super.dispose();
   }
 
@@ -100,26 +103,61 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
     );
   }*/
 
+  // https://www.kindacode.com/article/flutter-listview-pagination-load-more/
+  // The controller for the ListView
+  late ScrollController _listViewController;
+  String currentSearchKey = "";
+
+  //https://medium.com/@diegoveloper/flutter-lets-know-the-scrollcontroller-and-scrollnotification-652b2685a4ac
+
+  _scrollListener() {
+    //Bottom of list
+    if (_listViewController.offset >= _listViewController.position.maxScrollExtent &&
+        !_listViewController.position.outOfRange) {
+      BlocProvider.of<SearchBloc>(context).add(
+          SearchInterestsKey(key: currentSearchKey, isInitialSearch: false));
+      //print("l 119 search interests screen");
+    }
+
+    //Over the top
+    if (_listViewController.offset <= _listViewController.position.minScrollExtent &&
+        !_listViewController.position.outOfRange) {
+
+    }
+
+
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: AppBar(
-          elevation: 0,
-            leading: IconButton( icon: Icon(Icons.arrow_back_ios, color: Colors.grey, size:18) ,onPressed: () => BlocProvider.of<NavigationBloc>(context).add(
-              NavigationRequested(destination: NavigationDestinations.back),
-            ),),
+            elevation: 0,
+            leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios, color: Colors.grey, size: 18),
+                onPressed: () {
+                  BlocProvider.of<SearchBloc>(context)
+                      .add(ResetInterestsSearchResults());
+                  BlocProvider.of<NavigationBloc>(context).add(
+                    NavigationRequested(
+                        destination: NavigationDestinations.back),
+                  );
+                }),
             title: BlocBuilder<SearchBloc, SearchState>(
                 builder: (BuildContext context, SearchState state) {
-                  return TextField(
-                    controller: _controller,
-                    onSubmitted: (String value) async {
-                      input = value;
-                      /*sContext
+              return TextField(
+                controller: _controller,
+                onSubmitted: (String value) async {
+                  input = value;
+                  /*sContext
                             .read<SearchBloc>()
                             .add(SearchInterestsKey(key: value));*/
-                      BlocProvider.of<SearchBloc>(context).add(SearchInterestsKey(key: value));
-                      /*
+                  currentSearchKey = value;
+                  BlocProvider.of<SearchBloc>(context).add(
+                      SearchInterestsKey(key: value, isInitialSearch: true));
+                  /*
                         await showDialog<void>(
                             context: context,
                             builder: (BuildContext context) {
@@ -135,46 +173,49 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
                                   );
                                 },
                         );*/
-                    },
-                    onChanged: (String value) async { //for the app to be dynamic
-                      input = value;
-                    },
-                    decoration: InputDecoration(
-                      filled: true,
-                      isDense: true,
-                      contentPadding: EdgeInsets.all(9),
-                      border: OutlineInputBorder(),
-                      labelText: 'search tags',
-                      fillColor: Colors.white,
-                    ),
-                  );
-                }
-            )
-
-        ),
+                },
+                onChanged: (String value) async {
+                  //for the app to be dynamic
+                  input = value;
+                },
+                decoration: InputDecoration(
+                  filled: true,
+                  isDense: true,
+                  contentPadding: EdgeInsets.all(9),
+                  border: OutlineInputBorder(),
+                  labelText: 'search tags',
+                  fillColor: Colors.white,
+                ),
+              );
+            })),
         body: BlocBuilder<SearchBloc, SearchState>(
             builder: (BuildContext context, SearchState state) {
-              return ListView.builder(
-                itemCount: BlocProvider.of<SearchBloc>(context).resultsInterests.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(BlocProvider.of<SearchBloc>(context).resultsInterests[index].name),
-                    trailing: IconButton(icon: Icon(Icons.add), onPressed: () {
-                      //print("the id of the interest is \n");
-                      //print(BlocProvider.of<SearchBloc>(context).resultsInterests[index].id);
-                      var interestId = BlocProvider.of<SearchBloc>(context).resultsInterests[index].id;
-                      BlocProvider.of<ProfileBloc>(context).add(
-                        AddOrModifyInterest(interestId: interestId, intensityDelta: 20),
-                      );
-                      },
-                    ),
-                  );
-                },
+          return ListView.builder(
+            controller: _listViewController,
+            itemCount:
+                BlocProvider.of<SearchBloc>(context).resultsInterests.length,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: Text(BlocProvider.of<SearchBloc>(context)
+                    .resultsInterests[index]
+                    .name),
+                trailing: IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    //print("the id of the interest is \n");
+                    //print(BlocProvider.of<SearchBloc>(context).resultsInterests[index].id);
+                    var interestId = BlocProvider.of<SearchBloc>(context)
+                        .resultsInterests[index]
+                        .id;
+                    BlocProvider.of<ProfileBloc>(context).add(
+                      AddOrModifyInterest(
+                          interestId: interestId, intensityDelta: 20),
+                    );
+                  },
+                ),
               );
-            }
-        )
-
-    );
+            },
+          );
+        }));
   }
-
 }

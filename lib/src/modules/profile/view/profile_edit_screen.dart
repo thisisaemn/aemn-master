@@ -205,7 +205,7 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
         subtitle: giveTags(),
         onTap: () {
           //_changeInterestIntensityDialog(index, name);
-          _showSliderDialogInterest(interest, interest.intensity, -1.0, 1000,
+          _showSliderDialogInterest(interest, interest.intensity, -1.0, 10,
               'on a scale from -1 to 1000, how interested are u in this topic . \nrange: \n-1 = uninterested\n0 = ambivalent\n1-1000 = degree of interest.');
         },
       );
@@ -311,11 +311,11 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
                         child: navigationItemFact(_facts[i]),
                         background: Container(color: Colors.red),
                         confirmDismiss: (DismissDirection direction) async {
-                          return _deleteFactDialog(index, _facts[i].key, _facts[i]); //...
+                          return _deleteFactDialog(index: index, name: _facts[i].key, kv: _facts[i], pContext: context); //...
                         },
                         onDismissed: (direction) {
-                          BlocProvider.of<ProfileBloc>(context).add(
-                              ProfileDeleteFact(fact: _facts[i]));
+                          /*BlocProvider.of<ProfileBloc>(context).add(
+                              ProfileDeleteFact(fact: _facts[i]));*/
                         }
                     );
                 } else if(index == _facts.length + 1){ // nicht clean...
@@ -334,20 +334,20 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
                       key: Key('$i'),
                       child: navigationItemInterest(_interests[i]),
                       confirmDismiss: (DismissDirection direction) async {
-                        return _deleteInterestDialog(i, _interests[i].interestModel.name, _interests[i]);
+                        return _deleteInterestDialog(index: i, name: _interests[i].interestModel.name, interest: _interests[i], pContext:context);
                       },
                       onDismissed: (direction) {
                         // Remove the item from the data source., first dialog
-                        BlocProvider.of<ProfileBloc>(context).add(
+                       /* BlocProvider.of<ProfileBloc>(context).add(
                             ProfileDeleteInterest(interest: _interests[i]));
                         // Then show a snackbar.
                         ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("$i dismissed")));
+                            SnackBar(content: Text("$i dismissed")));*/
                       },
                       // Show a red background as the item is swiped away.
                       background: Container(
                         color: Colors.red,
-                        child: Text('remove'),
+                        //child: Text('remove'),
                       ),
                     );
                   }
@@ -370,7 +370,7 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
   ///EDIT INTERESTS
 
   ///Delete Fact
-  Future<bool?> _deleteFactDialog(int index, String name, KeyValue kv) async {
+  Future<bool?> _deleteFactDialog({required int index, required String name, required KeyValue kv, required BuildContext pContext}) async {
     return showDialog<bool>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -380,7 +380,7 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Do you confirm deleting $name from your interests?'),
+                Text('Do you confirm deleting $name from facts?'),
               ],
             ),
           ),
@@ -394,6 +394,10 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
                 /*setState(() {
                   _interests.removeAt(index);
                 });*/
+                BlocProvider.of<ProfileBloc>(pContext).add(
+                  DeleteFact(factId: kv.id),
+                );
+
                 Navigator.of(context).pop(true);
               },
             ),
@@ -413,7 +417,7 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
   }
 
   ////DELETE AN INTEREST
-  Future<bool?> _deleteInterestDialog(int index, String name, Interest interest) async {
+  Future<bool?> _deleteInterestDialog({required int index, required String name, required Interest interest, required BuildContext pContext}) async {
     return showDialog<bool>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -437,6 +441,9 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
                 /*setState(() {
                   _interests.removeAt(index);
                 });*/
+                BlocProvider.of<ProfileBloc>(pContext).add(
+                  DeleteInterest(interestId: interest.interestModel.id, ),
+                );
                 Navigator.of(context).pop(true);
               },
             ),
@@ -455,17 +462,35 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
     );
   }
 
+  int transformInterestIntensity({required int initialValue}){
+    if(initialValue > 1000){
+      initialValue = 1000;
+    }else if(initialValue < -1){
+      initialValue = -1;
+    }
+    if(initialValue > 0 && initialValue <= 100){
+      return 1;
+    }else if(initialValue > 100 && initialValue <= 200){
+      return (initialValue/100).round();
+    }else{
+      return initialValue;
+    }
+  }
+
   //EDITS INTENSITY OF INTEREST
   void _showSliderDialogInterest(Interest interest, int _initialValue,
       double _min, double _max, String _msg) async {
 
     // this will contain the result from Navigator.pop(context, result)
+
+    int finalInitialValue = transformInterestIntensity(initialValue: _initialValue);
+
     final selectedValue = await showDialog<int>(
       context: context,
       barrierDismissible: true,
       builder: (context) =>
           SliderDialog(
-              initialValue: _initialValue, min: _min, max: _max, msg: _msg),
+              initialValue: finalInitialValue, min: _min, max: _max, msg: _msg),
     );
 
     // execution of this code continues when the dialog was closed (popped)
@@ -477,9 +502,13 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
       BlocProvider.of<ProfileBloc>(context).add(
           ProfileUpsertInterest(interestId: editedInterest.interestModel.id));
       */
-      BlocProvider.of<ProfileBloc>(context).add(
-          ChangeInterestIntensity(interestId: interest.interestModel.id, intensity: selectedValue));
+      int finalSelectedValue = selectedValue;
+      if(selectedValue > 0){
+        finalSelectedValue = selectedValue * 100;
+      }
 
+      BlocProvider.of<ProfileBloc>(context).add(
+          ChangeInterestIntensity(interestId: interest.interestModel.id, intensity: finalSelectedValue));
 
       /*//UPDATE VALUE IF CHANGED
       for (int i = 0; i < _interests.length; i++) {
@@ -519,8 +548,8 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
     // (back button or pressed outside of the dialog)
     if (selectedValue != null) {
       BlocProvider.of<ProfileBloc>(context).add(
-        ProfileUpsertFact(
-            kv: KeyValue(id: kv.id, key: kv.key, value: '$selectedValue')),
+        UpsertFact(
+            keyValue: KeyValue(id: kv.id, key: kv.key, value: '$selectedValue')),
       );
 
       //UPDATE VALUE IF CHANGED
@@ -568,8 +597,7 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
       ;*/
 
       BlocProvider.of<ProfileBloc>(context).add(
-        ProfileUpsertFact(
-            kv: KeyValue(id: kv.id, key: kv.key, value: '$selectedValue')),
+        UpsertFact( keyValue: KeyValue(id: kv.id, key: kv.key, value: '$selectedValue')),
       );
     }
   }
@@ -591,8 +619,8 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
     if (selectedValue != null) {
       //HERE THE DATABASE SHOULD BE UPDATED...
       BlocProvider.of<ProfileBloc>(context).add(
-        ProfileUpsertFact(
-            kv: KeyValue(id: kv.id, key: kv.key, value: '$selectedValue')),
+        UpsertFact(
+            keyValue: KeyValue(id: kv.id, key: kv.key, value: '$selectedValue')),
       );
     }
   }
@@ -612,9 +640,9 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
       //HERE THE DATABASE SHOULD BE UPDATED...
 
       BlocProvider.of<ProfileBloc>(context).add(
-        ProfileUpsertFact(
+        AddFact(
           //Isn't it possible here to get the same id twice??
-            kv: KeyValue(id: Uuid().v4(), key: selectedValue[0], value: selectedValue[1])),
+            keyValue: KeyValue(id: "", key: selectedValue[0], value: selectedValue[1])),
       );
 
       /*

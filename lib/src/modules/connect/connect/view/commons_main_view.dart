@@ -1,6 +1,7 @@
 import 'package:aemn/src/core/navigation/navigation/navigation.dart';
 import 'package:aemn/src/modules/profile/profile.dart';
 import 'package:aemn/src/modules/connect/connect.dart';
+import 'package:aemn/src/utils/utils.dart';
 import 'package:connect_repository/connect_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -136,7 +137,22 @@ class CommonsMainView extends StatelessWidget {
       scrollDirection: Axis.vertical,
       children: [
         SizedBox(height: 20),
-        usernameSection(),
+        //usernameSection(),
+
+        ElevatedButton(
+            style: ButtonStyle(elevation: MaterialStateProperty.all(0.0)),
+            onPressed: (){
+              _changeSessionNameDialog(sessionId: session.id, initialValue: session.name, context: context);
+          /*BlocProvider.of<ConnectBloc>(context).add(
+              ChangeSessionName(sessionId: session.id, sessionName: session.name));*/
+        }, child: Text(session.name, style: TextStyle(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            shadows: [Shadow(blurRadius: 6.0)],
+            letterSpacing: 7.0,
+            wordSpacing: 5))),
+
         /*Text(
           profile.username,
           textAlign: TextAlign.center,
@@ -162,6 +178,27 @@ class CommonsMainView extends StatelessWidget {
           ),*/
       ],
     ));
+  }
+
+
+  //Dialog
+
+//Change Session Name
+
+  void _changeSessionNameDialog({required String sessionId, required String initialValue,  required BuildContext context}) async {
+    final selectedValue = await showDialog<String>(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) =>
+          TextFieldDialog(value: initialValue, msg: 'Enter new session name',),
+    );
+
+    if (selectedValue != null) {
+      BlocProvider.of<ConnectBloc>(context).add(
+        ChangeSessionName(
+            sessionId: sessionId, sessionName: selectedValue),
+      );
+    }
   }
 
 

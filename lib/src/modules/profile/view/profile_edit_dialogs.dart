@@ -11,8 +11,13 @@ class SliderDialog extends StatefulWidget {
   final double max;
   final String msg;
 
-
-  const SliderDialog({Key? key, required this.initialValue, required this.min, required this.max, required this.msg}) : super(key: key);
+  const SliderDialog(
+      {Key? key,
+      required this.initialValue,
+      required this.min,
+      required this.max,
+      required this.msg})
+      : super(key: key);
 
   @override
   _SliderDialogState createState() => _SliderDialogState();
@@ -21,8 +26,8 @@ class SliderDialog extends StatefulWidget {
 class _SliderDialogState extends State<SliderDialog> {
   /// current selection of the slider
   late String _msg;
-  double _min =0;
-  double _max=100;
+  double _min = 0;
+  double _max = 100;
   late int _initialValue;
   late int _chosenValue;
 
@@ -33,7 +38,6 @@ class _SliderDialogState extends State<SliderDialog> {
 
     _min = widget.min;
     _max = widget.max;
-
 
     _initialValue = widget.initialValue;
     _chosenValue = _initialValue;
@@ -53,7 +57,7 @@ class _SliderDialogState extends State<SliderDialog> {
                 value: _chosenValue.toDouble(),
                 min: _min,
                 max: _max,
-                divisions: _max.toInt()-(_min.toInt()+1),
+                divisions: _max.toInt() - (_min.toInt() + 1),
                 onChanged: (value) {
                   setState(() {
                     _chosenValue = value.toInt();
@@ -382,7 +386,8 @@ class AddCustomPickerDialog extends StatefulWidget {
 
   final List<Map<String, Object>> options;
 
-  const AddCustomPickerDialog({ Key? key, required this.options}) : super(key: key);
+  const AddCustomPickerDialog({Key? key, required this.options})
+      : super(key: key);
 
   @override
   _AddCustomPickerDialogState createState() => _AddCustomPickerDialogState();
@@ -390,10 +395,11 @@ class AddCustomPickerDialog extends StatefulWidget {
 
 class _AddCustomPickerDialogState extends State<AddCustomPickerDialog> {
   //Suggested options
-  List<Map<String, Object>> _options = [{'key': 'other', 'value': 'other'}];
+  List<Map<String, Object>> _options = [
+    {'key': 'other', 'value': 'other'}
+  ];
   List<String> keyOptions = [];
   List<String> valueOptions = [];
-
 
   late String value;
   List<String> selectedValue = ['other', 'other'];
@@ -407,7 +413,7 @@ class _AddCustomPickerDialogState extends State<AddCustomPickerDialog> {
     keyOptions = [];
 
     //INITILIZE KEY OPTIONS
-    for(int i=0; i<_options.length; i++){
+    for (int i = 0; i < _options.length; i++) {
       //GET THE POSSIBLE VALUES FOR A KEY
       keyOptions.add(_options[i]['key'].toString());
     }
@@ -416,60 +422,61 @@ class _AddCustomPickerDialogState extends State<AddCustomPickerDialog> {
   //Widget DROPDOWN
 
   Widget dropdownOption(editing, dropOptions) {
-      String giveplaceholder() {
-        if (editing == 'key') {
-          return selectedValue[0];
-        } else if (editing == 'value') {
-          return selectedValue[1];
-        }
-        return '';
+    String giveplaceholder() {
+      if (editing == 'key') {
+        return selectedValue[0];
+      } else if (editing == 'value') {
+        return selectedValue[1];
       }
+      return '';
+    }
 
-      return DropdownButton<String>(
-        value: giveplaceholder(),
-        elevation: 16,
-        onChanged: (chosenValue) {
-          if (editing == 'key') {
-            setState(() {
-              finalValue[0] = chosenValue!;
-              selectedValue[0] = chosenValue;
-              //this was placed in give dropdown before
-              //Specify options for chosen key
-              for(int i=0; i<_options.length; i++){
-                //GET THE POSSIBLE VALUES FOR A KEY
-                if(_options[i]['key'] == selectedValue[0]){
-                    valueOptions = _options[i]['value'] as List<String>;
-                }
+    return DropdownButton<String>(
+
+      value: giveplaceholder(),
+      elevation: 16,
+      onChanged: (chosenValue) {
+        if (editing == 'key') {
+          setState(() {
+            finalValue[0] = chosenValue!;
+            selectedValue[0] = chosenValue;
+            //this was placed in give dropdown before
+            //Specify options for chosen key
+            for (int i = 0; i < _options.length; i++) {
+              //GET THE POSSIBLE VALUES FOR A KEY
+              if (_options[i]['key'] == selectedValue[0]) {
+                valueOptions = _options[i]['value'] as List<String>;
               }
-            });
-          } else if (editing == 'value') {
-            setState(() {
-              finalValue[1] = chosenValue!;
-              selectedValue[1] = chosenValue;
-            });
-          }
-        },
-        items: dropOptions.map<DropdownMenuItem<String>>((String value) {
-          return DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          );
-        }).toList(),
-      );
+            }
+          });
+        } else if (editing == 'value') {
+          setState(() {
+            finalValue[1] = chosenValue!;
+            selectedValue[1] = chosenValue;
+          });
+        }
+      },
+      items: dropOptions.map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
   }
 
   //DROPDOWN MENU
-  Widget giveDropdown(editing){
-    if(editing=='key'){
+  Widget giveDropdown(editing) {
+    if (editing == 'key') {
       //EDITING KEY
       return dropdownOption(editing, keyOptions);
-    }else if(editing=='value'){
+    } else if (editing == 'value') {
       //EDITING VALUE
-      for(int i=0; i<_options.length; i++){
+      for (int i = 0; i < _options.length; i++) {
         //GET THE POSSIBLE VALUES FOR A KEY
-        if(_options[i]['key'] == selectedValue[0]){
+        if (_options[i]['key'] == selectedValue[0]) {
           setState(() {
-            valueOptions =_options[i]['value'] as List<String>;
+            valueOptions = _options[i]['value'] as List<String>;
           });
           return dropdownOption(editing, valueOptions);
         }
@@ -478,126 +485,135 @@ class _AddCustomPickerDialogState extends State<AddCustomPickerDialog> {
     return Container();
   }
 
-
   //TEXTIELD FOR OTHER
 
-    // TextEditingController _controller;
-    Widget textFieldEdit(String editing,) {
-      String giveplaceholder() {
+  // TextEditingController _controller;
+  Widget textFieldEdit(
+    String editing,
+  ) {
+    String giveplaceholder() {
+      if (editing == 'key') {
+        return finalValue[0];
+      } else if (editing == 'value') {
+        return finalValue[1];
+      } else {
+        return '';
+      }
+    }
+
+    return TextField(
+      onSubmitted: (String value) async {
         if (editing == 'key') {
-          return finalValue[0];
+          finalValue[0] = value;
         } else if (editing == 'value') {
-          return finalValue[1];
-        }else{
-          return '';
+          finalValue[1] = value;
         }
+      },
+      onChanged: (String value) async {
+        //for the app to be dynamic
+        if (editing == 'key') {
+          finalValue[0] = value;
+        } else if (editing == 'value') {
+          finalValue[1] = value;
+        }
+      },
+      decoration: InputDecoration(
+        filled: true,
+        isDense: true,
+        contentPadding: EdgeInsets.all(9),
+        border: OutlineInputBorder(),
+        labelText: giveplaceholder(),
+      ),
+    );
+  }
+
+  Widget giveTextfield(
+    editing,
+  ) {
+    if (editing == 'key') {
+      if (selectedValue[0] == 'other') {
+        return textFieldEdit(editing);
       }
-
-      return TextField(
-        onSubmitted: (String value) async {
-          if (editing == 'key') {
-            finalValue[0] = value;
-          } else if (editing == 'value') {
-            finalValue[1] = value;
-          }
-        },
-        onChanged: (String value) async {
-          //for the app to be dynamic
-          if (editing == 'key') {
-            finalValue[0] = value;
-          } else if (editing == 'value') {
-            finalValue[1] = value;
-          }
-        },
-        decoration: InputDecoration(
-          filled: true,
-          isDense: true,
-          contentPadding: EdgeInsets.all(9),
-          border: OutlineInputBorder(),
-          labelText: giveplaceholder(),
-        ),
-      );
-    }
-
-    Widget giveTextfield(editing,){
-      if(editing=='key'){
-        if(selectedValue[0]=='other'){
-          return textFieldEdit(editing);
-        }
-      }else if(editing=='value'){
-        if(selectedValue[1]=='other'){
-          return textFieldEdit(editing);
-        }
+    } else if (editing == 'value') {
+      if (selectedValue[1] == 'other') {
+        return textFieldEdit(editing);
       }
-      return Container();
     }
+    return Container();
+  }
 
-    @override
-    Widget build(BuildContext context) {
-      return AlertDialog(
-        title: Text('add additional tags'),
-        content: SingleChildScrollView(
-          padding: EdgeInsets.all(0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.fromLTRB(0, 5, 0, 15),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text('tag name:'),
-                    ),
-                    Expanded(child: Column(
-                      children: [
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text('add additional tags'),
+      content: SingleChildScrollView(
+        padding: EdgeInsets.all(0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.fromLTRB(0, 5, 0, 15),
+              child: Row(
+                children: [
+                  Flexible(
+                    fit: FlexFit.loose,
+                    child: Text('tag name:'),
+                  ),
+                  Container(width: 10.0,),
+                  Flexible(
+                      fit: FlexFit.loose,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
                         giveDropdown('key'),
-                       giveTextfield('key'),
-                      ],
-                    )),
-                  ],
-                ),
+                        giveTextfield('key'),
+                        ],
+                      )),
+                ],
               ),
-              Container(
-                padding: EdgeInsets.fromLTRB(0, 5, 0, 15),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text('tag value:'),
-                    ),
-                    Expanded(child: Column(
-                      children: [
-                        //giveDropdown('value'),
-                        dropdownOption('value', valueOptions),
-                        giveTextfield('value'),
-                      ],
-                    )),
-                  ],
-                ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(0, 5, 0, 15),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text('tag value:'),
+                  ),
+                  Expanded(
+                      child: Column(
+                    children: [
+                      //giveDropdown('value'),
+                      dropdownOption('value', valueOptions),
+                      giveTextfield('value'),
+                    ],
+                  )),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-        actions: <Widget>[
-          TextButton(
-            child: Text(
-              'save',
-              style: TextStyle(color: Colors.black),
-            ),
-            onPressed: () {
-              //Navigator.of(context).pop(_initialAge);
-              Navigator.pop(context, finalValue);
-            },
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: Text(
+            'save',
+            style: TextStyle(color: Colors.black),
           ),
-          TextButton(
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: Colors.black),
-            ),
-            onPressed: () {
-              Navigator.pop(context, null);
-            },
+          onPressed: () {
+            //Navigator.of(context).pop(_initialAge);
+            Navigator.pop(context, finalValue);
+          },
+        ),
+        TextButton(
+          child: Text(
+            'Cancel',
+            style: TextStyle(color: Colors.black),
           ),
-        ],
-      );
-    }
+          onPressed: () {
+            Navigator.pop(context, null);
+          },
+        ),
+      ],
+    );
+  }
 }

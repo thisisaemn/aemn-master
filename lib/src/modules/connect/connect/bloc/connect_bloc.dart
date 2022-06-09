@@ -21,8 +21,10 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
         super(Loading()){
     on<Load>(_onLoad);
     on<Connect>(_onConnect);
-    on<Send>(_onSend);
-    on<QuitSession>(_onQuitSession);
+    on<SendMsg>(_onSendMsg);
+    on<ExitSession>(_onExitSession);
+    on<KillSession>(_onKillSession);
+    on<ChangeSessionName>(_onChangeSessionName);
     on<InviteToNewSession>(_onInviteToNewSession);
     on<EnterSession>(_onEnterSession);
     on<JoinSession>(_onJoinSession);
@@ -102,20 +104,32 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
 
 
   //Enter session, should i rename?
-  Future<void> _onSend (Send event, Emitter<ConnectState> emit) async {
-    emit(Sending());
+  Future<void> _onSendMsg (SendMsg event, Emitter<ConnectState> emit) async {
+    emit(SendingMsg());
 
     bool success = await _trySendMsg(event.msg);
 
     if(!success){
-      emit(SendingFailed());
+      emit(SendingMsgFailed());
     }else {
-      emit(Sent());
+      emit(SentMsg());
     }
   }
 
-  Future<void> _onQuitSession (QuitSession event, Emitter<ConnectState> emit) async {
-    emit(QuittingSession());
+  Future<void> _onDeleteMsg (DeleteMsg event, Emitter<ConnectState> emit) async {
+    emit(DeletingMsg());
+
+    bool success = await _tryDeleteMsg(msgId: event.msgId);
+
+    if(!success){
+      emit(DeletingMsgFailed());
+    }else {
+      emit(DeletedMsg());
+    }
+  }
+
+  Future<void> _onExitSession (ExitSession event, Emitter<ConnectState> emit) async {
+    emit(ExitingSession());
 
     bool success = false;
 
@@ -125,18 +139,59 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       success = await _tryQuitSession(sessionId: event.sessionId);
     }*/
 
-    success = await _tryQuitSession(sessionId: event.sessionId);
+    success = await _tryExitSession(sessionId: event.sessionId);
 
     if(!success){
-      emit(QuittingSessionFailed());
+      emit(ExitingSessionFailed());
     }else {
-      emit(QuittedSession());
+      emit(ExitedSession());
+    }
+  }
+
+  Future<void> _onKillSession (KillSession event, Emitter<ConnectState> emit) async {
+    emit(KillingSession());
+
+    bool success = false;
+
+    /*
+    BAUSTELLE
+    if(userRepository.currentSession == event.sessionId || userRepository.currentUser.sessions.contains(event.sessionId)){
+      success = await _tryQuitSession(sessionId: event.sessionId);
+    }*/
+
+    success = await _tryKillSession(sessionId: event.sessionId);
+
+    if(!success){
+      emit(KillingSessionFailed());
+    }else {
+      emit(KilledSession());
+    }
+  }
+
+
+  Future<void> _onChangeSessionName (ChangeSessionName event, Emitter<ConnectState> emit) async {
+    emit(ChangingSessionName());
+
+    bool success = false;
+
+    /*
+    BAUSTELLE
+    if(userRepository.currentSession == event.sessionId || userRepository.currentUser.sessions.contains(event.sessionId)){
+      success = await _tryQuitSession(sessionId: event.sessionId);
+    }*/
+
+    success = await _tryChangeSessionName(sessionId: event.sessionId, sessionName: event.sessionName);
+
+    if(!success){
+      emit(ChangingSessionNameFailed());
+    }else {
+      emit(ChangedSessionName());
     }
   }
 
 
   Future<void> _onInviteToNewSession (InviteToNewSession event, Emitter<ConnectState> emit) async {
-    emit(Sending());
+    emit(SendingMsg());
 
     //bool success = await _trySendMsg(event.msg);
 
@@ -333,6 +388,16 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     }
   }
 
+  Future<bool> _tryDeleteMsg({required String msgId}) async {
+    try {
+      final success = await connectRepository.deleteMessage(msgId: msgId);
+      return success;
+    } on Exception {
+      ////print('failed sending request, connect bloc');
+      return false;
+    }
+  }
+
   Future<bool> _tryInviteToNewSession({required String inviteeId, required String inviteeUsername, required String senderId, required String senderUsername}) async {
     try {
       final success = await connectRepository.inviteToNewSession(inviteeId: inviteeId, inviteeUsername:inviteeUsername, senderId:senderId,  senderUsername:senderUsername);
@@ -343,9 +408,18 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     }
   }
 
-  Future<bool> _tryQuitSession({required String sessionId}) async {
+  Future<bool> _tryExitSession({required String sessionId}) async {
     try {
-      return connectRepository.quitSession(sessionId: sessionId);
+      return connectRepository.exitSession(sessionId: sessionId);
+    } on Exception {
+      ////print('failed quitting session, connect bloc');
+      return false;
+    }
+  }
+
+  Future<bool> _tryKillSession({required String sessionId}) async {
+    try {
+      return connectRepository.killSession(sessionId: sessionId);
     } on Exception {
       ////print('failed quitting session, connect bloc');
       return false;
@@ -381,6 +455,15 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     }
   }
 
+  Future<bool> _tryChangeSessionName({required String sessionId, required String sessionName}) async {
+    try {
+      ////print("try get trigger");
+      return connectRepository.changeSessionName(sessionId: sessionId, sessionName: sessionName);
+    } on Exception {
+      ////print('failed getting trigger, connect bloc');
+      return false;
+    }
+  }
 
 
 

@@ -69,11 +69,17 @@ class UserRepository {
 
   //am not really sure abt this stream thing.
   //can mongodb notify... but nah to bothersome. it should be requested then delivered... right?
-  Stream<Profile> get profile async* {
+  /*Stream<Profile> get profile async* {
     //await getProfile(); //Muss das gemacht werden?
     //yield AuthenticationStatus.unauthenticated;
     yield* profileController.stream;
   }
+  int helperForNow = -1;
+  Profile get profile async* {
+    if(helperForNow == -1){
+
+    }
+  }*/
 
   //am not really sure abt this stream thing.
   //can mongodb notify... but nah to bothersome. it should be requested then delivered... right?
@@ -245,7 +251,7 @@ class UserRepository {
     };
 
     var res = await http.post(
-      Uri.parse('$SERVER_IP/deleteInterest'),
+      Uri.parse('$SERVER_IP/deleteInterestFromProfile'),
       headers: header,
       body: jsonEncode(body),
     );
@@ -273,7 +279,7 @@ class UserRepository {
       "authorization" : "Bearer $token"
     };
     var body = {
-      "factId": keyValue.id,
+      //"factId": keyValue.id,
       "factKey": keyValue.key,
       "factValue": keyValue.value
     };
@@ -339,7 +345,7 @@ class UserRepository {
     };
 
     var res = await http.post(
-      Uri.parse('$SERVER_IP/deleteFact'),
+      Uri.parse('$SERVER_IP/deleteFactFromProfile'),
       headers: header,
       body: jsonEncode(body),
     );
@@ -352,6 +358,48 @@ class UserRepository {
 
     return false;
   }
+
+  /*
+    Upserts Fact (KeyValue Pair) to profile
+   */
+  Future<bool> upsertFactOfProfile({
+    required KeyValue keyValue
+  }) async {
+    var token = await _cache.storage.read(key: 'jwt');
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+
+    /*
+    print(keyValue.id);
+    print(keyValue.key);
+    print(keyValue.value);*/
+
+    var body = {
+      "factId": keyValue.id.toString(),
+      "factKey": keyValue.key.toString(),
+      "factValue": keyValue.value.toString()
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/upsertFactOfProfile'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      print(resBody["msg"]);
+      return true; //return true if successful
+    }
+
+    return false;
+  }
+
+  ///
+
 
 
 

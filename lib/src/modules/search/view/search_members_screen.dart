@@ -23,11 +23,13 @@ class _SearchMembersScreenState extends State<SearchMembersScreen> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
+    _listViewController = new ScrollController()..addListener(_scrollListener);
     //_searchBloc = SearchBloc(userRepository: UserRepository());
   }
 
   void dispose() {
     _controller.dispose();
+    _listViewController.dispose();
     super.dispose();
   }
 
@@ -103,6 +105,27 @@ class _SearchMembersScreenState extends State<SearchMembersScreen> {
     );
   }*/
 
+  late ScrollController _listViewController;
+  String currentSearchKey = "";
+
+  _scrollListener() {
+    //Bottom of list
+    if (_listViewController.offset >= _listViewController.position.maxScrollExtent &&
+        !_listViewController.position.outOfRange) {
+      BlocProvider.of<SearchBloc>(context).add(
+          SearchMembersKey(key: currentSearchKey, isInitialSearch: false));
+      //print("l 119 search members screen");
+    }
+
+    //Over the top
+    if (_listViewController.offset <= _listViewController.position.minScrollExtent &&
+        !_listViewController.position.outOfRange) {
+
+    }
+
+
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -121,7 +144,8 @@ class _SearchMembersScreenState extends State<SearchMembersScreen> {
                           /*sContext
                             .read<SearchBloc>()
                             .add(SearchInterestsKey(key: value));*/
-                          BlocProvider.of<SearchBloc>(context).add(SearchMembersKey(key: value));
+                          currentSearchKey = value;
+                          BlocProvider.of<SearchBloc>(context).add(SearchMembersKey(key: value, isInitialSearch: true));
                           /*
                         await showDialog<void>(
                             context: context,
@@ -158,6 +182,7 @@ class _SearchMembersScreenState extends State<SearchMembersScreen> {
             body: BlocBuilder<SearchBloc, SearchState>(
                 builder: (BuildContext context, SearchState state) {
                   return ListView.builder(
+                    controller: _listViewController,
                     itemCount: BlocProvider.of<SearchBloc>(context).resultsMembers.length,
                     itemBuilder: (BuildContext context, int index) {
                       if(BlocProvider.of<SearchBloc>(context).resultsMembers[index].id == BlocProvider.of<ConnectBloc>(context).userRepository.currentUser.id ){

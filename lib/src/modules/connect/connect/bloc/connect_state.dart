@@ -22,11 +22,17 @@ class Connected extends Loaded{}
 
 class ConnectingFailed extends LoadingFailed{}
 
-class Sent extends Loaded{}
+class SentMsg extends Loaded{}
 
-class Sending extends Loading{}
+class SendingMsg extends Loading{}
 
-class SendingFailed extends LoadingFailed{}
+class SendingMsgFailed extends LoadingFailed{}
+
+class DeletedMsg extends Loaded{}
+
+class DeletingMsg extends Loading{}
+
+class DeletingMsgFailed extends LoadingFailed{}
 
 class InvitingToNewSession extends Loading{}
 
@@ -34,11 +40,23 @@ class InvitedToNewSession extends Loaded{}
 
 class InvitingToNewSessionFailed extends LoadingFailed{}
 
-class QuittingSession extends Loading{}
+class ExitingSession extends Loading{}
 
-class QuittedSession extends Loaded{}
+class ExitedSession extends Loaded{}
 
-class QuittingSessionFailed extends LoadingFailed{}
+class ExitingSessionFailed extends LoadingFailed{}
+
+class KillingSession extends Loading{}
+
+class KilledSession extends Loaded{}
+
+class KillingSessionFailed extends LoadingFailed{}
+
+class ChangingSessionName extends Loading{}
+
+class ChangedSessionName extends Loaded{}
+
+class ChangingSessionNameFailed extends LoadingFailed{}
 
 class JoiningSession extends Loading{
   final String sessionId;

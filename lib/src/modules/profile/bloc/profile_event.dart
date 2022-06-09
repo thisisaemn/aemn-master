@@ -104,7 +104,7 @@ class ChangeInterestIntensity extends ProfileEvent{
 class DeleteInterest extends ProfileEvent{
   final String interestId;
 
-  DeleteInterest(this.interestId);
+  DeleteInterest({required this.interestId});
 
   List<Object> get props => [interestId];
 }
@@ -115,7 +115,19 @@ class AddFact extends ProfileEvent{
   //final String value;
   final KeyValue keyValue;
 
-  AddFact(/*this.id,*/ this.keyValue);
+  AddFact(/*this.id,*/ {required this.keyValue});
+
+  List<Object> get props => [keyValue];
+
+}
+
+class UpsertFact extends ProfileEvent{
+  //final String id;
+  //final String key;
+  //final String value;
+  final KeyValue keyValue;
+
+  UpsertFact(/*this.id,*/ {required this.keyValue});
 
   List<Object> get props => [keyValue];
 
@@ -137,9 +149,30 @@ class ChangeFact extends ProfileEvent{
 }*/
 
 class DeleteFact extends ProfileEvent{
-  final factId;
+  final String factId;
 
-  DeleteFact(this.factId);
+  DeleteFact({required this.factId});
 
   List<Object> get props => [factId];
+}
+
+//
+
+class ChangePassword extends ProfileEvent{
+  final String oldPassword;
+  final String newPassword;
+
+  ChangePassword({required this.oldPassword, required this.newPassword});
+
+  @override
+  List<Object> get props => [oldPassword, newPassword];
+}
+
+class DeleteUser extends ProfileEvent{
+  final String userId;
+
+  DeleteUser({required this.userId});
+
+  @override
+  List<Object> get props => [userId];
 }

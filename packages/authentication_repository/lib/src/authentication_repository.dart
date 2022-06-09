@@ -146,6 +146,65 @@ class AuthenticationRepository {
     }
   }
 
+  ///
+
+
+  Future<bool> deleteUser({
+    required String userId
+  }) async {
+    var token = await _cache.storage.read(key: 'jwt');
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+    var body = {
+      "userId": userId,
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/userId'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      print(resBody["msg"]);
+      return true; //return true if successful
+    }
+
+    return false;
+  }
+
+  Future<bool> changePassword({
+    required String changedPw
+  }) async {
+    var token = await _cache.storage.read(key: 'jwt');
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+    var body = {
+      "changedPw": changedPw,
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/changePw'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      print(resBody["msg"]);
+      return true; //return true if successful
+    }
+
+    return false;
+  }
+
 
   CacheClient get cache => _cache;
 }
