@@ -23,12 +23,14 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
     super.initState();
     _controller = TextEditingController();
     _listViewController = new ScrollController()..addListener(_scrollListener); //..addListener(_loadMore);
+
   }
 
   void dispose() {
     _controller.dispose();
     _listViewController.dispose(); //.removeListener(_loadMore);
     super.dispose();
+
   }
 
   //= SearchBloc();
@@ -132,6 +134,9 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<SearchBloc>(context).add(
+        SearchInterestsKey(key: "", isInitialSearch: true));
+
     return Scaffold(
         appBar: AppBar(
             elevation: 0,
@@ -155,6 +160,8 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
                             .read<SearchBloc>()
                             .add(SearchInterestsKey(key: value));*/
                   currentSearchKey = value;
+                  BlocProvider.of<SearchBloc>(context)
+                      .add(ResetInterestsSearchResults());
                   BlocProvider.of<SearchBloc>(context).add(
                       SearchInterestsKey(key: value, isInitialSearch: true));
                   /*

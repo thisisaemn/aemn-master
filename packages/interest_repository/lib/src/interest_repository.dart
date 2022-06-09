@@ -50,6 +50,17 @@ class InterestRepository {
    *
    */
 
+  /**
+   * took a slightly different approach with a very similar principle
+   *
+   * instead of using pagen as the determining index
+   * we sort the collection by _id
+   * the last relevant returned id from the results is given as a parameter
+   * k greater than that will be considered in the result
+   *
+   *
+   */
+
   /*
   //original search interests method
 
