@@ -585,7 +585,9 @@ class ConnectRepository {
     //print('now the triggerbase:');
     //print(await getTriggerBaseInterests(commons: session.commons));
 
-    List<InterestModel>? interestModels = await getTriggerBaseInterests(commons: session.commons);
+    List<InterestModel>? interestModels = [];
+
+    interestModels = await getTriggerBaseInterests(commons: session.commons);
 
     if(interestModels == null){
       //maybe completely random trigger request.
@@ -614,12 +616,16 @@ class ConnectRepository {
 
     if(res.statusCode == 200) {
       var resBody = await json.decode(res.body);
-      //print(resBody);
+      //print("connect repo l 617" +resBody);
       Trigger trigger = await Trigger.fromJson(resBody["trigger"]);
-      print(trigger.mainContent);
+      print("connect repo l 619" +trigger.mainContent);
       //trigger.mainContentLink = trigger.mainContent.
       return trigger;
+    }else{
+      print(await json.decode(res.body));
     }
+
+
     await Future.delayed(
       const Duration(milliseconds: 3000)
     );

@@ -1,4 +1,5 @@
 import 'package:aemn/src/core/navigation/navigation/navigation.dart';
+import 'package:aemn/src/modules/settings/models/models.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,7 +26,7 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 
-  List<Map<String, Object>> settingsOptions = [
+  /*List<Map<String, Object>> settingsOptions = [
     {
       'key' : 'faq',
       'icon': '57986',
@@ -61,7 +62,7 @@ class SettingsScreen extends StatelessWidget {
       'icon': '59464',
       'action': '',
     }
-  ];
+  ];*/
 
   Widget settingsTitle(){
     return  Container(
@@ -78,19 +79,19 @@ class SettingsScreen extends StatelessWidget {
 
       return Expanded(child:
       ListView.builder(
-          itemCount: settingsOptions.length,
+          itemCount: SettingsOptions.getSettingsOptions.length,
           scrollDirection: Axis.vertical,
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
               leading: Icon(
-                IconData(
-                    stringToInt_tryParse(settingsOptions[index]['icon'].toString(), 60018),
+                const IconData(
+                    /*stringToInt_tryParse(settingsOptions[index]['icon'].toString(), 60018)*/ 60018,
                     fontFamily: 'MaterialIcons',),
                 size: 18,
               ),
-              title: Text(settingsOptions[index]['key'].toString()),
+              title: Text(SettingsOptions.getSettingsOptions[index]['key'].toString()),
               onTap: (){
-                settingsAction(context, settingsOptions[index]['key'].toString());
+                settingsAction(context, SettingsOptions.getSettingsOptions[index]['key'].toString());
               },
             );
           })
