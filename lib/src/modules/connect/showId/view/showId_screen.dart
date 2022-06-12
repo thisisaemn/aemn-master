@@ -22,7 +22,8 @@ class ShowIdScreen extends StatelessWidget {
     String username = context.select(
           (ConnectBloc bloc) => bloc.userRepository.currentUser.username,
     );
-    code = "https://www.aemn.io/connectionRequest/smencrtptyness/$userId;$username";
+    //code = "https://www.aemn.io/connectionRequest/smencrtptyness/$userId;$username";
+    code="$username,$userId";
     return Scaffold(
       appBar: AppBar(//DIE NAVIGATION NICHT GEKLÄRT...
         elevation: 0,

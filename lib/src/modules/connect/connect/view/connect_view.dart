@@ -7,9 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class ConnectView extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<ConnectBloc>(context).add(
+    /*BlocProvider.of<ConnectBloc>(context).add(
       Load(),
-    );
+    );*/
     BlocProvider.of<ConnectBloc>(context).add(
       Connect(sessionId: ''),
     );
@@ -38,8 +38,11 @@ class ConnectView extends StatelessWidget{
           //return SessionView(session: (state as EnteredSession).session);
           //return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
         }else if(state is ExitedSession || state is JoinedSession){
-          BlocProvider.of<ConnectBloc>(context).add(
+          /*BlocProvider.of<ConnectBloc>(context).add(
             Load(),
+          );*/
+          BlocProvider.of<ConnectBloc>(context).add(
+            Connect(sessionId: ''),
           );
           //return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
         }//else{

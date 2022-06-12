@@ -66,34 +66,9 @@ class _ProfileMainScreen extends State<ProfileMainScreen> {
           BlocProvider.of<ProfileBloc>(context).add(
               ProfileLoad());
           return Future.delayed(Duration(milliseconds: 1));
-        }, child: ListView(
-      scrollDirection: Axis.vertical,
-      children: [
-        SizedBox(height: 20),
-        Text(
-          profile.username,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              //decorationColor: Colors.black,
-              //decorationStyle: TextDecorationStyle.double,
-              fontSize: 25,
-              //backgroundColor: Colors.black,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              shadows: [Shadow(blurRadius: 6.0)],
-              /*backgroundColor: Colors.black54,*/
-              letterSpacing: 7.0,
-              wordSpacing: 5), ),
-        FactsListView(facts: profile.facts,),
-        //TodayRecipeListView(recipes: snapshot.data?.todayRecipes ?? []),
-        const SizedBox(height: 20),
-        InterestsListView(interests: profile.interests),
-        /*Container(
-            height: 400,
-            color: Colors.green,
-          ),*/
-      ],
-    ));
+        },
+        child: InterestsFactsListView(interests: profile.interests, facts: profile.facts,username: profile.username,)
+    );
   }
 }
 

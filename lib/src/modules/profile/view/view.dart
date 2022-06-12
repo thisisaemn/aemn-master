@@ -12,3 +12,5 @@ export 'profile_screen.dart';
 export 'facts_listView.dart';
 
 export 'interests_listView.dart';
+
+export 'interests_facts_listView.dart';

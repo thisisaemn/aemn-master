@@ -28,44 +28,40 @@ class CommonsMainView extends StatelessWidget {
     List<Widget> list = []; //= List<Widget>();
     for (var i = 0; i < members.length; i++) {
       String content = members[i].username.toLowerCase();
-      if(i == 0){
+      if (i == 0) {
         content = members[i].username.toLowerCase() + " ∙ ";
-      }else if(i == members.length-1){
+      } else if (i == members.length - 1) {
         content = members[i].username.toLowerCase();
-      }else{
+      } else {
         content = " ∙ " + members[i].username.toLowerCase() + " ∙ ";
       }
 
-      list.add(
-          Container(
-              child: FittedBox(
-                fit: BoxFit.fitWidth,
-                child: Text(
-                  content,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    //decorationColor: Colors.black,
-                    //decorationStyle: TextDecorationStyle.double,
-                      fontSize: 25,
-                      //backgroundColor: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      shadows: [Shadow(blurRadius: 6.0)],
-                      /*backgroundColor: Colors.black54,*/
-                      letterSpacing: 7.0,
-                      wordSpacing: 5),
-                ),
+      list.add(Container(
+          child: FittedBox(
+        fit: BoxFit.fitWidth,
+        child: Text(
+          content,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              //decorationColor: Colors.black,
+              //decorationStyle: TextDecorationStyle.double,
+              fontSize: 25,
+              //backgroundColor: Colors.black,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              shadows: [Shadow(blurRadius: 6.0)],
+              /*backgroundColor: Colors.black54,*/
+              letterSpacing: 7.0,
+              wordSpacing: 5),
+        ),
 
-
-                /*Text(members[i].username.toLowerCase(),
+        /*Text(members[i].username.toLowerCase(),
                     style: TextStyle(
                       fontFamily: 'Open Sans',
                       fontSize: 23.0,
                       fontWeight: FontWeight.w300,
                     )),*/
-              )
-          )
-      );
+      )));
     }
 
     return Wrap(
@@ -74,10 +70,8 @@ class CommonsMainView extends StatelessWidget {
         children: list);
   }
 
-
-  Widget usernameSection(){
+  Widget usernameSection() {
     if (session.members != null && session.members.length > 0) {
-
       /*return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -90,16 +84,16 @@ class CommonsMainView extends StatelessWidget {
       return Container(
           padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
           height: 33,
-          child:ListView.builder(
+          child: ListView.builder(
             itemCount: members.length,
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) {
               String content = members[index].username.toLowerCase();
-              if(index == 0 && members.length == 2){
+              if (index == 0 && members.length == 2) {
                 content = members[index].username.toLowerCase() + " ∩ ";
-              }else if(index == members.length-1){
+              } else if (index == members.length - 1) {
                 content = members[index].username.toLowerCase();
-              }else{
+              } else {
                 content = " ∩ " + members[index].username.toLowerCase() + " ∩ ";
               }
 
@@ -107,8 +101,8 @@ class CommonsMainView extends StatelessWidget {
                 content,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  //decorationColor: Colors.black,
-                  //decorationStyle: TextDecorationStyle.double,
+                    //decorationColor: Colors.black,
+                    //decorationStyle: TextDecorationStyle.double,
                     fontSize: 25,
                     //backgroundColor: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -122,18 +116,25 @@ class CommonsMainView extends StatelessWidget {
           ));
 
       //return Text('members');
-    }else return Container(child: Text(''),);
+    } else
+      return Container(
+        child: Text(''),
+      );
   }
 
-
-  Widget profileList(BuildContext context){
+  Widget profileList(BuildContext context) {
     return RefreshIndicator(
-        onRefresh: () {
-          //Set List to zero during loading, make loading connect
-          BlocProvider.of<ConnectBloc>(context).add(
-              Load());
-          return Future.delayed(Duration(milliseconds: 5000));
-        }, child: ListView(
+      onRefresh: () {
+        //Set List to zero during loading, make loading connect
+        BlocProvider.of<ConnectBloc>(context).add(Load());
+        return Future.delayed(Duration(milliseconds: 5000));
+      },
+      child: InterestsFactsListView(
+        interests: session.commons.interests,
+        facts: session.commons.facts,
+        username: session.name,
+      ),
+      /*child: ListView(
       scrollDirection: Axis.vertical,
       children: [
         SizedBox(height: 20),
@@ -177,29 +178,31 @@ class CommonsMainView extends StatelessWidget {
             color: Colors.green,
           ),*/
       ],
-    ));
+    )*/
+    );
   }
-
 
   //Dialog
 
 //Change Session Name
 
-  void _changeSessionNameDialog({required String sessionId, required String initialValue,  required BuildContext context}) async {
+  void _changeSessionNameDialog(
+      {required String sessionId,
+      required String initialValue,
+      required BuildContext context}) async {
     final selectedValue = await showDialog<String>(
       context: context,
       barrierDismissible: true,
-      builder: (context) =>
-          TextFieldDialog(value: initialValue, msg: 'Enter new session name',),
+      builder: (context) => TextFieldDialog(
+        value: initialValue,
+        msg: 'Enter new session name',
+      ),
     );
 
     if (selectedValue != null) {
       BlocProvider.of<ConnectBloc>(context).add(
-        ChangeSessionName(
-            sessionId: sessionId, sessionName: selectedValue),
+        ChangeSessionName(sessionId: sessionId, sessionName: selectedValue),
       );
     }
   }
-
-
 }

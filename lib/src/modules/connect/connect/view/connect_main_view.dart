@@ -46,7 +46,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
 
   late List<Message> box;
 
-  Widget? floatingActionButtonSession(BuildContext context, bool isInSession) {
+  /*Widget? floatingActionButtonSession(BuildContext context, bool isInSession) {
     if (isInSession) {
       return ElevatedButton(
         //Hier eigentlich nur navigation when session existiert
@@ -63,7 +63,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
     } else {
       return null;
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +103,8 @@ class _HomeLandingViewState extends State<HomeLandingView> {
           //https://stackoverflow.com/questions/58908968/how-to-implement-a-flutter-search-app-bar
           //}
         ),
+        title: SessionOverviewTitle(),
+        centerTitle: true,
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.qr_code, size: 18),
@@ -123,7 +125,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
       //floatingActionButton: floatingActionButtonSession(context, context.select((ConnectBloc bloc) => bloc.userRepository.currentSession.id) != "" && context.select((ConnectBloc bloc) => bloc.userRepository.currentSession.id) != "00000000"),
       body: RefreshIndicator(
         child: Column(
-          children: [SessionOverviewTitle(), Expanded(child: BoxList())],
+          children: [Expanded(child: BoxList())],
         ),
         onRefresh: () {
           //Set List to zero during loading, make loading connect
@@ -161,11 +163,11 @@ class _HomeLandingViewState extends State<HomeLandingView> {
           Message item = context.select(
             (ConnectBloc bloc) => bloc.user.box,
           )[index];
-          return BoxInvitationTile(
+          return Container(padding: EdgeInsets.all(10),child:BoxInvitationTile(
               item,
               context.select(
                 (ConnectBloc bloc) => bloc.user.sessions,
-              ));
+              )));
         });
       },
     );
@@ -179,12 +181,14 @@ class _HomeLandingViewState extends State<HomeLandingView> {
         'sessions',
         textAlign: TextAlign.center,
         style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-            shadows: [Shadow(blurRadius: 1.5)],
-            /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:
-                6.0,
-            wordSpacing: 5),
+          //fontSize: 13,
+          //fontWeight: FontWeight.w500,
+          color: Colors.black,
+          //shadows: [Shadow(blurRadius: 1.5)],
+          /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/
+          //letterSpacing: 4.0,
+          //wordSpacing: 5
+        ),
       ),
     );
   }
@@ -205,7 +209,10 @@ class _HomeLandingViewState extends State<HomeLandingView> {
         },
         child: Container(
             child: Column(children: [
-          Icon(Icons.local_fire_department_rounded),
+          Icon(
+            Icons.local_fire_department_rounded,
+            size: 20,
+          ),
           Text('triggers', style: TextStyle(fontSize: 10.0))
         ])));
   }
@@ -222,7 +229,13 @@ class _HomeLandingViewState extends State<HomeLandingView> {
                 EnterSession(sessionId: sessionId, option: options.commons));
           },
           child: Container(
-              child: Column(children: [Icon(Icons.people), Text('commons')])));
+              child: Column(children: [
+            Icon(
+              Icons.people,
+              size: 20,
+            ),
+            Text('commons', style: TextStyle(fontSize: 10.0))
+          ])));
     } else {
       return Container();
     }
@@ -233,7 +246,10 @@ class _HomeLandingViewState extends State<HomeLandingView> {
     if (userJoinedSession(sessions: sessions, sessionId: sessionId)) {
       return Container();
     }
-    return Text("press to join", style: TextStyle(fontSize: 12, color: Colors.grey),);
+    return Text(
+      "press to join",
+      style: TextStyle(fontSize: 12, color: Colors.grey),
+    );
   }
 
   //sessions the user is already part of
@@ -254,15 +270,15 @@ class _HomeLandingViewState extends State<HomeLandingView> {
       sessionName = msg.meta.sessionName!;
     }
 
-    print(sessionName);
-
+    //print(sessionName);
 
     return ElevatedButton(
       style: ButtonStyle(
-        elevation: MaterialStateProperty.all(0.2),
+        elevation: MaterialStateProperty.all(0.0),
       ),
-      child: Column(children: [
-        Text(msg.subject + " "+ sessionName),
+      child: Column(
+          children: [
+        Text(/*msg.subject + " "+*/ sessionName),
         pressToJoinTxt(sessions: sessions, sessionId: sessionId),
       ]),
       onPressed: () {
@@ -281,13 +297,11 @@ class _HomeLandingViewState extends State<HomeLandingView> {
     );
   }
 
-  Widget invitationDetailsWidget({required Message msg}){
+  Widget invitationDetailsWidget({required Message msg}) {
     return Text(msg.content);
   }
 
   ///////////////
-
-
 
   /**
    * new list tile for connect
@@ -323,7 +337,24 @@ class _HomeLandingViewState extends State<HomeLandingView> {
       sessionName = msg.meta.sessionName!;
     }
 
-    return ExpansionTile(
+    return ListTile(
+      title: JoinSessionBtn(msg: msg, sessions: sessions),
+      subtitle: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Expanded(
+              child: enterSessionTriggersBtn(
+                  sessions: sessions, sessionId: sessionId)),
+          Expanded(
+              child: enterSessionCommonsBtn(
+                  sessions: sessions, sessionId: sessionId))
+        ],
+      ),
+      shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black38, width: 0.9), borderRadius: BorderRadius.circular(13)),
+      //trailing: Divider(),
+    );
+
+    /*return ExpansionTile(
       controlAffinity: ListTileControlAffinity.leading,
       textColor: Colors.black,
       collapsedTextColor: Colors.black,
@@ -350,7 +381,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
           ],
         )
       ],
-    );
+    );*/
   }
 
   /**
@@ -416,11 +447,11 @@ class _HomeLandingViewState extends State<HomeLandingView> {
         onDismissed: (direction) {
           //and delete msg
           BlocProvider.of<ConnectBloc>(context).add(DeleteMsg(msgId: item.id));
-          if(item.meta.sessionId != null) {
-            BlocProvider.of<ConnectBloc>(context).add(
-                ExitSession(sessionId: item.meta.sessionId!));
+          if (item.meta.sessionId != null) {
+            BlocProvider.of<ConnectBloc>(context)
+                .add(ExitSession(sessionId: item.meta.sessionId!));
           }
-          });
+        });
   }
 
   //Dieses Dialogue ist sehr provisorisch apparently

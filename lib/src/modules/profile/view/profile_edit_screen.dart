@@ -99,10 +99,10 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
           height: 100, width: 200, child: Text(kv.value)),
         onTap: () {
           //Apart from age everthing has an option
-          if (kv.key == 'age') {
+          if (kv.key == 'dateYear') {
             _showSliderDialogFacts(
                 kv, ConvertInput.stringToInt_tryParse(kv.value, 0),
-                0.0, 100.0, 'how old will you turn this year?');
+                1950, 2022, 'which year were you born in?');
             //_editFactDateDialog();
           } else {
             //Determine the options

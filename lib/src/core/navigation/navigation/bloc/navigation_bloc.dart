@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 
 import 'package:bloc/bloc.dart';
 import 'package:connect_repository/connect_repository.dart';
@@ -49,12 +50,26 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
 
     if(this.currentDestination == NavigationDestinations.back){
       print(destinationsHistory);
-      destinationsHistory.removeLast();
-      if(destinationsHistory.length-2 > 1){
-        currentDestination = destinationsHistory[destinationsHistory.length-2];
+      bool go = true;
+      for(int i=destinationsHistory.length-1; i>=0; i--){
+        if(go && destinationsHistory[i] == NavigationDestinations.back){
+          destinationsHistory.removeAt(i);
+          i--;
+        }
+        if(destinationsHistory[i] != NavigationDestinations.back){
+          go = false;
+        }
       }
+
+
+      if(destinationsHistory.length > 0){
+        destinationsHistory.removeLast();
+        currentDestination = destinationsHistory[destinationsHistory.length-1];
+      }else{
+        currentDestination = NavigationDestinations.home;
+      }
+
       print(currentDestination);
-      destinationsHistory.removeLast();
     }//BACK ... but idk if this is clean.
 
     emit(CurrentDestinationChanged(currentDestination: this.currentDestination));

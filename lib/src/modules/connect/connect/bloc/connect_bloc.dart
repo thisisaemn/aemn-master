@@ -113,6 +113,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       emit(SendingMsgFailed());
     }else {
       emit(SentMsg());
+      this.add(Connect(sessionId: ""));
     }
   }
 
@@ -125,6 +126,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       emit(DeletingMsgFailed());
     }else {
       emit(DeletedMsg());
+      this.add(Connect(sessionId: ""));
     }
   }
 
@@ -145,6 +147,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       emit(ExitingSessionFailed());
     }else {
       emit(ExitedSession());
+      this.add(Connect(sessionId: ""));
     }
   }
 
@@ -165,6 +168,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       emit(KillingSessionFailed());
     }else {
       emit(KilledSession());
+      this.add(Connect(sessionId: ""));
     }
   }
 
@@ -208,6 +212,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       emit(InvitingToNewSessionFailed());
     }else {
       emit(InvitedToNewSession());
+      this.add(Connect(sessionId: ""));
     }
   }
 
