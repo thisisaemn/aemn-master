@@ -45,16 +45,20 @@ class _EmailInput extends StatelessWidget {
     return BlocBuilder<SignUpCubit, SignUpCubitState>(
       buildWhen: (previous, current) => previous.email != current.email,
       builder: (context, state) {
-        return TextField(
+        return Container(
+            padding: EdgeInsets.fromLTRB(25,2,25,2),
+            child:TextField(
           key: const Key('signUpForm_emailInput_textField'),
           onChanged: (email) => context.read<SignUpCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+            border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
             labelText: 'email',
             helperText: '',
             errorText: state.email.invalid ? 'invalid email' : null,
           ),
-        );
+        ));
       },
     );
   }
@@ -66,17 +70,22 @@ class _PasswordInput extends StatelessWidget {
     return BlocBuilder<SignUpCubit, SignUpCubitState>(
       buildWhen: (previous, current) => previous.password != current.password,
       builder: (context, state) {
-        return TextField(
+        return Container(
+            padding: EdgeInsets.fromLTRB(25,2,25,2),
+        child:
+          TextField(
           key: const Key('signUpForm_passwordInput_textField'),
           onChanged: (password) =>
               context.read<SignUpCubit>().passwordChanged(password),
           obscureText: true,
           decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+            border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
             labelText: 'password',
             helperText: '',
             errorText: state.password.invalid ? 'invalid password' : null,
           ),
-        );
+        ));
       },
     );
   }
@@ -90,20 +99,24 @@ class _ConfirmPasswordInput extends StatelessWidget {
       previous.password != current.password ||
           previous.confirmedPassword != current.confirmedPassword,
       builder: (context, state) {
-        return TextField(
+        return Container(
+            padding: EdgeInsets.fromLTRB(25,2,25,2),
+            child:TextField(
           key: const Key('signUpForm_confirmedPasswordInput_textField'),
           onChanged: (confirmPassword) => context
               .read<SignUpCubit>()
               .confirmedPasswordChanged(confirmPassword),
           obscureText: true,
           decoration: InputDecoration(
+            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+            border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
             labelText: 'confirm password',
             helperText: '',
             errorText: state.confirmedPassword.invalid
                 ? 'passwords do not match'
                 : null,
           ),
-        );
+        ));
       },
     );
   }
@@ -121,7 +134,7 @@ class _SignUpButton extends StatelessWidget {
           key: const Key('signUpForm_continue_raisedButton'),
           style: ElevatedButton.styleFrom(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+              borderRadius: BorderRadius.circular(15),
             ),
             primary: Colors.orangeAccent,
           ),

@@ -205,12 +205,16 @@ class _SwipeMainViewScreenState extends State<SwipeMainViewScreen> {
           BlocProvider.of<SwipeBloc>(context).add(
               LoadSwipes(bias: []));
           return Future.delayed(Duration(milliseconds: 1000));
-        }, child: ListView(
+        }, child: Center(
+            child: Image.asset('lib/src/assets/images/swipe-in-progress.png',
+            height: 220,)
+        )
+          /*child: ListView(
           children: [Container(
               width: double.maxFinite,
               height: double.maxFinite,
               child: Text("no swipes loaded", textAlign: TextAlign.center, style: TextStyle(color: Colors.black45),))],
-        )
+        )*/
         );
       }else{
         return SwipeList();

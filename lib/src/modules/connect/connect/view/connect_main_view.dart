@@ -343,11 +343,11 @@ class _HomeLandingViewState extends State<HomeLandingView> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Expanded(
-              child: enterSessionTriggersBtn(
+              child: enterSessionCommonsBtn(
                   sessions: sessions, sessionId: sessionId)),
           Expanded(
-              child: enterSessionCommonsBtn(
-                  sessions: sessions, sessionId: sessionId))
+              child: enterSessionTriggersBtn(
+                  sessions: sessions, sessionId: sessionId)),
         ],
       ),
       shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black38, width: 0.9), borderRadius: BorderRadius.circular(13)),

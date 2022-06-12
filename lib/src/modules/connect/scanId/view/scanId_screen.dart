@@ -133,6 +133,8 @@ class _QRViewExampleState extends State<QRViewExample> {
     );
   }
 
+  String scannedUserId = "";
+
   void _onQRViewCreated(QRViewController controller) {
     setState(() {
       this.controller = controller;
@@ -142,7 +144,8 @@ class _QRViewExampleState extends State<QRViewExample> {
         List<String> c = scanData.code!.split(',');
         String username = c[0];
         String userId = c[1];
-        if (userId != "") {
+        if (userId != "" && scannedUserId != userId) {
+          scannedUserId = userId;
           BlocProvider.of<ConnectBloc>(context).add(
               InviteToNewSession(inviteeUsername: username, inviteeId: userId));
         }

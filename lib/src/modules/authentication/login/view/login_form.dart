@@ -132,10 +132,9 @@ class LoginForm extends StatelessWidget {
               Padding(padding: EdgeInsets.all(90)),
               Image.asset(
                 'lib/src/assets/images/aemn-logo-bare.png',
-                height: 120,
+                height: 220,
               ),
               //const SizedBox(height: 16),
-              Padding(padding: EdgeInsets.all(25)),
               _EmailInput(),
               //const SizedBox(height: 8),
               Padding(padding: EdgeInsets.all(5)),
@@ -166,11 +165,14 @@ class _EmailInput extends StatelessWidget {
             width: 300,
             child: TextField(
               //scrollPadding: EdgeInsets.all(0.1),
+
+              showCursor: true,
               key: const Key('loginForm_emailInput_textField'),
               onChanged: (email) => context.read<LoginCubit>().emailChanged(email),
               keyboardType: TextInputType.emailAddress,
               style: TextStyle(height: 0),
               decoration: InputDecoration(
+                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                 border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                 label: Row(children: [Icon(Icons.alternate_email, size: 14.0,), Text(" email")]),
                 //labelText: 'email',
@@ -198,6 +200,7 @@ class _PasswordInput extends StatelessWidget {
               obscureText: true,
               style: TextStyle(height: 0),
               decoration: InputDecoration(
+                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                 border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
                 //labelText: 'password',
                 label: Row(children: [Icon(Icons.lock_outlined , size: 14.0,), Text(" password")]),
@@ -269,7 +272,7 @@ class _SignUpButton extends StatelessWidget {
       onPressed: () => Navigator.of(context).push<void>(SignUpPage.route()),
       child: Text(
         'CREATE ACCOUNT',
-        style: TextStyle(color: Color(0xFFFFD600)/*theme.primaryColor*/),
+        style: TextStyle(color: Color(0xFFFFD600,)/*theme.primaryColor*/ ),
       ),
     );
   }

@@ -120,15 +120,25 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
     }
   }
 
+  int tabIndex = 1;
+
   int giveIndexByDestination(NavigationDestinations destination) {
     if (destination == NavigationDestinations.swipe) {
+      tabIndex=0;
       return 0;
     } else if (destination == NavigationDestinations.home) {
+      tabIndex=1;
       return 1;
     } else if (destination == NavigationDestinations.profile) {
+      tabIndex=2;
       return 2;
     } else {
-      return 1;
+      if (tabIndex >= 0 && tabIndex <= 3){
+        return tabIndex;
+      }else{
+        tabIndex = 1;
+        return 1;
+      }
     }
   }
 
@@ -173,7 +183,7 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
               case (NavigationDestinations.swipe):
                 return SwipeView();
               case (NavigationDestinations.settings):
-                return SettingsScreen(text: 'test');
+                return SettingsScreen(text: 'settings');
               case (NavigationDestinations.searchInterests):
                 return SearchInterestsScreen();
               case (NavigationDestinations.searchMembers):
