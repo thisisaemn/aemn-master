@@ -26,6 +26,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     on<KillSession>(_onKillSession);
     on<ChangeSessionName>(_onChangeSessionName);
     on<InviteToNewSession>(_onInviteToNewSession);
+    on<InviteToExistingSession>(_onInviteToExistingSession);
     on<EnterSession>(_onEnterSession);
     on<JoinSession>(_onJoinSession);
     on<GetSession>(_onGetSession);
@@ -207,6 +208,49 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     //Should CoppleRepo then send creation request for these?
 
     bool success= await _tryInviteToNewSession(senderId: senderId, senderUsername: senderUsername, inviteeId: inviteeId, inviteeUsername: inviteeUsername, );
+
+    if(!success){
+      emit(InvitingToNewSessionFailed());
+    }else {
+      emit(InvitedToNewSession());
+      this.add(Connect(sessionId: ""));
+    }
+  }
+
+  Future<void> _onInviteToExistingSession (InviteToExistingSession event, Emitter<ConnectState> emit) async {
+    emit(SendingMsg());
+
+    //bool success = await _trySendMsg(event.msg);
+
+    var inviteeId = event.inviteeId;
+    var inviteeUsername =  event.inviteeUsername;
+    print(inviteeUsername);
+    //THIS IS REALLY FUll. NOT SURE IF BLOC SHOULD HANDLE THIS.
+    var senderUsername = userRepository.currentProfile.username;
+    var senderId = userRepository.currentProfile.id;
+    var sessionId = event.sessionId;
+    var sessionName = event.sessionName;
+    //Should CoppleRepo then send creation request for these?
+
+    print("inviting to existing session");
+
+    
+    var msg = Message(
+        id: "",
+        subject: "Invitation - $sessionName", content: "$senderUsername invites you to join $sessionName",
+        meta: MetaInformation(
+            sessionId: sessionId,
+            receiverUsername: inviteeUsername,
+            sessionName: sessionName,
+            receiverId: inviteeId,
+            senderUsername: senderUsername,
+            senderId: senderId
+        )
+    );
+
+    print(msg);
+
+    bool success= await _trySendMsg(msg);
 
     if(!success){
       emit(InvitingToNewSessionFailed());
@@ -405,6 +449,7 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
 
   Future<bool> _tryInviteToNewSession({required String inviteeId, required String inviteeUsername, required String senderId, required String senderUsername}) async {
     try {
+      //print(senderUsername);
       final success = await connectRepository.inviteToNewSession(inviteeId: inviteeId, inviteeUsername:inviteeUsername, senderId:senderId,  senderUsername:senderUsername);
       return success;
     } on Exception {

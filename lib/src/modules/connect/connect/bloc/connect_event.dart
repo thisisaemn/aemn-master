@@ -50,6 +50,18 @@ class InviteToNewSession extends ConnectEvent{
 
 }
 
+class InviteToExistingSession extends ConnectEvent{
+  final String inviteeId;
+  final String inviteeUsername;
+  final String sessionName;
+  final String sessionId;
+
+  InviteToExistingSession({required this.inviteeId, required this.inviteeUsername, required this.sessionName, required this.sessionId});
+
+  List<Object> get props => [inviteeId, inviteeUsername, sessionName, sessionId];
+
+}
+
 class ExitSession extends ConnectEvent{
   final String sessionId;
 

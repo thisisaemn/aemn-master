@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:ffi';
+//import 'dart:ffi';
 
 import 'package:bloc/bloc.dart';
 import 'package:connect_repository/connect_repository.dart';
@@ -22,7 +22,7 @@ part 'navigation_state.dart';
 class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
   NavigationBloc({required this.userRepository,})
       : assert(userRepository != null),
-        super(/*HomeDestinationLoaded()*/DestinationLoaded(currentDestination: NavigationDestinations.home)){
+        super(/*HomeDestinationLoaded()*/DestinationLoaded(currentDestination: NavigationDestinations.connect)){
     //on<PageLoading>(_onPageLoading);
     on<AppStarted>(_onAppStarted);
     on<NavigationRequested>(_onNavigationRequested);
@@ -33,13 +33,13 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
   final UserRepository userRepository;
   //final SwipeRepository swipeRepository;
   //int currentIndex = 1;
-  NavigationDestinations currentDestination = NavigationDestinations.home;
+  NavigationDestinations currentDestination = NavigationDestinations.connect;
   List<NavigationDestinations> destinationsHistory = [];
 
   void _onAppStarted(NavigationEvent event, Emitter<NavigationState> emit){
     this.add(NavigationRequested(/*index: this.currentIndex, */destination: this.currentDestination));
    // emit(HomeDestinationLoaded());
-    emit(DestinationLoaded(currentDestination: NavigationDestinations.home));
+    emit(DestinationLoaded(currentDestination: NavigationDestinations.connect));
   }
 
   Future<void> _onNavigationRequested(NavigationRequested event, Emitter<NavigationState> emit) async {
@@ -51,6 +51,7 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
     if(this.currentDestination == NavigationDestinations.back){
       print(destinationsHistory);
       bool go = true;
+      //remove the last back commands
       for(int i=destinationsHistory.length-1; i>=0; i--){
         if(go && destinationsHistory[i] == NavigationDestinations.back){
           destinationsHistory.removeAt(i);
@@ -62,11 +63,11 @@ class NavigationBloc extends Bloc<NavigationEvent, NavigationState> {
       }
 
 
-      if(destinationsHistory.length > 0){
+      if(destinationsHistory.length > 1){
         destinationsHistory.removeLast();
         currentDestination = destinationsHistory[destinationsHistory.length-1];
       }else{
-        currentDestination = NavigationDestinations.home;
+        currentDestination = NavigationDestinations.connect;
       }
 
       print(currentDestination);

@@ -50,6 +50,14 @@ class _SessionMainView extends State<SessionMainView> {
             leading: BuilderBackButton(),
             actions: <Widget>[
               IconButton(
+                  icon: Icon(Icons.person_add_alt_1 , size: 18,),
+                  tooltip: 'Invite other members',
+                  onPressed: () {
+                    BlocProvider.of<NavigationBloc>(context).add(
+                      NavigationRequested(destination: NavigationDestinations.searchMembersForAnExistingSession, session: _session),
+                    );
+                  }),
+              IconButton(
                   icon: Icon(Icons.exit_to_app , size: 18,),
                   tooltip: 'Exit',
                   onPressed: () {

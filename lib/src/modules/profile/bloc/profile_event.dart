@@ -158,6 +158,15 @@ class DeleteFact extends ProfileEvent{
 
 //
 
+class ChangeUsername extends ProfileEvent{
+  final String newUsername;
+
+  ChangeUsername({required this.newUsername});
+
+  @override
+  List<Object> get props => [newUsername];
+}
+
 class ChangePassword extends ProfileEvent{
   final String oldPassword;
   final String newPassword;

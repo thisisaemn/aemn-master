@@ -1,18 +1,23 @@
+import 'package:connect_repository/connect_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:interest_repository/interest_repository.dart';
 import 'package:user_repository/user_repository.dart';
+import 'package:aemn/src/utils/utils.dart';
 
-class InterestsFactsListView extends StatelessWidget {
+import '../../connect.dart';
+
+class EditCommonsInterestsFactsListView extends StatelessWidget {
   // 1
-  final String username;
+  final Session session;
   final List<Interest> interests;
   final List<KeyValue> facts;
 
-  const InterestsFactsListView(
+  const EditCommonsInterestsFactsListView(
       {Key? key,
-      required this.interests,
-      required this.facts,
-      required this.username})
+        required this.interests,
+        required this.facts,
+        required this.session})
       : super(key: key);
 
   @override
@@ -31,16 +36,17 @@ class InterestsFactsListView extends StatelessWidget {
 
   Widget interestFactList() {
     return ListView.builder(
-      itemCount: interests.length + facts.length + 1,
+      itemCount: interests.length + facts.length +1,
       shrinkWrap: true,
       itemBuilder: (BuildContext context, int index) {
         if(index==0){
           return //Username
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                UsernameSection(username)
-            ]);
+                  //Username
+                  EditSessionNameSection(sessionName: session.name, context: context, sessionId: session.id, ),
+                ]);
         } else if (index <= facts.length) {
           //Facts Section
           if (index == 1) {
@@ -52,19 +58,19 @@ class InterestsFactsListView extends StatelessWidget {
                 const SizedBox(height: 16),
 
                 Container(
-                  padding: EdgeInsets.all(13),
+                    padding: EdgeInsets.all(13),
                     child:Text(
-                  'facts',
-                  textAlign: TextAlign.start,
-                  style: TextStyle(
-                      backgroundColor: Colors.amberAccent.withOpacity(0.4),
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      shadows: [Shadow(blurRadius: 1.5)],
-                      /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:
-                          6.0,
-                      wordSpacing: 5),
-                )),
+                      'facts',
+                      textAlign: TextAlign.start,
+                      style: TextStyle(
+                          backgroundColor: Colors.amberAccent.withOpacity(0.4),
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          shadows: [Shadow(blurRadius: 1.5)],
+                          /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:
+                      6.0,
+                          wordSpacing: 5),
+                    )),
 
                 factTag(context, facts[index-1])
               ],
@@ -75,8 +81,8 @@ class InterestsFactsListView extends StatelessWidget {
           return Container();
         } else {
           //Interests section
-          int iindex = index - facts.length - 1;
-          if (index == facts.length+1 && interests.length > 0) {
+          int iindex = index - facts.length -1;
+          if (index == facts.length +1  && interests.length > 0) {
             //Section Header
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +91,7 @@ class InterestsFactsListView extends StatelessWidget {
                 //Divider(height: 2,),
                 //const SizedBox(height: 16),
                 Container(
-                    //decoration: BoxDecoration(border: Border.all(color: Colors.black38, width: 0.9), borderRadius: BorderRadius.circular(13)),
+                  //decoration: BoxDecoration(border: Border.all(color: Colors.black38, width: 0.9), borderRadius: BorderRadius.circular(13)),
                     padding: EdgeInsets.all(13),
                     child: Text(
                       'interests',
@@ -106,15 +112,15 @@ class InterestsFactsListView extends StatelessWidget {
 
                 Container(
                     child: interestItem(
-                  interest: interests[iindex],
-                ))
+                      interest: interests[iindex],
+                    ))
               ],
             );
           } else {
             return Container(
                 child: interestItem(
-              interest: interests[iindex],
-            ));
+                  interest: interests[iindex],
+                ));
           }
         }
       },
@@ -162,15 +168,15 @@ class InterestsFactsListView extends StatelessWidget {
     for (var i = 0; i < item.length; i++) {
       list.add(Container(
           child: FittedBox(
-        fit: BoxFit.fitWidth,
-        child: Text(
-          item[i].name,
-          style: TextStyle(
-            color: Colors.grey[500],
-            fontSize: 10,
-          ),
-        ),
-      )));
+            fit: BoxFit.fitWidth,
+            child: Text(
+              item[i].name,
+              style: TextStyle(
+                color: Colors.grey[500],
+                fontSize: 10,
+              ),
+            ),
+          )));
     }
     return Wrap(
         spacing: 5.0, // gap between adjacent chips
@@ -220,29 +226,65 @@ class InterestsFactsListView extends StatelessWidget {
     );
   }
 
-  Widget UsernameSection(String username) {
-    return Column(
-      children: [
-        SizedBox(height: 20),
-        Container(
-          padding: EdgeInsets.all(10),
-          child: Text(
-            username,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-                //decorationColor: Colors.black,
-                //decorationStyle: TextDecorationStyle.double,
-                fontSize: 20,
-                //backgroundColor: Colors.black,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-                //shadows: [Shadow(blurRadius: 6.0)],
-                /*backgroundColor: Colors.black54,*/
-                letterSpacing: 3.0,
-                wordSpacing: 5),
-          ),
-        ),
-      ],
+  Widget EditSessionNameSection({required String sessionId, required String sessionName, required BuildContext context}) {
+    return ElevatedButton(
+        style: ButtonStyle(elevation: MaterialStateProperty.all(0)),
+        onPressed: () {
+          _changeSessionNameDialog(initialValue: sessionName, context: context, sessionId: sessionId);
+          /*BlocProvider.of<ConnectBloc>(context).add(
+              ChangeSessionName(sessionId: session.id, sessionName: session.name));*/
+        },
+        child: Row(children: [
+          Expanded(
+              child: Container(
+                  padding: EdgeInsets.all(15),
+                  child: Column(
+                    children: [
+                      Text(
+                        sessionName,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            letterSpacing: 3.0,
+                            wordSpacing: 5),
+                      ),
+                      Text(
+                        "press to change username",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            letterSpacing: 3.0,
+                            wordSpacing: 0),
+                      ),
+                    ],
+                  )
+              ))
+        ]));
+  }
+
+  //Change Session Name
+
+  void _changeSessionNameDialog(
+      {required String sessionId,
+        required String initialValue,
+        required BuildContext context}) async {
+    final selectedValue = await showDialog<String>(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => TextFieldDialog(
+        value: initialValue,
+        msg: 'Enter new session name',
+      ),
     );
+
+    if (selectedValue != null) {
+      BlocProvider.of<ConnectBloc>(context).add(
+        ChangeSessionName(sessionId: sessionId, sessionName: selectedValue),
+      );
+    }
   }
 }

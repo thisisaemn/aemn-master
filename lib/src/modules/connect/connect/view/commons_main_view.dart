@@ -10,7 +10,8 @@ import 'package:user_repository/user_repository.dart';
 
 //SRC: https://www.raywenderlich.com/books/flutter-apprentice/v2.0/chapters/5-scrollable-widgets#toc-chapter-011-anchor-003
 
-class CommonsMainView extends StatelessWidget {
+
+class CommonsMainView extends StatefulWidget {
   final Session session;
 
   const CommonsMainView({
@@ -19,12 +20,26 @@ class CommonsMainView extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<CommonsMainView> createState() => _CommonsMainViewState();
+
+}
+
+  class _CommonsMainViewState extends State<CommonsMainView> {
+  late final Session _session;
+  bool _editing = false;
+
+  @override
+  void initState() {
+    _session = widget.session;
+  }
+
+  @override
   Widget build(BuildContext context) {
     // 3
     return profileList(context);
   }
 
-  Widget listOfMembers(List<Member> members) {
+  /*Widget listOfMembers(List<Member> members) {
     List<Widget> list = []; //= List<Widget>();
     for (var i = 0; i < members.length; i++) {
       String content = members[i].username.toLowerCase();
@@ -68,10 +83,10 @@ class CommonsMainView extends StatelessWidget {
         spacing: 5.0, // gap between adjacent chips
         runSpacing: 2.0, // gap between lines
         children: list);
-  }
+  }*/
 
-  Widget usernameSection() {
-    if (session.members != null && session.members.length > 0) {
+  /*Widget usernameSection() {
+    if (_session.members != null && _session.members.length > 0) {
       /*return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -79,7 +94,7 @@ class CommonsMainView extends StatelessWidget {
           listOfMembers(_session.members),
         ],
       );*/
-      List<Member> members = session.members;
+      List<Member> members = _session.members;
 
       return Container(
           padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -120,7 +135,46 @@ class CommonsMainView extends StatelessWidget {
       return Container(
         child: Text(''),
       );
+  }*/
+
+  Widget commonsListView(){
+    if(_editing){
+      return EditCommonsInterestsFactsListView(interests: _session.commons.interests,
+          facts: _session.commons.facts, session: _session);
+    }else{
+      return InterestsFactsListView(
+        interests: _session.commons.interests,
+        facts: _session.commons.facts,
+        username: _session.name,
+      );
+    }
   }
+
+  Widget editBtn(){
+    return ElevatedButton(
+      onPressed: () => setState((){
+        _editing = !_editing;
+        if(_editing){
+          editBtnTxt = "done";
+        }else{
+          editBtnTxt = "edit";
+        }
+      }),
+      child: Text(
+        editBtnTxt,
+        textAlign: TextAlign.left,
+        style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: Colors.black.withOpacity(0.4),
+            letterSpacing: 3.0,
+            wordSpacing: 0),
+      ),
+      style: ButtonStyle(elevation: MaterialStateProperty.all(0.3)),
+    );
+  }
+
+  String editBtnTxt = "edit";
 
   Widget profileList(BuildContext context) {
     return RefreshIndicator(
@@ -129,11 +183,15 @@ class CommonsMainView extends StatelessWidget {
         BlocProvider.of<ConnectBloc>(context).add(Load());
         return Future.delayed(Duration(milliseconds: 5000));
       },
-      child: InterestsFactsListView(
-        interests: session.commons.interests,
-        facts: session.commons.facts,
-        username: session.name,
-      ),
+      child: (Stack(
+        //crossAxisAlignment: CrossAxisAlignment.end,
+        alignment: Alignment.topRight,
+        children: [
+
+        commonsListView(),
+          editBtn()
+
+      ],))
       /*child: ListView(
       scrollDirection: Axis.vertical,
       children: [
@@ -205,4 +263,6 @@ class CommonsMainView extends StatelessWidget {
       );
     }
   }
+
+
 }

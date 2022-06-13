@@ -13,6 +13,8 @@ export 'commons_view.dart';
 
 export 'commons_main_view.dart';
 
+export 'commons_edit.dart';
+
 export 'triggers_view.dart';
 
 export 'triggers_main_view.dart';

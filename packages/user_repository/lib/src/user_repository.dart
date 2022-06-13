@@ -157,6 +157,69 @@ class UserRepository {
 
   }
 
+  ///EDITS
+  ///
+  ///
+  Future<bool> deleteUser({
+    required String interestId,
+    required int interestIntensity
+  }) async {
+    var token = await _cache.storage.read(key: 'jwt');
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+    var body = {
+      "interestId": interestId,
+      "interestIntensity": interestIntensity
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/deleteUser'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      print(resBody["msg"]);
+      return true; //return true if successful
+    }
+
+    return false;
+  }
+
+  Future<bool> changeUsername({
+    required String newUsername
+  }) async {
+    var token = await _cache.storage.read(key: 'jwt');
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+    var body = {
+      "newUsername": newUsername,
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/changeUsername'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      //print(resBody["msg"]);
+      return true; //return true if successful
+    }
+
+    return false;
+  }
+
+
+
   /**
    * If Interests does not exists add to profile with default intensity,
    * otherwise change interest intensity by delta

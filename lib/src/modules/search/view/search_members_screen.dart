@@ -194,7 +194,7 @@ class _SearchMembersScreenState extends State<SearchMembersScreen> {
                               .of<SearchBloc>(context)
                               .resultsMembers[index].username),
                           trailing: IconButton(
-                            icon: Icon(Icons.animation), onPressed: () {
+                            icon: Icon(Icons.local_post_office_outlined), onPressed: () {
                             //print("the id of the interest is \n");
                             //print(BlocProvider.of<SearchBloc>(context).resultsInterests[index].id);
 

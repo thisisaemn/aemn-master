@@ -189,6 +189,7 @@ class ConnectRepository {
 
     };
 
+    print(senderUsername);
     var res = await http.post(
       Uri.parse('$SERVER_IP/inviteToNewSession'),
       headers: header,

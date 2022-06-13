@@ -36,6 +36,30 @@ class ProfileLoadingFailed extends ProfileState{
   String toString() => 'ProfileLoaded';
 }
 
+class EditProfileLoaded extends ProfileState{
+  //final String username;
+
+  //ProfileLoaded({@required this.username});
+
+  @override
+  String toString() => 'ProfileLoaded';
+}
+
+class EditProfileLoading extends ProfileState{
+  @override
+  String toString() => 'ProfileLoading';
+}
+
+class EditProfileLoadingFailed extends ProfileState{
+  //final String username;
+
+  //ProfileLoaded({@required this.username});
+
+  @override
+  String toString() => 'ProfileLoaded';
+}
+
+
 class Loading extends ProfileState {
 
 }
@@ -93,3 +117,13 @@ class DeletedUser extends ProfileState {
 class DeletingUserFailed extends ProfileState {
 
 }
+
+class EditingUser extends ProfileState {
+
+}
+
+class EditedUser extends ProfileState {
+
+}
+
+class EditingUserFailed extends ProfileState{}

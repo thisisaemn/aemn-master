@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:aemn/src/modules/search/search.dart';
+import 'package:aemn/src/utils/utils.dart';
 import 'package:aemn/src/modules/profile/view/profile_edit_dialogs.dart';
 import 'package:aemn/src/core/navigation/navigation/navigation.dart';
 
@@ -15,8 +16,7 @@ import 'package:aemn/src/utils/helpers/helpers.dart';
 
 import 'package:uuid/uuid.dart';
 
-
-class ProfileEditScreen extends StatelessWidget{
+class ProfileEditScreen extends StatelessWidget {
   static Route route() {
     return MaterialPageRoute<void>(builder: (_) => ProfileEditScreen());
   }
@@ -29,7 +29,10 @@ class ProfileEditScreen extends StatelessWidget{
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
-              icon: const Icon(Icons.arrow_back_ios, size: 18,),
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                size: 18,
+              ),
               onPressed: () => BlocProvider.of<NavigationBloc>(context).add(
                 NavigationRequested(destination: NavigationDestinations.back),
               ),
@@ -37,20 +40,40 @@ class ProfileEditScreen extends StatelessWidget{
             );
           },
         ),
+        centerTitle: true,
+        title: combinedSectionTitle(),
       ),
       body: Builder(
         builder: (context) {
           final facts = context.select(
-                (ProfileBloc bloc) => bloc.profile.facts,
+            (ProfileBloc bloc) => bloc.profile.facts,
           );
           final interests = context.select(
-                (ProfileBloc bloc) => bloc.profile.interests,
+            (ProfileBloc bloc) => bloc.profile.interests,
+          );
+          final username = context.select(
+            (ProfileBloc bloc) => bloc.profile.username,
           );
           //return Text(facts[0].value);
-          return ProfileEditViewScreen(facts: facts, interests: interests,);
+          return ProfileEditViewScreen(
+            username: username,
+            facts: facts,
+            interests: interests,
+          );
         },
       ),
     );
+  }
+
+  Widget combinedSectionTitle() {
+    return Container(
+        padding: EdgeInsets.fromLTRB(0, 0, 0, 10), child: Text("edit profile"));
+    /*child: Text('edit profile',
+            style: TextStyle(
+              fontFamily: 'Open Sans',
+              fontSize: 23.0,
+              fontWeight: FontWeight.w300,
+            )));*/
   }
 }
 
@@ -58,8 +81,10 @@ class ProfileEditScreen extends StatelessWidget{
 class ProfileEditViewScreen extends StatefulWidget {
   List<KeyValue>? facts; //= factsData;
   List<Interest>? interests; //= interestData;
+  String? username;
 
-  ProfileEditViewScreen({Key? key, this.facts, this.interests}) : super();
+  ProfileEditViewScreen({Key? key, this.username, this.facts, this.interests})
+      : super();
 
   @override
   State<StatefulWidget> createState() => _ProfileEditViewScreenState();
@@ -68,6 +93,7 @@ class ProfileEditViewScreen extends StatefulWidget {
 class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
   late List<KeyValue> _facts; //= factsData;
   late List<Interest> _interests; //= interestData;
+  late String _username;
 
   @override
   void initState() {
@@ -84,32 +110,42 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
     } else {
       _facts = widget.facts!;
     }
-  }
 
+    if (widget.username == null) {
+      _username = "";
+    } else {
+      _username = widget.username!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-
     Widget navigationItemFact(KeyValue kv) {
       List<String> options = [];
 
       return (ListTile(
         leading: Text(kv.key),
-        trailing: SizedBox(
-          height: 100, width: 200, child: Text(kv.value)),
+        trailing: Text(
+          kv.value,
+          style: TextStyle(fontWeight: FontWeight.w500),
+        ),
         onTap: () {
           //Apart from age everthing has an option
           if (kv.key == 'dateYear') {
             _showSliderDialogFacts(
-                kv, ConvertInput.stringToInt_tryParse(kv.value, 0),
-                1950, 2022, 'which year were you born in?');
+                kv,
+                ConvertInput.stringToInt_tryParse(kv.value, 0),
+                1950,
+                2022,
+                'which year were you born in?');
             //_editFactDateDialog();
           } else {
             //Determine the options
             for (int i = 0; i < OptionsFact.getOptionsFact.length; i++) {
               //GET THE POSSIBLE VALUES FOR A KEY
               if (OptionsFact.getOptionsFact[i]['key'] == kv.key) {
-                options = OptionsFact.getOptionsFact[i]['value'] as List<String>;
+                options =
+                    OptionsFact.getOptionsFact[i]['value'] as List<String>;
               }
             }
             //...
@@ -139,15 +175,15 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
         for (var i = 0; i < item.length; i++) {
           list.add(Container(
               child: FittedBox(
-                fit: BoxFit.fitWidth,
-                child: Text(
-                  item[i].name,
-                  style: TextStyle(
-                    color: Colors.grey[500],
-                    fontSize: 10,
-                  ),
-                ),
-              )));
+            fit: BoxFit.fitWidth,
+            child: Text(
+              item[i].name,
+              style: TextStyle(
+                color: Colors.grey[500],
+                fontSize: 10,
+              ),
+            ),
+          )));
         }
         return Wrap(
             spacing: 5.0, // gap between adjacent chips
@@ -157,11 +193,14 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
 
       //Constraint needed
       Widget? giveTags() {
-        if (interest.interestModel.tags != null && interest.interestModel.tags.length > 0) {
+        if (interest.interestModel.tags != null &&
+            interest.interestModel.tags.length > 0) {
           return Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              Expanded(child: ClipRect(child: listOfWidgets(interest.interestModel.tags))),
+              Expanded(
+                  child: ClipRect(
+                      child: listOfWidgets(interest.interestModel.tags))),
             ],
           );
         } else
@@ -174,14 +213,14 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
             Text(
               interest.interestModel.name,
               style: TextStyle(
-                //fontWeight: FontWeight.bold,
-              ),
+                  //fontWeight: FontWeight.bold,
+                  ),
             ),
             Expanded(
                 child: Container(
-                  width: 0,
-                  height: 0.0,
-                )),
+              width: 0,
+              height: 0.0,
+            )),
             Row(
               children: [
                 Container(
@@ -214,81 +253,103 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
     Widget factSectionTitle(String name) {
       return Container(
           padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-          child: Row(children: [
-            Text('about you',
-                style: TextStyle(
-                  fontFamily: 'Open Sans',
-                  fontSize: 17.0,
-                  fontWeight: FontWeight.w600,
-                )),
-            Expanded(
-                child: Container(
+          child: ElevatedButton(
+              child: Row(children: [
+                Text('edit facts',
+                    style: TextStyle(
+                      backgroundColor: Colors.black12.withOpacity(0.1),
+                      //fontFamily: 'Open Sans',
+                      fontSize: 17.0,
+                      fontWeight: FontWeight.w600,
+                    )),
+                Expanded(
+                    child: Container(
                   width: 0,
                   height: 0.0,
                 )),
-            IconButton(
-              icon: Icon(
-                Icons.add,
-                color: Colors.grey,
-              ),
+                Icon(
+                  Icons.add,
+                  color: Colors.grey,
+                ),
+              ]),
+              style: ButtonStyle(elevation: MaterialStateProperty.all(0)),
               onPressed: () {
-                //_addFactDialog();
                 _showAddCustomPickerDialog(OptionsFact.getOptionsFact);
-              },
-              padding: EdgeInsets.all(0),
-              constraints: BoxConstraints.tight(Size(20, 20)),
-            )
-          ]));
+              }));
     }
 
     Widget interestSectionTitle() {
       return Container(
           padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-          child: Row(children: [
-            Text('your interests',
-                style: TextStyle(
-                  fontFamily: 'Open Sans',
-                  fontSize: 17.0,
-                  fontWeight: FontWeight.w600,
-                )),
-            Expanded(
-                child: Container(
-                  width: 0,
-                  height: 0.0,
-                )),
-            IconButton(
-              icon: Icon(
+          child: ElevatedButton(
+            child: Row(children: [
+              Text('edit interests',
+                  style: TextStyle(
+                    backgroundColor: Colors.black12.withOpacity(0.1),
+                    //fontFamily: 'Open Sans',
+                    fontSize: 17.0,
+                    fontWeight: FontWeight.w600,
+                  )),
+              Expanded(
+                  child: Container(
+                width: 0,
+                height: 0.0,
+              )),
+              Icon(
                 Icons.add,
                 color: Colors.grey,
               ),
-              onPressed: /*() {
-                Navigator.push(context, MaterialPageRoute<void>(
-                  builder: (BuildContext context) {
-                    return SwipeSearchScreen();
-                  },
-                ));
-              }*/ () => BlocProvider.of<NavigationBloc>(context).add(
-                NavigationRequested(destination: NavigationDestinations.searchInterests),
-              ),
-              padding: EdgeInsets.all(0),
-              constraints: BoxConstraints.tight(Size(20, 20)),
-            )
+            ]),
+            style: ButtonStyle(elevation: MaterialStateProperty.all(0)),
+            onPressed: () => BlocProvider.of<NavigationBloc>(context).add(
+                NavigationRequested(
+                    destination: NavigationDestinations.searchInterests)),
+          ));
+    }
+
+    Widget EditUsernameSection(String username) {
+      return ElevatedButton(
+        style: ButtonStyle(elevation: MaterialStateProperty.all(0)),
+          onPressed: () {
+            _changeUsernameDialog(initialValue: username, context: context);
+            /*BlocProvider.of<ConnectBloc>(context).add(
+              ChangeSessionName(sessionId: session.id, sessionName: session.name));*/
+          },
+          child: Row(children: [
+            Expanded(
+                child: Container(
+              padding: EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  Text(
+                    username,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        letterSpacing: 3.0,
+                        wordSpacing: 5),
+                  ),
+                  Text(
+                    "press to change username",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        letterSpacing: 3.0,
+                        wordSpacing: 0),
+                  ),
+                ],
+              )
+            ))
           ]));
     }
 
-    Widget combinedSectionTitle() {
-      return Container(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-          child: Text('edit profile',
-              style: TextStyle(
-                fontFamily: 'Open Sans',
-                fontSize: 23.0,
-                fontWeight: FontWeight.w300,
-              )));
-    }
-
     Widget combinedList() {
-      return Expanded( //Check if no interests n stuff
+      return Expanded(
+          //Check if no interests n stuff
           child: ListView.builder(
               itemCount: 2 + _interests.length + _facts.length,
               scrollDirection: Axis.vertical,
@@ -297,80 +358,109 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Divider(),
+                      EditUsernameSection(_username),
+                      //Divider(),
                       factSectionTitle('you'),
-                      Divider(),
+                      //Divider(),
                     ],
                   );
-                }
-                else if (index <= _facts.length) {
+                } else if (index <= _facts.length) {
                   int i = index - 1;
-                    return Dismissible(
-                      //https://flutter.dev/docs/cookbook/gestures/dismissible
-                        key: Key('$i'),
-                        child: navigationItemFact(_facts[i]),
-                        background: Container(color: Colors.red),
-                        confirmDismiss: (DismissDirection direction) async {
-                          return _deleteFactDialog(index: index, name: _facts[i].key, kv: _facts[i], pContext: context); //...
-                        },
-                        onDismissed: (direction) {
-                          /*BlocProvider.of<ProfileBloc>(context).add(
-                              ProfileDeleteFact(fact: _facts[i]));*/
-                        }
-                    );
-                } else if(index == _facts.length + 1){ // nicht clean...
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Divider(),
-                        interestSectionTitle(),
-                        Divider(),
-                      ],
-                    );
-                  } else {
-                  int i = index - _facts.length - 2;
-                    return Dismissible(
+                  return Dismissible(
                       //https://flutter.dev/docs/cookbook/gestures/dismissible
                       key: Key('$i'),
-                      child: navigationItemInterest(_interests[i]),
+                      child: navigationItemFact(_facts[i]),
+                      background: Container(color: Colors.red),
                       confirmDismiss: (DismissDirection direction) async {
-                        return _deleteInterestDialog(index: i, name: _interests[i].interestModel.name, interest: _interests[i], pContext:context);
+                        return _deleteFactDialog(
+                            index: index,
+                            name: _facts[i].key,
+                            kv: _facts[i],
+                            pContext: context); //...
                       },
                       onDismissed: (direction) {
-                        // Remove the item from the data source., first dialog
-                       /* BlocProvider.of<ProfileBloc>(context).add(
+                        /*BlocProvider.of<ProfileBloc>(context).add(
+                              ProfileDeleteFact(fact: _facts[i]));*/
+                      });
+                } else if (index == _facts.length + 1) {
+                  // nicht clean...
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      //Divider(),
+                      interestSectionTitle(),
+                      //Divider(),
+                    ],
+                  );
+                } else {
+                  int i = index - _facts.length - 2;
+                  return Dismissible(
+                    //https://flutter.dev/docs/cookbook/gestures/dismissible
+                    key: Key('$i'),
+                    child: navigationItemInterest(_interests[i]),
+                    confirmDismiss: (DismissDirection direction) async {
+                      return _deleteInterestDialog(
+                          index: i,
+                          name: _interests[i].interestModel.name,
+                          interest: _interests[i],
+                          pContext: context);
+                    },
+                    onDismissed: (direction) {
+                      // Remove the item from the data source., first dialog
+                      /* BlocProvider.of<ProfileBloc>(context).add(
                             ProfileDeleteInterest(interest: _interests[i]));
                         // Then show a snackbar.
                         ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text("$i dismissed")));*/
-                      },
-                      // Show a red background as the item is swiped away.
-                      background: Container(
-                        color: Colors.red,
-                        //child: Text('remove'),
-                      ),
-                    );
-                  }
-              }
-              )
-      );
+                    },
+                    // Show a red background as the item is swiped away.
+                    background: Container(
+                      color: Colors.red,
+                      //child: Text('remove'),
+                    ),
+                  );
+                }
+              }));
     }
 
     return Scaffold(
         body: Column(
-          children: [
-            combinedSectionTitle(),
-            combinedList(),
-          ],
-        ));
+      children: [
+        combinedList(),
+      ],
+    ));
   }
 
   // DIALOGS TO EDIT
 
+  //Change Username
+
+  void _changeUsernameDialog(
+      {required String initialValue, required BuildContext context}) async {
+    final selectedValue = await showDialog<String>(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => TextFieldDialog(
+        value: initialValue,
+        msg: 'enter username',
+      ),
+    );
+
+    if (selectedValue != null) {
+      BlocProvider.of<ProfileBloc>(context).add(
+        ChangeUsername(newUsername: selectedValue),
+      );
+    }
+  }
+
   ///EDIT INTERESTS
 
   ///Delete Fact
-  Future<bool?> _deleteFactDialog({required int index, required String name, required KeyValue kv, required BuildContext pContext}) async {
+  Future<bool?> _deleteFactDialog(
+      {required int index,
+      required String name,
+      required KeyValue kv,
+      required BuildContext pContext}) async {
     return showDialog<bool>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -417,7 +507,11 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
   }
 
   ////DELETE AN INTEREST
-  Future<bool?> _deleteInterestDialog({required int index, required String name, required Interest interest, required BuildContext pContext}) async {
+  Future<bool?> _deleteInterestDialog(
+      {required int index,
+      required String name,
+      required Interest interest,
+      required BuildContext pContext}) async {
     return showDialog<bool>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -442,7 +536,9 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
                   _interests.removeAt(index);
                 });*/
                 BlocProvider.of<ProfileBloc>(pContext).add(
-                  DeleteInterest(interestId: interest.interestModel.id, ),
+                  DeleteInterest(
+                    interestId: interest.interestModel.id,
+                  ),
                 );
                 Navigator.of(context).pop(true);
               },
@@ -462,17 +558,17 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
     );
   }
 
-  int transformInterestIntensity({required int initialValue}){
-    if(initialValue > 1000){
+  int transformInterestIntensity({required int initialValue}) {
+    if (initialValue > 1000) {
       initialValue = 1000;
-    }else if(initialValue < -1){
+    } else if (initialValue < -1) {
       initialValue = -1;
     }
-    if(initialValue > 0 && initialValue <= 100){
+    if (initialValue > 0 && initialValue <= 100) {
       return 1;
-    }else if(initialValue > 100 && initialValue <= 200){
-      return (initialValue/100).round();
-    }else{
+    } else if (initialValue > 100 && initialValue <= 200) {
+      return (initialValue / 100).round();
+    } else {
       return initialValue;
     }
   }
@@ -480,17 +576,16 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
   //EDITS INTENSITY OF INTEREST
   void _showSliderDialogInterest(Interest interest, int _initialValue,
       double _min, double _max, String _msg) async {
-
     // this will contain the result from Navigator.pop(context, result)
 
-    int finalInitialValue = transformInterestIntensity(initialValue: _initialValue);
+    int finalInitialValue =
+        transformInterestIntensity(initialValue: _initialValue);
 
     final selectedValue = await showDialog<int>(
       context: context,
       barrierDismissible: true,
-      builder: (context) =>
-          SliderDialog(
-              initialValue: finalInitialValue, min: _min, max: _max, msg: _msg),
+      builder: (context) => SliderDialog(
+          initialValue: finalInitialValue, min: _min, max: _max, msg: _msg),
     );
 
     // execution of this code continues when the dialog was closed (popped)
@@ -503,12 +598,13 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
           ProfileUpsertInterest(interestId: editedInterest.interestModel.id));
       */
       int finalSelectedValue = selectedValue;
-      if(selectedValue > 0){
+      if (selectedValue > 0) {
         finalSelectedValue = selectedValue * 100;
       }
 
-      BlocProvider.of<ProfileBloc>(context).add(
-          ChangeInterestIntensity(interestId: interest.interestModel.id, intensity: finalSelectedValue));
+      BlocProvider.of<ProfileBloc>(context).add(ChangeInterestIntensity(
+          interestId: interest.interestModel.id,
+          intensity: finalSelectedValue));
 
       /*//UPDATE VALUE IF CHANGED
       for (int i = 0; i < _interests.length; i++) {
@@ -529,17 +625,16 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
   //https://stackoverflow.com/questions/54010876/how-to-implement-a-slider-within-an-alertdialog-in-flutter
 
   //Slider for Age
-  void _showSliderDialogFacts(KeyValue kv, int _initialValue,
-      double _min, double _max, String _msg) async {
+  void _showSliderDialogFacts(KeyValue kv, int _initialValue, double _min,
+      double _max, String _msg) async {
     // <-- note the async keyword here
 
     // this will contain the result from Navigator.pop(context, result)
     final selectedValue = await showDialog<int>(
       context: context,
       barrierDismissible: true,
-      builder: (context) =>
-          SliderDialog(
-              initialValue: _initialValue, min: _min, max: _max, msg: _msg),
+      builder: (context) => SliderDialog(
+          initialValue: _initialValue, min: _min, max: _max, msg: _msg),
     );
 
     // execution of this code continues when the dialog was closed (popped)
@@ -549,7 +644,8 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
     if (selectedValue != null) {
       BlocProvider.of<ProfileBloc>(context).add(
         UpsertFact(
-            keyValue: KeyValue(id: kv.id, key: kv.key, value: '$selectedValue')),
+            keyValue:
+                KeyValue(id: kv.id, key: kv.key, value: '$selectedValue')),
       );
 
       //UPDATE VALUE IF CHANGED
@@ -569,17 +665,16 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
   }
 
   ////EDIT DROPDOWN, Culture Beliefsystem ... DIALOG
-  void _showPickerDialogFacts(KeyValue kv, String _initialValue,
-      List<String> options) async {
+  void _showPickerDialogFacts(
+      KeyValue kv, String _initialValue, List<String> options) async {
     final selectedValue = await showDialog<String>(
       context: context,
       barrierDismissible: true,
-      builder: (context) =>
-          DropDownPickerDialog(
-            dialogKey: kv.key,
-            initialValue: _initialValue,
-            options: options,
-          ),
+      builder: (context) => DropDownPickerDialog(
+        dialogKey: kv.key,
+        initialValue: _initialValue,
+        options: options,
+      ),
     );
 
     if (selectedValue != null) {
@@ -597,30 +692,32 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
       ;*/
 
       BlocProvider.of<ProfileBloc>(context).add(
-        UpsertFact( keyValue: KeyValue(id: kv.id, key: kv.key, value: '$selectedValue')),
+        UpsertFact(
+            keyValue:
+                KeyValue(id: kv.id, key: kv.key, value: '$selectedValue')),
       );
     }
   }
 
   ////EDIT Custom DIALOG
-  void _showCustomPickerDialogFacts(KeyValue kv, String _initialValue,
-      List<String> options) async {
+  void _showCustomPickerDialogFacts(
+      KeyValue kv, String _initialValue, List<String> options) async {
     final selectedValue = await showDialog<List<String>>(
       context: context,
       barrierDismissible: true,
-      builder: (context) =>
-          CustomPickerDialog(
-            dialogKey: kv.key,
-            initialValue: _initialValue,
-            options: options,
-          ),
+      builder: (context) => CustomPickerDialog(
+        dialogKey: kv.key,
+        initialValue: _initialValue,
+        options: options,
+      ),
     );
 
     if (selectedValue != null) {
       //HERE THE DATABASE SHOULD BE UPDATED...
       BlocProvider.of<ProfileBloc>(context).add(
         UpsertFact(
-            keyValue: KeyValue(id: kv.id, key: kv.key, value: '$selectedValue')),
+            keyValue:
+                KeyValue(id: kv.id, key: kv.key, value: '$selectedValue')),
       );
     }
   }
@@ -630,10 +727,9 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
     final selectedValue = await showDialog<List<String>>(
       context: context,
       barrierDismissible: true,
-      builder: (context) =>
-          AddCustomPickerDialog(
-            options: options,
-          ),
+      builder: (context) => AddCustomPickerDialog(
+        options: options,
+      ),
     );
 
     if (selectedValue != null) {
@@ -641,8 +737,9 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
 
       BlocProvider.of<ProfileBloc>(context).add(
         AddFact(
-          //Isn't it possible here to get the same id twice??
-            keyValue: KeyValue(id: "", key: selectedValue[0], value: selectedValue[1])),
+            //Isn't it possible here to get the same id twice??
+            keyValue: KeyValue(
+                id: "", key: selectedValue[0], value: selectedValue[1])),
       );
 
       /*

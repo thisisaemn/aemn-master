@@ -10,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:user_repository/user_repository.dart';
 
 class ProfileScreen extends StatelessWidget {
-
   /*@override
   initState(){
     BlocProvider.of<ProfileBloc>(context).add(
@@ -20,14 +19,29 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*BlocProvider.of<ProfileBloc>(context).add(
+    BlocProvider.of<ProfileBloc>(context).add(
       ProfileLoad(),
-    );*/
-    return  ProfileMainScreen(profile: context.select((ProfileBloc bloc) => bloc.profile,));
+    );
+
+    return BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (BuildContext context, ProfileState state) {
+      if (state is ProfileLoaded) {
+        return ProfileMainScreen(
+            profile: context.select(
+          (ProfileBloc bloc) => bloc.profile,
+        ));
+      } /*else if(state is EditProfileLoading){
+
+      }*/else {
+        return Scaffold(
+            body: Center(
+                child: CircularProgressIndicator.adaptive(
+          backgroundColor: Colors.amber,
+        )));
+      }
+    });
   }
-
 }
-
 
 /*
 class ProfileScreen extends StatelessWidget {

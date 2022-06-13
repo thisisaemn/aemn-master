@@ -36,7 +36,7 @@ dependencies:
   equatable: ^2.0.0
   flutter_bloc: ^8.0.0
   #meta: ^1.2.4
-  qr_code_scanner: ^0.7.0 #https://pub.dev/packages/qr_code_scanner/install
+  qr_code_scanner: ^1.0.0 #https://pub.dev/packages/qr_code_scanner/install
   qr_flutter: ^4.0.0 #https://pub.dev/packages/qr_flutter
   http: any #https://startflutter.com/question/cant-import-packagehttphttp-dart-as-http-in-project/ ,https://bloclibrary.dev/#/flutterweathertutorial
   #https://bloclibrary.dev/#/flutterfirebaselogintutorial?id=splash, tutorial

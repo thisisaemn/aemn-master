@@ -102,7 +102,7 @@ class _QRViewExampleState extends State<QRViewExample> {
                       children: <Widget>[
                         //if (result != null)
                         Text(
-                            'Barcode Type: ${describeEnum(result.format)}\nData: ${result.code}')
+                            /*'Barcode Type: ${describeEnum(result.format)}\n*/'Data: ${result.code}')
                         //else
                         //Text('Scan a code'),
                       ],
@@ -148,6 +148,7 @@ class _QRViewExampleState extends State<QRViewExample> {
           scannedUserId = userId;
           BlocProvider.of<ConnectBloc>(context).add(
               InviteToNewSession(inviteeUsername: username, inviteeId: userId));
+          BlocProvider.of<NavigationBloc>(context).add(NavigationRequested(destination: NavigationDestinations.connect));
         }
       }
 

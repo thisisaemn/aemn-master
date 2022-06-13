@@ -112,11 +112,11 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
     if (index == 0) {
       return NavigationDestinations.swipe;
     } else if (index == 1) {
-      return NavigationDestinations.home;
+      return NavigationDestinations.connect;
     } else if (index == 2) {
       return NavigationDestinations.profile;
     } else {
-      return NavigationDestinations.home;
+      return NavigationDestinations.connect;
     }
   }
 
@@ -126,7 +126,7 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
     if (destination == NavigationDestinations.swipe) {
       tabIndex=0;
       return 0;
-    } else if (destination == NavigationDestinations.home) {
+    } else if (destination == NavigationDestinations.connect) {
       tabIndex=1;
       return 1;
     } else if (destination == NavigationDestinations.profile) {
@@ -174,11 +174,11 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
             }*/
             //return Scaffold(body:Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,)));
           }*/
-          print(state.session);
+          //print(state.session);
 
           if (state is DestinationLoaded || state is DestinationLoading) {
             switch (state.currentDestination) {
-              case (NavigationDestinations.home):
+              case (NavigationDestinations.connect):
                 return ConnectView();
               case (NavigationDestinations.swipe):
                 return SwipeView();
@@ -188,6 +188,8 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
                 return SearchInterestsScreen();
               case (NavigationDestinations.searchMembers):
                 return SearchMembersScreen();
+              case (NavigationDestinations.searchMembersForAnExistingSession):
+                return SearchMembersForAnExistingSessionScreen(session: state.session,);
               case (NavigationDestinations.profile):
                 return ProfileScreen();
               case (NavigationDestinations.editProfile):

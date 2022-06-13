@@ -28,6 +28,7 @@ class ProfileBloc
     on<AddFact>(_onAddFact);
     on<UpsertFact>(_onUpsertFact);
     on<DeleteFact>(_onDeleteFact);
+    on<ChangeUsername>(_onChangeUsername);
     //on<DeletedUser>(_onDeleteUser);
     //on<ChangePassword>(_onChangePassword);
 
@@ -96,6 +97,24 @@ class ProfileBloc
   }
 
 
+  Future<void> _onChangeUsername(ChangeUsername event, Emitter<ProfileState> emit) async {
+    profile = userRepository.currentProfile;
+    emit(EditingUser());
+    Profile? pProfile = await _tryGetProfile();
+    //print(profile);
+
+    bool success = await _tryChangeUsername(newUsername: event.newUsername);
+
+    if(success){
+      //print(profile!.facts);
+      //profile = pProfile;
+      emit(EditedUser());
+      this.add(ProfileLoad());
+    }else{
+      emit(EditingUserFailed());
+    }
+  }
+
 
   /*
   Future<void> _onProfileUpsertInterest(ProfileUpsertInterest event, Emitter<ProfileState> emit) async {
@@ -146,6 +165,7 @@ class ProfileBloc
       }
     }
   }
+
 
   Future<void> _onChangeInterestIntensity(ChangeInterestIntensity event, Emitter<ProfileState> emit) async {
     print("tryna change intensity of interest");
@@ -427,5 +447,15 @@ class ProfileBloc
     }
   }
 
+
+  Future<bool> _tryChangeUsername({required String newUsername}) async {
+    try{
+      final success = userRepository.changeUsername(newUsername: newUsername);
+      return success;
+    }on Exception{
+      print("failed updating fact");
+      return false;
+    }
+  }
 
 }

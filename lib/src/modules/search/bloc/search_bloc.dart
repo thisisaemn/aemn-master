@@ -35,7 +35,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     emit(Searching());
     String searchKey = event.key ?? "";
     String lastId = "000000000000000000000000";
-    if(resultsInterests.length>0){
+    if(resultsInterests.length>0 && !event.isInitialSearch){
       lastId = resultsInterests[resultsInterests.length-1].id;
     }
     print(resultsInterests);
@@ -44,6 +44,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     if(event.isInitialSearch){
       pagen = 0;
     }
+
     List<InterestModel>? results = await _tryGetInterestsSearchResults(key: searchKey, pPagen: pagen, lastId: lastId);
     if(results != null){
       //this.add(ProfileLoad());
@@ -74,8 +75,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     String searchKey = event.key ?? "";
     String lastId = "000000000000000000000000";
 
-    if(resultsMembers.length>0){
-      lastId = resultsInterests[resultsInterests.length-1].id;
+
+    if(resultsMembers.length>0 && !event.isInitialSearch){
+      lastId = resultsInterests.last.id;//resultsInterests[resultsInterests.length-1].id;
     }
 
     List<Member>? results = await _tryGetMembersSearchResults(key: searchKey , lastId: lastId);
