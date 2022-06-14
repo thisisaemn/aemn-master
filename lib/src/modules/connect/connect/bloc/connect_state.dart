@@ -34,6 +34,12 @@ class DeletingMsg extends Loading{}
 
 class DeletingMsgFailed extends LoadingFailed{}
 
+class ChangedMsgSessionName extends Loaded{}
+
+class ChangingMsgSessionName extends Loading{}
+
+class ChangingMsgSessionNameFailed extends LoadingFailed{}
+
 class InvitingToNewSession extends Loading{}
 
 class InvitedToNewSession extends Loaded{}

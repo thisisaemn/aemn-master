@@ -33,6 +33,8 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     on<GetTrigger>(_onGetTrigger);
     on<GetTriggers>(_onGetTriggers);
     on<ResetTriggers>(_onResetTriggers);
+    on<DeleteMsg>(_onDeleteMsg);
+    on<ChangeMsgSessionName>(_onChangeMsgSessionName);
     /*
     _userSubscription = userRepository.user.listen(
           (user) => add(Load()),
@@ -114,21 +116,49 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       emit(SendingMsgFailed());
     }else {
       emit(SentMsg());
-      this.add(Connect(sessionId: ""));
+      //this.add(Connect(sessionId: ""));
     }
+
+    this.add(Connect(sessionId: ""));
   }
 
   Future<void> _onDeleteMsg (DeleteMsg event, Emitter<ConnectState> emit) async {
     emit(DeletingMsg());
 
-    bool success = await _tryDeleteMsg(msgId: event.msgId);
+    bool success = await _tryDeleteMsg(msgId: event.msg.id);
 
     if(!success){
       emit(DeletingMsgFailed());
     }else {
       emit(DeletedMsg());
-      this.add(Connect(sessionId: ""));
+      String? msgSessionId =  event.msg.meta.sessionId;
+      if(msgSessionId != null) {
+        this.add(ExitSession(sessionId: msgSessionId));
+      }
     }
+    this.add(Connect(sessionId: ""));
+  }
+
+  Future<void> _onChangeMsgSessionName (ChangeMsgSessionName event, Emitter<ConnectState> emit) async {
+    emit(ChangingMsgSessionName());
+
+    bool success = false;
+
+    /*
+    BAUSTELLE
+    if(userRepository.currentSession == event.sessionId || userRepository.currentUser.sessions.contains(event.sessionId)){
+      success = await _tryQuitSession(sessionId: event.sessionId);
+    }*/
+
+    success = await _tryChangeMsgSessionName(msgId: event.msgId, newMsgSessionName: event.newMsgSessionName);
+
+    if(!success){
+      emit(ChangingMsgSessionNameFailed());
+    }else {
+      emit(ChangedMsgSessionName());
+    }
+
+    this.add(Connect(sessionId: ""));
   }
 
   Future<void> _onExitSession (ExitSession event, Emitter<ConnectState> emit) async {
@@ -148,8 +178,9 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       emit(ExitingSessionFailed());
     }else {
       emit(ExitedSession());
-      this.add(Connect(sessionId: ""));
     }
+
+    this.add(Connect(sessionId: ""));
   }
 
   Future<void> _onKillSession (KillSession event, Emitter<ConnectState> emit) async {
@@ -171,6 +202,8 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       emit(KilledSession());
       this.add(Connect(sessionId: ""));
     }
+    this.add(Connect(sessionId: ""));
+
   }
 
 
@@ -226,26 +259,26 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     var inviteeUsername =  event.inviteeUsername;
     print(inviteeUsername);
     //THIS IS REALLY FUll. NOT SURE IF BLOC SHOULD HANDLE THIS.
-    var senderUsername = userRepository.currentProfile.username;
-    var senderId = userRepository.currentProfile.id;
-    var sessionId = event.sessionId;
-    var sessionName = event.sessionName;
+    String senderUsername = userRepository.currentProfile.username;
+    String senderId = userRepository.currentProfile.id;
+    String sessionId = event.sessionId;
+    String sessionName = event.sessionName;
     //Should CoppleRepo then send creation request for these?
 
-    print("inviting to existing session");
+    MetaInformation metaInfo = MetaInformation(
+        sessionId: event.sessionId,
+        receiverUsername: inviteeUsername,
+        sessionName: sessionName,
+        receiverId: inviteeId,
+        senderUsername: senderUsername,
+        senderId: senderId
+    );
 
-    
+    print(metaInfo.toString());
     var msg = Message(
         id: "",
         subject: "Invitation - $sessionName", content: "$senderUsername invites you to join $sessionName",
-        meta: MetaInformation(
-            sessionId: sessionId,
-            receiverUsername: inviteeUsername,
-            sessionName: sessionName,
-            receiverId: inviteeId,
-            senderUsername: senderUsername,
-            senderId: senderId
-        )
+        meta: metaInfo
     );
 
     print(msg);
@@ -509,6 +542,16 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     try {
       ////print("try get trigger");
       return connectRepository.changeSessionName(sessionId: sessionId, sessionName: sessionName);
+    } on Exception {
+      ////print('failed getting trigger, connect bloc');
+      return false;
+    }
+  }
+
+  Future<bool> _tryChangeMsgSessionName({required String msgId, required String newMsgSessionName}) async {
+    try {
+      ////print("try get trigger");
+      return connectRepository.changeMsgSessionName(msgId: msgId, newMsgSessionName: newMsgSessionName);
     } on Exception {
       ////print('failed getting trigger, connect bloc');
       return false;

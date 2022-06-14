@@ -189,7 +189,7 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
               case (NavigationDestinations.searchMembers):
                 return SearchMembersScreen();
               case (NavigationDestinations.searchMembersForAnExistingSession):
-                return SearchMembersForAnExistingSessionScreen(session: state.session,);
+                {if(state.session != null){return SearchMembersForAnExistingSessionScreen(session: state.session,);}else{return ConnectView();}}
               case (NavigationDestinations.profile):
                 return ProfileScreen();
               case (NavigationDestinations.editProfile):
@@ -203,25 +203,29 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
               //case(NavigationDestinations.session):  return SessionView(session: state.session);
               case (NavigationDestinations.triggers):
                 {
-                  BlocProvider.of<ConnectBloc>(context).add(
-                    ResetTriggers(),
-                  );
+                  if (state.session != null){
+                    BlocProvider.of<ConnectBloc>(context).add(
+                      ResetTriggers(),
+                    );
                   /*BlocProvider.of<ConnectBloc>(context).add(
                     GetTriggers(session: state.session,),
                   );*/
                   return SessionMainView(
                       session: state.session,
                       sessionBody: TriggersView(session: state.session));
-                }
-                ;
+                }else{
+                    return ConnectView();
+                  }
+                };
               case (NavigationDestinations.commons):
-                return SessionMainView(
-                    session: state.session,
-                    sessionBody: CommonsView(session: state.session));
-
+                if(state.session != null){
+                  return SessionMainView(
+                      session: state.session,
+                      sessionBody: CommonsView(session: state.session));
+                }else{return ConnectView();}}
               //default: return HomeLandingScreen();
             }
-          }
+
 
           /*
           if (state is HomeDestinationLoaded) {

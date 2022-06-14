@@ -134,6 +134,9 @@ class ConnectRepository {
       return true;
     }
 
+    var resBody = await json.decode(res.body);
+    print(resBody["msg"]);
+
     return false;
   }
 
@@ -166,6 +169,39 @@ class ConnectRepository {
 
     return false;
   }
+
+  Future<bool> changeMsgSessionName({
+    required String msgId, required String newMsgSessionName
+  }) async {  //did the not have a stream or smth similar as a return type?
+    var token = await _cache.storage.read(key: 'jwt');
+    //print(token.toString());
+
+    var header = {
+      "content-type" : "application/json",
+      "authorization" : "Bearer $token"
+    };
+
+    var body = {
+      "msgId": msgId,
+      "newMsgSessionName": newMsgSessionName
+    };
+
+    var res = await http.post(
+      Uri.parse('$SERVER_IP/changeMsgSessionName'),
+      headers: header,
+      body: jsonEncode(body),
+    );
+
+    if(res.statusCode == 200){
+      var resBody = await json.decode(res.body);
+      //print(resBody["msg"]);
+      return true;
+    }
+
+    return false;
+  }
+
+
 
   Future<bool> inviteToNewSession({
     required String inviteeId,

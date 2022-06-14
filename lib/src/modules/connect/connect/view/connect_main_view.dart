@@ -163,11 +163,24 @@ class _HomeLandingViewState extends State<HomeLandingView> {
           Message item = context.select(
             (ConnectBloc bloc) => bloc.user.box,
           )[index];
-          return Container(padding: EdgeInsets.all(10),child:BoxInvitationTile(
-              item,
-              context.select(
-                (ConnectBloc bloc) => bloc.user.sessions,
-              )));
+          return Dismissible(
+              key: Key('$index'),
+              background: Container(color: Colors.red),
+              confirmDismiss: (DismissDirection direction) async {
+                return _deleteDialog(context, "");
+              },
+              onDismissed: (direction) {
+                //print("del msg");
+                BlocProvider.of<ConnectBloc>(context).add(
+                              DeleteMsg(msg: item));
+              },
+              child: Container(
+                  padding: EdgeInsets.all(10),
+                  child: BoxInvitationTile(
+                      item,
+                      context.select(
+                        (ConnectBloc bloc) => bloc.user.sessions,
+                      ))));
         });
       },
     );
@@ -246,10 +259,16 @@ class _HomeLandingViewState extends State<HomeLandingView> {
     if (userJoinedSession(sessions: sessions, sessionId: sessionId)) {
       return Container();
     }
-    return Text(
+    return Column(children:[
+      Text(
       "press to join",
       style: TextStyle(fontSize: 12, color: Colors.grey),
-    );
+    ),
+      Text(
+        "btw. you can press long on the tile anytime to change the msg name",
+        style: TextStyle(fontSize: 7, color: Colors.black12),
+      ),
+    ]);
   }
 
   //sessions the user is already part of
@@ -276,8 +295,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
       style: ButtonStyle(
         elevation: MaterialStateProperty.all(0.0),
       ),
-      child: Column(
-          children: [
+      child: Column(children: [
         Text(/*msg.subject + " "+*/ sessionName),
         pressToJoinTxt(sessions: sessions, sessionId: sessionId),
       ]),
@@ -350,8 +368,11 @@ class _HomeLandingViewState extends State<HomeLandingView> {
                   sessions: sessions, sessionId: sessionId)),
         ],
       ),
-      shape: RoundedRectangleBorder(side: BorderSide(color: Colors.black38, width: 0.9), borderRadius: BorderRadius.circular(13)),
+      shape: RoundedRectangleBorder(
+          side: BorderSide(color: Colors.black38, width: 0.9),
+          borderRadius: BorderRadius.circular(13)),
       //trailing: Divider(),
+      onLongPress: ()=>_changeMsgSessionNameDialog(initialValue: sessionName, context: context, msgId: msg.id),
     );
 
     /*return ExpansionTile(
@@ -387,7 +408,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
   /**
    * This is the previous ListTile
    */
-  Widget BoxMsgTile(Message item, List<Session?> sessions) {
+  /*Widget BoxMsgTile(Message item, List<Session?> sessions) {
     /* String senderUsername;
 
     if(msg.meta.senderUsername?.isEmpty ?? true){
@@ -452,7 +473,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
                 .add(ExitSession(sessionId: item.meta.sessionId!));
           }
         });
-  }
+  }*/
 
   //Dieses Dialogue ist sehr provisorisch apparently
   void _showDialogConfirmConnection(
@@ -561,4 +582,25 @@ Future<bool?> _deleteDialog(
       );
     },
   );
+}
+
+
+void _changeMsgSessionNameDialog(
+    {required String msgId,
+      required String initialValue,
+      required BuildContext context}) async {
+  final selectedValue = await showDialog<String>(
+    context: context,
+    barrierDismissible: true,
+    builder: (context) => TextFieldDialog(
+      value: initialValue,
+      msg: 'Enter new name',
+    ),
+  );
+
+  if (selectedValue != null) {
+    BlocProvider.of<ConnectBloc>(context).add(
+      ChangeMsgSessionName(msgId: msgId, newMsgSessionName: selectedValue),
+    );
+  }
 }

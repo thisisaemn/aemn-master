@@ -73,11 +73,15 @@ class _SearchMembersForAnExistingSessionScreenState extends State<SearchMembersF
         appBar: AppBar(
             elevation: 0,
             leading: IconButton( icon: Icon(Icons.arrow_back_ios, color: Colors.grey,size: 18,) ,onPressed:
-            ()=>BlocProvider.of<ConnectBloc>(context).add(
-                EnterSession(sessionId: _session.id, option: options.commons)
+            /*()=>BlocProvider.of<ConnectBloc>(context).add(
+                EnterSession(sessionId: _session.id, option: options.commons))*/
               /*() => BlocProvider.of<NavigationBloc>(context).add(
               NavigationRequested(destination: NavigationDestinations.connect, session: _session),*/
-            ),),
+              ()=>  BlocProvider.of<NavigationBloc>(context).add(
+              NavigationRequested(
+                  destination: NavigationDestinations.commons, session: _session), //Sollte hier iwo nicht die session id mitgegeben werden? //Va jz da mehrere sessions mgl sind.
+            )
+              ,),
             title: BlocBuilder<SearchBloc, SearchState>(
                 builder: (BuildContext context, SearchState state) {
                   return TextField(

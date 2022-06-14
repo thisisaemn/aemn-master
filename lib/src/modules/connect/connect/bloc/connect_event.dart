@@ -32,12 +32,23 @@ class SendMsg extends ConnectEvent{
 }
 
 class DeleteMsg extends ConnectEvent{
+  final Message msg;
+
+  DeleteMsg({required this.msg});
+
+  @override
+  List<Object> get props => [msg];
+
+}
+
+class ChangeMsgSessionName extends ConnectEvent{
   final String msgId;
+  final String newMsgSessionName;
 
-  DeleteMsg({required this.msgId});
+  ChangeMsgSessionName({required this.msgId, required this.newMsgSessionName});
 
-  List<Object> get props => [msgId];
-
+  @override
+  List<Object> get props => [msgId, newMsgSessionName];
 }
 
 class InviteToNewSession extends ConnectEvent{

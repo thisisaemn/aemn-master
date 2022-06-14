@@ -148,6 +148,7 @@ class _QRViewExampleState extends State<QRViewExample> {
           scannedUserId = userId;
           BlocProvider.of<ConnectBloc>(context).add(
               InviteToNewSession(inviteeUsername: username, inviteeId: userId));
+          controller.pauseCamera();
           BlocProvider.of<NavigationBloc>(context).add(NavigationRequested(destination: NavigationDestinations.connect));
         }
       }
