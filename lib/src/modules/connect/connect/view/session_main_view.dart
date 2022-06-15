@@ -114,7 +114,9 @@ Widget MembersList(){
       itemCount: _session.members.length+1,
       itemBuilder: (BuildContext context, int index){
         if(index == 0){
-          return Text(
+          return Container(
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 30),
+              child:Text(
             'members',
             textAlign: TextAlign.start,
             style: TextStyle(
@@ -125,14 +127,15 @@ Widget MembersList(){
                 /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:
             6.0,
                 wordSpacing: 5),
-          );
+          ));
         }else{
           return Container(
-            padding: EdgeInsets.all(5),
+            padding: EdgeInsets.fromLTRB(20, 10,5, 0),
               child:Text(
-            'members',
+            _session.members[index-1].username,
             textAlign: TextAlign.start,
             style: TextStyle(
+              overflow: TextOverflow.fade,
                 //backgroundColor: Colors.amberAccent.withOpacity(0.4),
                 //fontWeight: FontWeight.bold,
                 color: Colors.black,
