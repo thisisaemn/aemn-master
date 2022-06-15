@@ -301,7 +301,6 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
     //bool success = await _trySendMsg(event.msg);
     bool success = false;
 
-
     //if(userRepository.user.contains() != event.sessionId || userRepository.currentUser.currentSession != event.sessionId){
       //success = await _tryEnterSession(sessionId: event.session.id);
       success = await _tryEvaluateCommons(sessionId: event.sessionId);

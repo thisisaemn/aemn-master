@@ -57,7 +57,7 @@ class AuthenticationRepository {
   /// Throws a [SignUpWithEmailAndPasswordFailure] if an exception occurs.
   Future<void> signUp({required String email, required String password}) async {
     try {
-      print(email);
+      //print(email);
 
       var header = {
         "content-type" : "application/json"
@@ -73,8 +73,8 @@ class AuthenticationRepository {
           headers: header,
           body: jsonEncode(body),
       );
-      print(res.body);
-      print(res.statusCode);
+      //print(res.body);
+      //print(res.statusCode);
 
     }catch (_) {
       throw const SignUpWithEmailAndPasswordFailure();
@@ -99,7 +99,7 @@ class AuthenticationRepository {
     };
 
     try {
-      print("Before posting the Api request to login");
+      //print("Before posting the Api request to login");
       var res = await http.post(
           url,
           headers: header,
@@ -170,7 +170,7 @@ class AuthenticationRepository {
 
     if(res.statusCode == 200){
       var resBody = await json.decode(res.body);
-      print(resBody["msg"]);
+      //print(resBody["msg"]);
       return true; //return true if successful
     }
 
@@ -198,7 +198,7 @@ class AuthenticationRepository {
 
     if(res.statusCode == 200){
       var resBody = await json.decode(res.body);
-      print(resBody["msg"]);
+      //print(resBody["msg"]);
       return true; //return true if successful
     }
 

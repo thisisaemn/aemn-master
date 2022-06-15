@@ -316,18 +316,6 @@ class _HomeLandingViewState extends State<HomeLandingView> {
         ])));
   }
 
-  Widget pressToJoinTxt({required String sessionId}) {
-    return Column(children: [
-      Text(
-        "press to join",
-        style: TextStyle(fontSize: 12, color: Colors.grey),
-      ),
-      Text(
-        "btw. you can press long on the tile anytime to change the msg name",
-        style: TextStyle(fontSize: 7, color: Colors.black12),
-      ),
-    ]);
-  }
 
   //sessions the user is already part of
   Widget JoinSessionBtn({
@@ -509,12 +497,12 @@ class _HomeLandingViewState extends State<HomeLandingView> {
             Container(
                 padding: EdgeInsets.fromLTRB(20,0,0,0),
                 //width: MediaQuery.of(context).size.width *0.66,
-                child:Expanded(child: enterSessionCommonsBtn(sessionId: sessionId)),
+                child:enterSessionCommonsBtn(sessionId: sessionId),
             ),
             Container(
               padding: EdgeInsets.fromLTRB(10,0,20,0),
               //width: MediaQuery.of(context).size.width *0.10,
-              child: Expanded(child: enterSessionTriggersBtn(sessionId: sessionId)),
+              child: enterSessionTriggersBtn(sessionId: sessionId),
             ),
           ],
         ),
@@ -582,6 +570,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
     if (selectedValue != null) {
       //UPDATE VALUE IF CHANGED
       if (selectedValue) {
+        print("join session");
         BlocProvider.of<ConnectBloc>(context)
             .add(JoinSession(sessionId: (sessionId)));
         //Wait for this to enter

@@ -41,22 +41,32 @@ class _SessionMainView extends State<SessionMainView> {
       _sessionBody = widget.sessionBody;
     }
   }
+ //https://stackoverflow.com/questions/57748170/flutter-how-to-open-drawer-programmatically
+  //final GlobalKey<ScaffoldState> _key = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+     // key: _key,
         appBar: AppBar(
             elevation:0,
             leading: BuilderBackButton(),
             actions: <Widget>[
               IconButton(
-                  icon: Icon(Icons.person_add_alt_1 , size: 18,),
+                  icon: Icon(Icons.person_add_alt_1_rounded , size: 18,),
                   tooltip: 'Invite other members',
                   onPressed: () {
                     BlocProvider.of<NavigationBloc>(context).add(
                       NavigationRequested(destination: NavigationDestinations.searchMembersForAnExistingSession, session: _session),
                     );
                   }),
+             /* IconButton(
+                  icon: Icon(Icons.people , size: 20,),
+                  tooltip: 'See members',
+                  onPressed: () {
+                    //_key.currentState!.openDrawer();
+                    Scaffold.of(context).openEndDrawer();
+                  }),*/
               IconButton(
                   icon: Icon(Icons.exit_to_app , size: 18,),
                   tooltip: 'Exit',
@@ -69,6 +79,10 @@ class _SessionMainView extends State<SessionMainView> {
                     );
                   }),
             ]),
+        endDrawer: Drawer(
+          width: MediaQuery.of(context).size.width * 0.7,
+          child: MembersList(),
+        ),
         body: _sessionBody,
         /*floatingActionButton: ElevatedButton(
           onPressed: () => {
@@ -91,6 +105,49 @@ class _SessionMainView extends State<SessionMainView> {
       return CommonsMainView(session: _session);
     }
   }*/
+
+Widget MembersList(){
+  return SafeArea(child: 
+  Container(
+    padding: EdgeInsets.all(10),
+    child: ListView.builder(
+      itemCount: _session.members.length+1,
+      itemBuilder: (BuildContext context, int index){
+        if(index == 0){
+          return Text(
+            'members',
+            textAlign: TextAlign.start,
+            style: TextStyle(
+                backgroundColor: Colors.amberAccent.withOpacity(0.4),
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                shadows: [Shadow(blurRadius: 1.5)],
+                /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:
+            6.0,
+                wordSpacing: 5),
+          );
+        }else{
+          return Container(
+            padding: EdgeInsets.all(5),
+              child:Text(
+            'members',
+            textAlign: TextAlign.start,
+            style: TextStyle(
+                //backgroundColor: Colors.amberAccent.withOpacity(0.4),
+                //fontWeight: FontWeight.bold,
+                color: Colors.black,
+                shadows: [Shadow(blurRadius: 1.5)],
+                /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:
+            6.0,
+                wordSpacing: 5),
+          ));
+        }
+       
+      },
+      
+    ),
+  ));
+}
 
 
 

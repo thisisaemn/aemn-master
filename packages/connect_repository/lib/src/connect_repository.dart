@@ -318,6 +318,8 @@ class ConnectRepository {
       body: jsonEncode(body),
     );
 
+    print(sessionId);
+
     //Response Dealing
     if(res.statusCode == 200){
       var resBody = await json.decode(res.body);
