@@ -67,12 +67,19 @@ class SettingsScreen extends StatelessWidget {
   Widget settingsTitle(){
     return  Container(
         padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-        child: Text('settings',
-            style: TextStyle(
-              fontFamily: 'Open Sans',
-              fontSize: 23.0,
-              fontWeight: FontWeight.w300,
-            )));
+        child: Text(
+          'settings',
+          textAlign: TextAlign.start,
+          style: TextStyle(
+              //backgroundColor: Colors.amberAccent.withOpacity(0.4),
+              //fontWeight: FontWeight.bold,
+              color: Colors.black,
+              //shadows: [Shadow(blurRadius: 1.5)],
+             // /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:  6.0,
+             // wordSpacing: 5
+          ),
+        )
+    );
   }
 
   Widget settingsList(){
@@ -85,9 +92,9 @@ class SettingsScreen extends StatelessWidget {
             return ListTile(
               leading: Icon(
                 const IconData(
-                    /*stringToInt_tryParse(settingsOptions[index]['icon'].toString(), 60018)*/ 60018,
+                    /*stringToInt_tryParse(settingsOptions[index]['icon'].toString(), 60018)*/ 984409,
                     fontFamily: 'MaterialIcons',),
-                size: 18,
+                size: 0,
               ),
               title: Text(SettingsOptions.getSettingsOptions[index]['key'].toString()),
               onTap: (){
@@ -124,6 +131,8 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(//DIE NAVIGATION NICHT GEKLÄRT...
+          title: settingsTitle(),
+          centerTitle: true,
           elevation: 0,
           leading: IconButton( icon: Icon(Icons.arrow_back_ios, color: Colors.grey, size: 18,) ,onPressed: () => BlocProvider.of<NavigationBloc>(context).add(
             NavigationRequested(destination: NavigationDestinations.back),
@@ -131,7 +140,7 @@ class SettingsScreen extends StatelessWidget {
             ),
         body: Column(
           children: [
-            settingsTitle(),
+            //settingsTitle(),
             settingsList(),
           ],
         )
