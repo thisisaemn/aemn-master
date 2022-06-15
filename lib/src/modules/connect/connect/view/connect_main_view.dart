@@ -279,6 +279,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
   Widget enterSessionTriggersBtn({required String sessionId}) {
     return ElevatedButton(
         style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.black38.withOpacity(0.01)),
           elevation: MaterialStateProperty.all(0),
         ),
         onPressed: () {
@@ -298,6 +299,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
   Widget enterSessionCommonsBtn({required String sessionId}) {
     return ElevatedButton(
         style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(Colors.black38.withOpacity(0.01)),
           elevation: MaterialStateProperty.all(0),
         ),
         onPressed: () {
