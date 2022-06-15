@@ -1,8 +1,8 @@
 class NetworkConstants{
-  static const String SERVER_IP =  "http://192.168.178.35:5000"; //zuhause //"http://192.168.178.90:5000";//"https://aemn-0.herokuapp.com";
+  //static const String SERVER_IP =  "http://192.168.178.35:5000"; //zuhause //"http://192.168.178.90:5000";//"https://aemn-0.herokuapp.com";
   //static const String SERVER_IP = "http://192.168.178.129:5000"; //Bahar Abla House
   //static const String SERVER_IP = "https://git.heroku.com/aemn-0.git";
-  //static const String SERVER_IP = "https://aemn-0.herokuapp.com";
+  static const String SERVER_IP = "https://aemn-0.herokuapp.com";
 
   //static const String SERVER_IP = "http://192.168.10.177:5000";
 

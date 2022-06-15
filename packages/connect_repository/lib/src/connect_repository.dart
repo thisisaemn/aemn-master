@@ -657,7 +657,7 @@ class ConnectRepository {
       var resBody = await json.decode(res.body);
       //print("connect repo l 617" +resBody);
       Trigger trigger = await Trigger.fromJson(resBody["trigger"]);
-      print("connect repo l 619" +trigger.mainContent);
+      //print("connect repo l 619" +trigger.mainContent);
       //trigger.mainContentLink = trigger.mainContent.
       return trigger;
     }else{

@@ -131,10 +131,10 @@ class ConnectBloc extends Bloc<ConnectEvent, ConnectState> {
       emit(DeletingMsgFailed());
     }else {
       emit(DeletedMsg());
-      String? msgSessionId =  event.msg.meta.sessionId;
+      /*String? msgSessionId =  event.msg.meta.sessionId;
       if(msgSessionId != null) {
         this.add(ExitSession(sessionId: msgSessionId));
-      }
+      }*/
     }
     this.add(Connect(sessionId: ""));
   }
