@@ -1,5 +1,7 @@
 import 'package:connect_repository/connect_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class OverviewTrigger extends StatelessWidget {
   const OverviewTrigger({required Trigger trigger}) : trigger = trigger;
@@ -88,14 +90,31 @@ class OverviewTrigger extends StatelessWidget {
     );
   }
 
+  /*final urlRegExp = new RegExp(
+      r"((https?:www\.)|(https?:\/\/)|(www\.))[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9]{1,6}(\/[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)?");
+  final urlMatches = urlRegExp.allMatches(text);
+  List<String> urls = urlMatches.map(
+          (urlMatch) => text.substring(urlMatch.start, urlMatch.end))
+      .toList();
+  urls.forEach((x) => print(x));*/
+
+
+
   Widget TriggerWidget(Trigger trigger) {
     return Container(
-      child: Text(
+      child: ElevatedButton(
+        onPressed: () async {
+          if(trigger.mainContentLink != null && Uri.tryParse(trigger.mainContentLink) != null){
+            await launchUrl(Uri.dataFromString(trigger.mainContentLink));
+          }
+        },
+        style: ButtonStyle(elevation: MaterialStateProperty.all(0)),
+          child: Text(
         trigger.mainContent,
         textAlign: TextAlign.center,
         style:
             TextStyle(fontStyle: FontStyle.italic, fontWeight: FontWeight.w600),
-      ),
+      )),
       alignment: Alignment.center,
       padding: EdgeInsets.all(40),
     );

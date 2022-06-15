@@ -15,7 +15,9 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
           .map((e) => Message.fromJson(e as Map<String, dynamic>))
           .toList(),
       sessions:
-          (json['sessions'] as List<dynamic>).map((e) => e as String).toList(),
+          (json['sessions'] as List<dynamic>)
+              .map((e) => KeyValue.fromJson(e as Map<String, dynamic>))
+              .toList(),
     );
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{

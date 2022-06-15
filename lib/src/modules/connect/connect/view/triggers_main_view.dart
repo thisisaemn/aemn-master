@@ -3,6 +3,8 @@ import 'package:connect_repository/connect_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+
+
 import 'package:aemn/src/core/navigation/navigation/navigation.dart';
 
 import 'package:user_repository/user_repository.dart';
@@ -107,26 +109,22 @@ class _TriggersMainView extends State<TriggersMainView> {
               //Get back to the page they were currently on
             }*/
 
-            print(_triggers!.length);
+           /* print(_triggers!.length);
             print(index);
             print(_triggers!.length <= index);
-            print(_triggers);
+            print(_triggers);*/
 
             if((!(BlocProvider.of<ConnectBloc>(context).state is GettingTrigger) && _triggers!.length <= index) || _triggers![index]== null){
-              print("this trigger is null");
+              //print("this trigger is null");
               BlocProvider.of<ConnectBloc>(context).add(GetTrigger(session: _session, index: index),);
               //return Container();
               return Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,));
-            }
-
-            if(BlocProvider.of<ConnectBloc>(context).state is GettingTrigger){
+            }else if(BlocProvider.of<ConnectBloc>(context).state is GettingTrigger){
               return Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,));
-            }
-
-            if(BlocProvider.of<ConnectBloc>(context).state is GotTrigger){
+            }else if(BlocProvider.of<ConnectBloc>(context).state is GotTrigger){
               return /*Column(children: [Text("$index index, " + (_triggers!.length.toString()) + " length"),*/OverviewTrigger(trigger: _triggers![index]!,)/*])*/;
             }
-            return Container();
+            return Center(child:CircularProgressIndicator.adaptive(backgroundColor: Colors.amber,));
 
 
           } catch (e) {

@@ -125,7 +125,7 @@ class _SearchMembersForAnExistingSessionScreenState extends State<SearchMembersF
                           .of<SearchBloc>(context)
                           .resultsMembers[index].username),
                       trailing: IconButton(
-                        icon: Icon(Icons.animation), onPressed: () {
+                        icon: Icon(Icons.mail_outline), onPressed: () {
                           String iUsername = BlocProvider
                               .of<SearchBloc>(context)
                               .resultsMembers[index].username;

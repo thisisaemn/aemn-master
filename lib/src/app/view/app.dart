@@ -22,6 +22,8 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //Does this make sense?
+    WidgetsFlutterBinding.ensureInitialized();
     return RepositoryProvider.value(
       value: _authenticationRepository,
       child: BlocProvider(

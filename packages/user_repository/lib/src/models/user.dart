@@ -1,5 +1,6 @@
 import 'package:connect_repository/connect_repository.dart';
 import 'package:equatable/equatable.dart';
+import 'package:interest_repository/interest_repository.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user.g.dart';
@@ -14,7 +15,7 @@ class User extends Equatable{
   final String email;
   final String username;
 
-  List<String> sessions;
+  List<KeyValue> sessions;
 
   List<Message> box;
 

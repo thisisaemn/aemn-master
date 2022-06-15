@@ -4,7 +4,6 @@ import 'package:aemn/src/utils/utils.dart';
 import 'package:connect_repository/connect_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:interest_repository/interest_repository.dart';
 import 'package:user_repository/user_repository.dart';
 
 class HomeLandingScreen extends StatelessWidget {
@@ -16,8 +15,8 @@ class HomeLandingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return HomeLandingView(
         box: context.select(
-      (ConnectBloc bloc) => bloc.user.box,
-    ));
+              (ConnectBloc bloc) => bloc.user.box,
+        ));
   }
 }
 
@@ -104,8 +103,8 @@ class _HomeLandingViewState extends State<HomeLandingView> {
           //https://stackoverflow.com/questions/58908968/how-to-implement-a-flutter-search-app-bar
           //}
         ),
-        //title: SessionOverviewTitle(),
-        //centerTitle: true,
+        title: SessionOverviewTitle(),
+        centerTitle: true,
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.qr_code, size: 18),
@@ -153,103 +152,36 @@ class _HomeLandingViewState extends State<HomeLandingView> {
   ///
   ///
   ///
-  /// Combined Box and Sessions List
   Widget BoxList() {
     return ListView.builder(
-      itemCount: (context.select((ConnectBloc bloc) => bloc.user.box).length) +
-          (context.select((ConnectBloc bloc) => bloc.user.sessions).length) +
-          2,
+      itemCount: context
+          .select((ConnectBloc bloc) => bloc.user.box /*,  listen: true*/
+      )
+          .length,
       itemBuilder: (BuildContext context, int index) {
         return Builder(builder: (context) {
-          if (index == 0) {
-            return Container(
-              child: Text(
-                "Invitations",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    backgroundColor: Colors.amberAccent.withOpacity(0.4),
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    shadows: [Shadow(blurRadius: 1.5)],
-                    /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:
-                        6.0,
-                    wordSpacing: 5),
-              ),
-              padding: EdgeInsets.all(20),
-            );
-          } else if (index <=
-              (context.select((ConnectBloc bloc) => bloc.user.box).length)) {
-            int bindex =
-                (context.select((ConnectBloc bloc) => bloc.user.box).length) -
-                    1;
-            Message item = context.select(
-              (ConnectBloc bloc) => bloc.user.box,
-            )[bindex];
-            return Dismissible(
-                key: Key('$index'),
-                background: Container(color: Colors.red),
-                confirmDismiss: (DismissDirection direction) async {
-                  return _deleteDialog(context, "");
-                },
-                onDismissed: (direction) {
-                  //print("del msg");
-                  BlocProvider.of<ConnectBloc>(context)
-                      .add(DeleteMsg(msg: item));
-                },
-                child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: BoxInvitationTile(
+          Message item = context.select(
+                (ConnectBloc bloc) => bloc.user.box,
+          )[index];
+          return Dismissible(
+              key: Key('$index'),
+              background: Container(color: Colors.red),
+              confirmDismiss: (DismissDirection direction) async {
+                return _deleteDialog(context, "");
+              },
+              onDismissed: (direction) {
+                //print("del msg");
+                BlocProvider.of<ConnectBloc>(context).add(
+                    DeleteMsg(msg: item));
+              },
+              child: Container(
+                  padding: EdgeInsets.all(10),
+                  /*child: BoxInvitationTile(
                       item,
-                    )));
-          } else if (index ==
-              (context.select((ConnectBloc bloc) => bloc.user.box).length) +
-                  1) {
-            return Container(
-              child: Text(
-                "Active Sessions",
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    backgroundColor: Colors.amberAccent.withOpacity(0.4),
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    shadows: [Shadow(blurRadius: 1.5)],
-                    /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:
-                        6.0,
-                    wordSpacing: 5),
-              ),
-              padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-            );
-          } else if (index <
-              (context.select((ConnectBloc bloc) => bloc.user.box).length) +
-                  2 +
-                  (context
-                      .select((ConnectBloc bloc) => bloc.user.sessions)
-                      .length)) {
-            int sindex = index -
-                (context.select((ConnectBloc bloc) => bloc.user.box).length) -
-                2;
-
-            KeyValue sessionRef = (context
-                .select((ConnectBloc bloc) => bloc.user.sessions))[sindex];
-            return Dismissible(
-                key: Key('$index'),
-                background: Container(color: Colors.red),
-                confirmDismiss: (DismissDirection direction) async {
-                  return _deleteDialog(context, "");
-                },
-                onDismissed: (direction) {
-                  //print("del msg");
-                  BlocProvider.of<ConnectBloc>(context)
-                      .add(ExitSession(sessionId: sessionRef.id));
-                },
-                child: Container(
-                    padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
-                    child: SessionReferenceTile(sessionRef)));
-          } else {
-            return Container(
-                child: Text(
-                    "something went wrong. we have to chill and find another way."));
-          }
+                      context.select(
+                            (ConnectBloc bloc) => bloc.user.sessions,
+                      ))*/
+              ));
         });
       },
     );
@@ -276,7 +208,11 @@ class _HomeLandingViewState extends State<HomeLandingView> {
   }
 
   //EnterSession button if session exists
-  Widget enterSessionTriggersBtn({required String sessionId}) {
+  Widget enterSessionTriggersBtn(
+      {required List<String> sessions, required String sessionId}) {
+    if (!userJoinedSession(sessions: sessions, sessionId: sessionId)) {
+      return Container();
+    }
     return ElevatedButton(
         style: ButtonStyle(
           elevation: MaterialStateProperty.all(0),
@@ -287,35 +223,44 @@ class _HomeLandingViewState extends State<HomeLandingView> {
         },
         child: Container(
             child: Column(children: [
-          Icon(
-            Icons.local_fire_department_rounded,
-            size: 20,
-          ),
-          Text('triggers', style: TextStyle(fontSize: 10.0))
-        ])));
+              Icon(
+                Icons.local_fire_department_rounded,
+                size: 20,
+              ),
+              Text('triggers', style: TextStyle(fontSize: 10.0))
+            ])));
   }
 
-  Widget enterSessionCommonsBtn({required String sessionId}) {
-    return ElevatedButton(
-        style: ButtonStyle(
-          elevation: MaterialStateProperty.all(0),
-        ),
-        onPressed: () {
-          BlocProvider.of<ConnectBloc>(context)
-              .add(EnterSession(sessionId: sessionId, option: options.commons));
-        },
-        child: Container(
-            child: Column(children: [
-          Icon(
-            Icons.people,
-            size: 20,
+  Widget enterSessionCommonsBtn(
+      {required List<String> sessions, required String sessionId}) {
+    if (userJoinedSession(sessions: sessions, sessionId: sessionId)) {
+      return ElevatedButton(
+          style: ButtonStyle(
+            elevation: MaterialStateProperty.all(0),
           ),
-          Text('commons', style: TextStyle(fontSize: 10.0))
-        ])));
+          onPressed: () {
+            BlocProvider.of<ConnectBloc>(context).add(
+                EnterSession(sessionId: sessionId, option: options.commons));
+          },
+          child: Container(
+              child: Column(children: [
+                Icon(
+                  Icons.people,
+                  size: 20,
+                ),
+                Text('commons', style: TextStyle(fontSize: 10.0))
+              ])));
+    } else {
+      return Container();
+    }
   }
 
-  Widget pressToJoinTxt({required String sessionId}) {
-    return Column(children: [
+  Widget pressToJoinTxt(
+      {required List<String> sessions, required String sessionId}) {
+    if (userJoinedSession(sessions: sessions, sessionId: sessionId)) {
+      return Container();
+    }
+    return Column(children:[
       Text(
         "press to join",
         style: TextStyle(fontSize: 12, color: Colors.grey),
@@ -328,9 +273,8 @@ class _HomeLandingViewState extends State<HomeLandingView> {
   }
 
   //sessions the user is already part of
-  Widget JoinSessionBtn({
-    required Message msg,
-  }) {
+  Widget JoinSessionBtn(
+      {required Message msg, required List<String> sessions}) {
     String sessionId;
     if (msg.meta.sessionId?.isEmpty ?? true) {
       sessionId = "";
@@ -348,58 +292,26 @@ class _HomeLandingViewState extends State<HomeLandingView> {
 
     //print(sessionName);
 
-    return IconButton(
-      icon: Icon(Icons.check_circle, color: Colors.lightGreen),
-      onPressed: () async {
+    return ElevatedButton(
+      style: ButtonStyle(
+        elevation: MaterialStateProperty.all(0.0),
+      ),
+      child: Column(children: [
+        Text(/*msg.subject + " "+*/ sessionName),
+        pressToJoinTxt(sessions: sessions, sessionId: sessionId),
+      ]),
+      onPressed: () {
         String requester;
         if (msg.meta.senderUsername?.isEmpty ?? true) {
           requester = '';
         } else {
           requester = msg.meta.senderUsername!;
         }
-        bool? res = await _showDialogConfirmConnection(msg);
-        if(res != null && res){
-          BlocProvider.of<ConnectBloc>(context).add(DeleteMsg(msg: msg));
+
+        if (msg.meta.sessionId != "" &&
+            !userJoinedSession(sessions: sessions, sessionId: sessionId)) {
+          _showDialogConfirmConnection(msg);
         }
-
-      },
-    );
-  }
-
-  //Reject Invitation
-  Widget RejectInvitationBtn({required Message msg}) {
-    String sessionId;
-    if (msg.meta.sessionId?.isEmpty ?? true) {
-      sessionId = "";
-    } else {
-      sessionId = msg.meta.sessionId!;
-    }
-
-    String sessionName;
-    //print("the session name is " + msg.meta.sessionName!);
-    if (msg.meta.sessionName?.isEmpty ?? true) {
-      sessionName = "";
-    } else {
-      sessionName = msg.meta.sessionName!;
-    }
-
-    //print(sessionName);
-
-    return IconButton(
-      icon: Icon(Icons.cancel, color: Colors.red),
-      onPressed: () async {
-        String requester;
-        if (msg.meta.senderUsername?.isEmpty ?? true) {
-          requester = '';
-        } else {
-          requester = msg.meta.senderUsername!;
-        }
-        //bool? resDialog = await _deleteDialog(context, "");
-       //if( resDialog != null && resDialog){
-         BlocProvider.of<ConnectBloc>(context).add(DeleteMsg(msg: msg));
-         /*BlocProvider.of<ConnectBloc>(context)
-             .add(ExitSession(sessionId: sessionId));*/
-       //}
       },
     );
   }
@@ -413,9 +325,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
   /**
    * new list tile for connect
    */
-  Widget BoxInvitationTile(
-    Message msg,
-  ) {
+  Widget BoxInvitationTile(Message msg, List<String> sessions) {
     String receiverUsername;
     String senderUsername;
     String sessionId;
@@ -446,105 +356,128 @@ class _HomeLandingViewState extends State<HomeLandingView> {
       sessionName = msg.meta.sessionName!;
     }
 
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        height: 50,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.fromLTRB(20,0,0,0),
-              width: MediaQuery.of(context).size.width *0.66,
-                child:Text(msg.subject, overflow: TextOverflow.fade)
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(3,0,0,0),
-              width: MediaQuery.of(context).size.width *0.10,
-              child: RejectInvitationBtn(msg: msg),
-            ),
-            Container(
-                padding: EdgeInsets.fromLTRB(3,0,0,0),
-                width: MediaQuery.of(context).size.width *0.10,
-                child: JoinSessionBtn(msg: msg),
-            ),
-
-          ],
-        ),
-        decoration: BoxDecoration(
-            color: Colors.black38.withOpacity(0.01),
-            border: Border.all(
-              width: 0.9,
-              color: Colors.black38.withOpacity(0.0),
-            ),
-            borderRadius: BorderRadius.circular(13))
-    );
-  }
-
-  ///Session Ref Tile
-  Widget SessionReferenceTile(KeyValue sessionRef) {
-    String sessionId = sessionRef.key;
-    String sessionName = sessionRef.value;
-    /*if (sessionRef.key.isEmpty ?? true) {
-      sessionId = "";
-    } else {
-      sessionId = sessionRef.key!;
-    }
-
-    if (sessionRef.value.isEmpty ?? true) {
-      sessionName = "";
-    } else {
-      sessionName = sessionRef.value!;
-    }*/
-
-    return Container(
-        width: MediaQuery.of(context).size.width,
-        //height: 50,
-        child: Column(children: [
-          Text(sessionName),
-          Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Container(
-                padding: EdgeInsets.fromLTRB(20,0,0,0),
-                //width: MediaQuery.of(context).size.width *0.66,
-                child:Expanded(child: enterSessionCommonsBtn(sessionId: sessionId)),
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(10,0,20,0),
-              //width: MediaQuery.of(context).size.width *0.10,
-              child: Expanded(child: enterSessionTriggersBtn(sessionId: sessionId)),
-            ),
-          ],
-        ),
-        ]),
-        decoration: BoxDecoration(
-            color: Colors.black38.withOpacity(0.03),
-            border: Border.all(
-              width: 0.9,
-              color: Colors.black38.withOpacity(0),
-            ),
-            borderRadius: BorderRadius.circular(13))
-    );
-
-    /*return ListTile(
-      title: Text(sessionName),
+    return ListTile(
+      title: JoinSessionBtn(msg: msg, sessions: sessions),
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Expanded(child: enterSessionCommonsBtn(sessionId: sessionId)),
-          Expanded(child: enterSessionTriggersBtn(sessionId: sessionId)),
+          Expanded(
+              child: enterSessionCommonsBtn(
+                  sessions: sessions, sessionId: sessionId)),
+          Expanded(
+              child: enterSessionTriggersBtn(
+                  sessions: sessions, sessionId: sessionId)),
         ],
       ),
       shape: RoundedRectangleBorder(
           side: BorderSide(color: Colors.black38, width: 0.9),
           borderRadius: BorderRadius.circular(13)),
       //trailing: Divider(),
-      // onLongPress: ()=>_changeMsgSessionNameDialog(initialValue: sessionName, context: context, msgId: msg.id),
+      onLongPress: ()=>_changeMsgSessionNameDialog(initialValue: sessionName, context: context, msgId: msg.id),
+    );
+
+    /*return ExpansionTile(
+      controlAffinity: ListTileControlAffinity.leading,
+      textColor: Colors.black,
+      collapsedTextColor: Colors.black,
+      iconColor: Colors.black,
+      collapsedIconColor: Colors.black38,
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(child: JoinSessionBtn(msg: msg, sessions: sessions)),
+          enterSessionTriggersBtn(sessions: sessions, sessionId: sessionId)
+        ],
+      ),
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Expanded(child:
+                Container(
+                  margin: EdgeInsets.fromLTRB(50, 0, 5, 0),
+                //child: invitationDetailsWidget(msg: msg)
+                )
+            ),
+            enterSessionCommonsBtn(sessions: sessions, sessionId: sessionId)
+          ],
+        )
+      ],
     );*/
   }
 
+  /**
+   * This is the previous ListTile
+   */
+  /*Widget BoxMsgTile(Message item, List<Session?> sessions) {
+    /* String senderUsername;
+
+    if(msg.meta.senderUsername?.isEmpty ?? true){
+      senderUsername = "";
+    }else{
+      senderUsername = msg.meta.senderUsername!;
+    }*/
+
+    return Dismissible(
+        key: Key(item.id),
+        child: Column(children: [
+          SizedBox(height: 8),
+          ElevatedButton(
+            style: ButtonStyle(
+              elevation: MaterialStateProperty.all(0),
+            ),
+            onPressed: () {
+              if (item.meta.sessionId != "") {
+                _showDialogConfirmConnection(item);
+              }
+            },
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Icon(
+                Icons.arrow_right,
+                size: 20,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+              ),
+              Expanded(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                    Text(
+                      item.subject,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 3, horizontal: 0),
+                    ),
+                    Text(
+                      item.content,
+                      softWrap: true,
+                    ),
+                  ])),
+            ]),
+          )
+        ]),
+        background: Container(color: Colors.red),
+        confirmDismiss: (DismissDirection direction) async {
+          return _deleteDialog(
+            context,
+            "content",
+          ); //...
+        },
+        onDismissed: (direction) {
+          //and delete msg
+          BlocProvider.of<ConnectBloc>(context).add(DeleteMsg(msgId: item.id));
+          if (item.meta.sessionId != null) {
+            BlocProvider.of<ConnectBloc>(context)
+                .add(ExitSession(sessionId: item.meta.sessionId!));
+          }
+        });
+  }*/
+
   //Dieses Dialogue ist sehr provisorisch apparently
-  Future<bool?> _showDialogConfirmConnection(
+  void _showDialogConfirmConnection(
       /*BuildContext context,*/ Message _msg) async {
     // <-- note the async keyword here
 
@@ -583,19 +516,37 @@ class _HomeLandingViewState extends State<HomeLandingView> {
         BlocProvider.of<ConnectBloc>(context)
             .add(JoinSession(sessionId: (sessionId)));
         //Wait for this to enter
-        return selectedValue;
+        /* List<Session?> _ss = context.select(
+              (ConnectBloc bloc) => bloc.user.sessions,
+        );*/
+
+        /*
+        Session s;
+        for(var i in _ss){
+          if(i!= null && i.id == _sessionId){
+            s= i;
+            BlocProvider.of<ConnectBloc>(context)
+                .add(JoinSession(sessionId: s.id));
+            /*
+            BlocProvider.of<NavigationBloc>(context).add(
+              NavigationRequested(
+                  destination: NavigationDestinations
+                      .session, session: s), //Sollte hier iwo nicht die session id mitgegeben werden? //Va jz da mehrere sessions mgl sind.
+            );
+             */
+          }
+        }*/
 
       }
-      return selectedValue;
     }
   }
 }
 
 Future<bool?> _deleteDialog(
-  BuildContext context,
-  String msg,
-  /*Function deleteOperation*/
-) async {
+    BuildContext context,
+    String msg,
+    /*Function deleteOperation*/
+    ) async {
   return showDialog<bool>(
     context: context,
     barrierDismissible: true, // user must tap button!
@@ -634,10 +585,11 @@ Future<bool?> _deleteDialog(
   );
 }
 
+
 void _changeMsgSessionNameDialog(
     {required String msgId,
-    required String initialValue,
-    required BuildContext context}) async {
+      required String initialValue,
+      required BuildContext context}) async {
   final selectedValue = await showDialog<String>(
     context: context,
     barrierDismissible: true,
