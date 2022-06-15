@@ -490,17 +490,27 @@ class _HomeLandingViewState extends State<HomeLandingView> {
         width: MediaQuery.of(context).size.width,
         //height: 50,
         child: Column(children: [
-          Text(sessionName),
+          Container(
+            padding: EdgeInsets.all(15),
+              child:Text(sessionName, style: TextStyle(
+              overflow: TextOverflow.fade,
+              //backgroundColor: Colors.amberAccent.withOpacity(0.4),
+              //fontWeight: FontWeight.bold,
+              color: Colors.black,
+              shadows: [Shadow(blurRadius: 1.5)],
+              /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:
+          6.0,
+              wordSpacing: 5))),
           Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Container(
-                padding: EdgeInsets.fromLTRB(20,0,0,0),
+                padding: EdgeInsets.fromLTRB(20,0,0,15),
                 //width: MediaQuery.of(context).size.width *0.66,
                 child:enterSessionCommonsBtn(sessionId: sessionId),
             ),
             Container(
-              padding: EdgeInsets.fromLTRB(10,0,20,0),
+              padding: EdgeInsets.fromLTRB(10,0,20,15),
               //width: MediaQuery.of(context).size.width *0.10,
               child: enterSessionTriggersBtn(sessionId: sessionId),
             ),
