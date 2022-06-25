@@ -153,6 +153,7 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
             title: BlocBuilder<SearchBloc, SearchState>(
                 builder: (BuildContext context, SearchState state) {
               return TextField(
+                cursorColor: Colors.amberAccent,
                 controller: _controller,
                 onSubmitted: (String value) async {
                   input = value;
@@ -192,6 +193,13 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
                   border: OutlineInputBorder(),
                   labelText: 'search tags',
                   fillColor: Colors.white,
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.black,
+                        ),
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+
                 ),
               );
             })),
