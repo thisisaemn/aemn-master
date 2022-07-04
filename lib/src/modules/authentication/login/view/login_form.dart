@@ -164,22 +164,32 @@ class _EmailInput extends StatelessWidget {
         return Container(
             width: 300,
             child: TextField(
-              //scrollPadding: EdgeInsets.all(0.1),
-
-              showCursor: true,
               key: const Key('loginForm_emailInput_textField'),
-              onChanged: (email) => context.read<LoginCubit>().emailChanged(email),
+              onChanged: (email) =>
+                  context.read<LoginCubit>().emailChanged(email),
               keyboardType: TextInputType.emailAddress,
-              style: TextStyle(height: 0),
+              textAlignVertical: TextAlignVertical.center,
+              cursorColor: Colors.grey,
+              cursorHeight: 20.0,
               decoration: InputDecoration(
-                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                label: Row(children: [Icon(Icons.alternate_email, size: 14.0,), Text(" email")]),
+                contentPadding: EdgeInsets.all(10),
+                floatingLabelBehavior: FloatingLabelBehavior.never,
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black)),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black)),
+                label: Row(children: [
+                  Icon(
+                    Icons.alternate_email,
+                    size: 14.0,
+                  ),
+                  Text(" email")
+                ]),
                 //labelText: 'email',
                 helperText: '',
                 errorText: state.email.invalid ? 'invalid email' : null,
               ),
-        ));
+            ));
       },
     );
   }
@@ -196,18 +206,27 @@ class _PasswordInput extends StatelessWidget {
             child: TextField(
               key: const Key('loginForm_passwordInput_textField'),
               onChanged: (password) =>
-              context.read<LoginCubit>().passwordChanged(password),
+                  context.read<LoginCubit>().passwordChanged(password),
               obscureText: true,
-              style: TextStyle(height: 0),
+              cursorColor: Colors.grey,
               decoration: InputDecoration(
-                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-                border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+                floatingLabelBehavior: FloatingLabelBehavior.never,
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black)),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black)),
                 //labelText: 'password',
-                label: Row(children: [Icon(Icons.lock_outlined , size: 14.0,), Text(" password")]),
+                label: Row(children: [
+                  Icon(
+                    Icons.lock_outlined,
+                    size: 14.0,
+                  ),
+                  Text(" password")
+                ]),
                 //helperText: 'password',
                 errorText: state.password.invalid ? 'invalid password' : null,
-            ),
-        ));
+              ),
+            ));
       },
     );
   }
@@ -222,20 +241,19 @@ class _LoginButton extends StatelessWidget {
         return state.status.isSubmissionInProgress
             ? const CircularProgressIndicator()
             : ElevatedButton(
-              key: const Key('loginForm_continue_raisedButton'),
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                key: const Key('loginForm_continue_raisedButton'),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  primary: const Color(0xFF000000),
                 ),
-                primary: const Color(0xFF000000),
-              ),
-              onPressed: state.status.isValidated
-              ? () => context.read<LoginCubit>().logInWithCredentials()
-              : null,
-              child: const Text('LOGIN',
-               style: TextStyle(color: Color(0xFFFFFFFF))
-              ),
-        );
+                onPressed: state.status.isValidated
+                    ? () => context.read<LoginCubit>().logInWithCredentials()
+                    : null,
+                child: const Text('LOGIN',
+                    style: TextStyle(color: Color(0xFFFFFFFF))),
+              );
       },
     );
   }
@@ -272,10 +290,11 @@ class _SignUpButton extends StatelessWidget {
       onPressed: () => Navigator.of(context).push<void>(SignUpPage.route()),
       child: Text(
         'CREATE ACCOUNT',
-        style: TextStyle(color: Color(0xFFFFD600,)/*theme.primaryColor*/ ),
+        style: TextStyle(
+            color: Color(
+          0xFFFFD600,
+        ) /*theme.primaryColor*/),
       ),
     );
   }
 }
-
-

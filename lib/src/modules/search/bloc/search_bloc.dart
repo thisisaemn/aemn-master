@@ -29,6 +29,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   //Look into the interest repository for further information on pagen
   int pagen = 0;
 
+
+  List<KeyValue> searchInterestsOptions = [];
+  List<KeyValue> searchMembersOptions = [];
+
   Future<void> _onSearchInterestsKey(SearchInterestsKey event, Emitter<SearchState> emit) async {
     //Stream<InterestModel> results = await _tryGetInterestsSearchResults(event.key);
     emit(SearchRequestSent());
@@ -45,7 +49,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       pagen = 0;
     }
 
-    List<InterestModel>? results = await _tryGetInterestsSearchResults(key: searchKey, pPagen: pagen, lastId: lastId);
+    List<InterestModel>? results = await _tryGetInterestsSearchResults(key: searchKey, lastId: lastId, options: searchInterestsOptions);
     if(results != null){
       //this.add(ProfileLoad());
       if(results.length >0) {
@@ -80,7 +84,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       lastId = resultsInterests.last.id;//resultsInterests[resultsInterests.length-1].id;
     }
 
-    List<Member>? results = await _tryGetMembersSearchResults(key: searchKey , lastId: lastId);
+    List<Member>? results = await _tryGetMembersSearchResults(key: searchKey , lastId: lastId, options: searchMembersOptions);
     if(results != null){
       //this.add(ProfileLoad());
       resultsMembers = results;
@@ -134,20 +138,20 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   ///////// Repo calls ///////
 
   //Future<Stream<InterestModel>> _tryGetInterestsSearchResults(String key) async {
-  Future<List<InterestModel>?> _tryGetInterestsSearchResults({required String key, required int pPagen, required String lastId}) async {
+  Future<List<InterestModel>?> _tryGetInterestsSearchResults({required String key, required String lastId, required List<KeyValue> options}) async {
     try {
       //final profile = await interestRepository.getProfile();
-      final result = await interestRepository.searchInterests(key: key, pagen: pPagen, lastId: lastId) ;
+      final result = await interestRepository.searchInterests(key: key, lastId: lastId, options: options) ;
       return result;
     } on Exception {
       return null; //Should null be possible
     }
   }
 
-  Future<List<Member>?> _tryGetMembersSearchResults({required String key, required String lastId}) async {
+  Future<List<Member>?> _tryGetMembersSearchResults({required String key, required String lastId, required List<KeyValue> options}) async {
     try {
       //final profile = await interestRepository.getProfile();
-      final result = await connectRepository.searchMembers(key: key, lastId: lastId);
+      final result = await connectRepository.searchMembers(key: key, lastId: lastId, options: options);
       return result;
     } on Exception {
       return null; //Should null be possible

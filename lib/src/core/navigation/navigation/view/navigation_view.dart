@@ -186,6 +186,8 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
                 return SettingsScreen(text: 'settings');
               case (NavigationDestinations.searchInterests):
                 return SearchInterestsScreen();
+              case (NavigationDestinations.searchInterestsFilter):
+                return SearchInterestsFilterScreen();
               case (NavigationDestinations.searchMembers):
                 return SearchMembersScreen();
               case (NavigationDestinations.searchMembersForAnExistingSession):

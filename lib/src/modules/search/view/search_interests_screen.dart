@@ -1,5 +1,6 @@
 import 'package:aemn/src/modules/profile/bloc/profile_bloc.dart';
 import 'package:aemn/src/modules/search/bloc/search_bloc.dart';
+import 'package:aemn/src/modules/search/search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:aemn/src/core/navigation/navigation/navigation.dart';
@@ -22,15 +23,14 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
   void initState() {
     super.initState();
     _controller = TextEditingController();
-    _listViewController = new ScrollController()..addListener(_scrollListener); //..addListener(_loadMore);
-
+    _listViewController = new ScrollController()
+      ..addListener(_scrollListener); //..addListener(_loadMore);
   }
 
   void dispose() {
     _controller.dispose();
     _listViewController.dispose(); //.removeListener(_loadMore);
     super.dispose();
-
   }
 
   //= SearchBloc();
@@ -114,7 +114,8 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
 
   _scrollListener() {
     //Bottom of list
-    if (_listViewController.offset >= _listViewController.position.maxScrollExtent &&
+    if (_listViewController.offset >=
+            _listViewController.position.maxScrollExtent &&
         !_listViewController.position.outOfRange) {
       BlocProvider.of<SearchBloc>(context).add(
           SearchInterestsKey(key: currentSearchKey, isInitialSearch: false));
@@ -122,20 +123,15 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
     }
 
     //Over the top
-    if (_listViewController.offset <= _listViewController.position.minScrollExtent &&
-        !_listViewController.position.outOfRange) {
-
-    }
-
-
+    if (_listViewController.offset <=
+            _listViewController.position.minScrollExtent &&
+        !_listViewController.position.outOfRange) {}
   }
-
-
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<SearchBloc>(context).add(
-        SearchInterestsKey(key: "", isInitialSearch: true));
+    BlocProvider.of<SearchBloc>(context)
+        .add(SearchInterestsKey(key: "", isInitialSearch: true));
 
     return Scaffold(
         appBar: AppBar(
@@ -150,10 +146,23 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
                         destination: NavigationDestinations.back),
                   );
                 }),
+            actions: [
+              Container(
+                  padding: EdgeInsets.fromLTRB(5, 10, 10, 10),
+                  child: IconButton(
+                    icon: Icon(Icons.keyboard_control_outlined),
+                    onPressed: () {
+                      BlocProvider.of<NavigationBloc>(context).add(
+                        NavigationRequested(
+                            destination: NavigationDestinations.searchInterestsFilter),
+                      );
+                    },
+                  )),
+            ],
             title: BlocBuilder<SearchBloc, SearchState>(
                 builder: (BuildContext context, SearchState state) {
               return TextField(
-                cursorColor: Colors.amberAccent,
+                cursorColor: Colors.grey,
                 controller: _controller,
                 onSubmitted: (String value) async {
                   input = value;
@@ -187,19 +196,19 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
                   input = value;
                 },
                 decoration: InputDecoration(
+                  floatingLabelBehavior: FloatingLabelBehavior.never,
                   filled: true,
                   isDense: true,
                   contentPadding: EdgeInsets.all(9),
                   border: OutlineInputBorder(),
                   labelText: 'search tags',
                   fillColor: Colors.white,
-                    focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.black,
-                        ),
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Colors.black,
+                    ),
+                    //borderRadius: BorderRadius.circular(30.0),
+                  ),
                 ),
               );
             })),

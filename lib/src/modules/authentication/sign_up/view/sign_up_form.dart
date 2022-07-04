@@ -22,18 +22,19 @@ class SignUpForm extends StatelessWidget {
       },
       child: Align(
         alignment: const Alignment(0, -1 / 3),
+        child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             _EmailInput(),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             _PasswordInput(),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
             _ConfirmPasswordInput(),
-            const SizedBox(height: 8),
+            const SizedBox(height: 50),
             _SignUpButton(),
           ],
-        ),
+        )),
       ),
     );
   }
@@ -51,7 +52,9 @@ class _EmailInput extends StatelessWidget {
           key: const Key('signUpForm_emailInput_textField'),
           onChanged: (email) => context.read<SignUpCubit>().emailChanged(email),
           keyboardType: TextInputType.emailAddress,
+          cursorColor: Colors.grey,
           decoration: InputDecoration(
+            floatingLabelBehavior: FloatingLabelBehavior.never,
             focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
             border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
             labelText: 'email',
@@ -78,7 +81,9 @@ class _PasswordInput extends StatelessWidget {
           onChanged: (password) =>
               context.read<SignUpCubit>().passwordChanged(password),
           obscureText: true,
+          cursorColor: Colors.grey,
           decoration: InputDecoration(
+            floatingLabelBehavior: FloatingLabelBehavior.never,
             focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
             border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
             labelText: 'password',
@@ -107,7 +112,9 @@ class _ConfirmPasswordInput extends StatelessWidget {
               .read<SignUpCubit>()
               .confirmedPasswordChanged(confirmPassword),
           obscureText: true,
+          cursorColor: Colors.grey,
           decoration: InputDecoration(
+            floatingLabelBehavior: FloatingLabelBehavior.never,
             focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
             border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
             labelText: 'confirm password',
@@ -133,8 +140,9 @@ class _SignUpButton extends StatelessWidget {
             : ElevatedButton(
           key: const Key('signUpForm_continue_raisedButton'),
           style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.fromLTRB(50,20,50,20),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
+              borderRadius: BorderRadius.circular(5),
             ),
             primary: Colors.orangeAccent,
           ),

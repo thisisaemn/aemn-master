@@ -164,10 +164,10 @@ class _HomeLandingViewState extends State<HomeLandingView> {
           if (index == 0) {
             return Container(
               child: Text(
-                "Invitations",
+                "Invitations".toUpperCase(),
                 textAlign: TextAlign.start,
                 style: TextStyle(
-                    backgroundColor: Colors.amberAccent.withOpacity(0.4),
+                    //backgroundColor: Colors.amberAccent.withOpacity(0.4),
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                     shadows: [Shadow(blurRadius: 1.5)],
@@ -206,10 +206,10 @@ class _HomeLandingViewState extends State<HomeLandingView> {
                   1) {
             return Container(
               child: Text(
-                "Active Sessions",
+                "Active Sessions".toUpperCase(),
                 textAlign: TextAlign.start,
                 style: TextStyle(
-                    backgroundColor: Colors.amberAccent.withOpacity(0.4),
+                    //backgroundColor: Colors.amberAccent.withOpacity(0.4),
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                     shadows: [Shadow(blurRadius: 1.5)],

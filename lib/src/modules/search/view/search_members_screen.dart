@@ -166,13 +166,21 @@ class _SearchMembersScreenState extends State<SearchMembersScreen> {
                         onChanged: (String value) async { //for the app to be dynamic
                           input = value;
                         },
+                        cursorColor: Colors.grey,
                         decoration: InputDecoration(
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
                           filled: true,
                           isDense: true,
                           contentPadding: EdgeInsets.all(9),
                           border: OutlineInputBorder(),
                           labelText: 'search members',
                           fillColor: Colors.white,
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.black,
+                            ),
+                            //borderRadius: BorderRadius.circular(30.0),
+                          ),
                         ),
                       );
                     }

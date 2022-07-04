@@ -255,12 +255,13 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
           padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
           child: ElevatedButton(
               child: Row(children: [
-                Text('edit facts',
+                Text('edit facts'.toUpperCase(),
                     style: TextStyle(
-                      backgroundColor: Colors.black12.withOpacity(0.1),
+                      //backgroundColor: Colors.black12.withOpacity(0.1),
                       //fontFamily: 'Open Sans',
                       fontSize: 17.0,
-                      fontWeight: FontWeight.w600,
+                      //fontWeight: FontWeight.w600,
+                        shadows: [Shadow(offset: Offset(0.1,0.1), blurRadius: 0.5)]
                     )),
                 Expanded(
                     child: Container(
@@ -283,12 +284,13 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
           padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
           child: ElevatedButton(
             child: Row(children: [
-              Text('edit interests',
+              Text('edit interests'.toUpperCase(),
                   style: TextStyle(
-                    backgroundColor: Colors.black12.withOpacity(0.1),
+                    //backgroundColor: Colors.black12.withOpacity(0.1),
                     //fontFamily: 'Open Sans',
                     fontSize: 17.0,
-                    fontWeight: FontWeight.w600,
+                    //fontWeight: FontWeight.w600,
+                    shadows: [Shadow(offset: Offset(0.1,0.1), blurRadius: 0.5)]
                   )),
               Expanded(
                   child: Container(
@@ -325,8 +327,8 @@ class _ProfileEditViewScreenState extends State<ProfileEditViewScreen> {
                     username,
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                        //fontWeight: FontWeight.bold,
                         color: Colors.black,
                         letterSpacing: 3.0,
                         wordSpacing: 5),

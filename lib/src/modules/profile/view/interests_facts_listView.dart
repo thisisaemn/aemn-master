@@ -54,10 +54,10 @@ class InterestsFactsListView extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(13),
                     child:Text(
-                  'facts',
+                  'facts'.toUpperCase(),
                   textAlign: TextAlign.start,
                   style: TextStyle(
-                      backgroundColor: Colors.amberAccent.withOpacity(0.4),
+                      //backgroundColor: Colors.amberAccent.withOpacity(0.4),
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                       shadows: [Shadow(blurRadius: 1.5)],
@@ -88,10 +88,10 @@ class InterestsFactsListView extends StatelessWidget {
                     //decoration: BoxDecoration(border: Border.all(color: Colors.black38, width: 0.9), borderRadius: BorderRadius.circular(13)),
                     padding: EdgeInsets.all(13),
                     child: Text(
-                      'interests',
+                      'interests'.toUpperCase(),
                       textAlign: TextAlign.start,
                       style: TextStyle(
-                          backgroundColor: Colors.amberAccent.withOpacity(0.4),
+                          //backgroundColor: Colors.amberAccent.withOpacity(0.4),
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                           /*Colors.black26,*/

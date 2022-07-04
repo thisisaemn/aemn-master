@@ -95,14 +95,14 @@ class InterestRepository {
   }*/
 
   Future<List<InterestModel>> searchInterests({
-    required String key, required pagen, required lastId
+    required String key, required String lastId,  required List<KeyValue> options
   }) async {
     var header = {
       "content-type" : "application/json"
     };
     var body = {
       "key": key,
-      "pagen": pagen,
+      "options": options,
       "lastId" : lastId
     };
 

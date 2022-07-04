@@ -36,7 +36,7 @@ class ProfileScreen extends StatelessWidget {
         return Scaffold(
             body: Center(
                 child: CircularProgressIndicator.adaptive(
-          backgroundColor: Colors.amber,
+         // backgroundColor: Colors.amber,
         )));
       }
     });

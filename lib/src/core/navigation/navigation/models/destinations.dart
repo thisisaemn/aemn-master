@@ -1,1 +1,1 @@
-enum NavigationDestinations {back, swipe, connect, profile, settings, searchInterests, searchMembers, editProfile, /*session, */scan, show, commons, triggers, searchMembersForAnExistingSession}
+enum NavigationDestinations {back, swipe, connect, profile, settings, searchInterests, searchInterestsFilter, searchMembers, editProfile, /*session, */scan, show, commons, triggers, searchMembersForAnExistingSession}

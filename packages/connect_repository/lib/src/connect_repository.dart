@@ -69,7 +69,7 @@ class ConnectRepository {
   }*/
 
   Future<List<Member>> searchMembers({
-    required String key, required String lastId
+    required String key, required String lastId, required List<KeyValue> options
   }) async {  //did the not have a stream or smth similar as a return type?
     var token = await _cache.storage.read(key: 'jwt');
     //print(token.toString());
@@ -81,7 +81,8 @@ class ConnectRepository {
 
     var body = {
       "key": key,
-      "lastId": lastId
+      "lastId": lastId,
+      "options": options
     };
 
     var res = await http.post(
