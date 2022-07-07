@@ -64,87 +64,92 @@ class SettingsScreen extends StatelessWidget {
     }
   ];*/
 
-  Widget settingsTitle(){
-    return  Container(
+  Widget settingsTitle() {
+    return Container(
         padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
         child: Text(
           'settings',
           textAlign: TextAlign.start,
           style: TextStyle(
-              //backgroundColor: Colors.amberAccent.withOpacity(0.4),
-              //fontWeight: FontWeight.bold,
-              color: Colors.black,
-              //shadows: [Shadow(blurRadius: 1.5)],
-             // /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:  6.0,
-             // wordSpacing: 5
+            //backgroundColor: Colors.amberAccent.withOpacity(0.4),
+            //fontWeight: FontWeight.bold,
+            color: Colors.black,
+            //shadows: [Shadow(blurRadius: 1.5)],
+            // /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:  6.0,
+            // wordSpacing: 5
           ),
-        )
-    );
+        ));
   }
 
-  Widget settingsList(){
-
-      return Expanded(child:
-      ListView.builder(
-          itemCount: SettingsOptions.getSettingsOptions.length,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              leading: Icon(
-                const IconData(
+  Widget settingsList() {
+    return Expanded(
+        child: ListView.builder(
+            itemCount: SettingsOptions.getSettingsOptions.length,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                leading: Icon(
+                  const IconData(
                     /*stringToInt_tryParse(settingsOptions[index]['icon'].toString(), 60018)*/ 984409,
-                    fontFamily: 'MaterialIcons',),
-                size: 0,
-              ),
-              title: Text(SettingsOptions.getSettingsOptions[index]['key'].toString()),
-              onTap: (){
-                settingsAction(context, SettingsOptions.getSettingsOptions[index]['key'].toString());
-              },
-            );
-          })
-      );
+                    fontFamily: 'MaterialIcons',
+                  ),
+                  size: 0,
+                ),
+                title: Text(SettingsOptions.getSettingsOptions[index]['key']
+                    .toString()),
+                onTap: () {
+                  settingsAction(
+                      context,
+                      SettingsOptions.getSettingsOptions[index]['key']
+                          .toString());
+                },
+              );
+            }));
   }
 
-  settingsAction(BuildContext context, String key){
-    if(key == 'logout'){
+  settingsAction(BuildContext context, String key) {
+    if (key == 'logout') {
       _logoutDialog(context);
-    }else if(key == 'faq'){
-
-    }else if(key == 'invite a friend'){
-
-    }else if(key == 'privacy policy'){
-
-    }else if(key == 'user agreement'){
-
-    }else if(key == 'imprint'){
-
-    }else if(key == 'change password'){
-
-    }else{
-      return ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'This function is not available yet.')));
+    } else if (key == 'faq') {
+    } else if (key == 'invite a friend') {
+    } else if (key == 'privacy policy') {
+    } else if (key == 'user agreement') {
+    } else if (key == 'imprint') {
+    } else if (key == 'change password') {
+    } else if (key == 'import profile data') {
+      BlocProvider.of<NavigationBloc>(context).add(
+          NavigationRequested(destination: NavigationDestinations.importProfileData));
+    } else {
+      return ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('This function is not available yet.')));
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(//DIE NAVIGATION NICHT GEKLÄRT...
+        appBar: AppBar(
+          //DIE NAVIGATION NICHT GEKLÄRT...
           title: settingsTitle(),
           centerTitle: true,
           elevation: 0,
-          leading: IconButton( icon: Icon(Icons.arrow_back_ios, color: Colors.grey, size: 18,) ,onPressed: () => BlocProvider.of<NavigationBloc>(context).add(
-            NavigationRequested(destination: NavigationDestinations.back),
-          ),),
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.grey,
+              size: 18,
             ),
+            onPressed: () => BlocProvider.of<NavigationBloc>(context).add(
+              NavigationRequested(destination: NavigationDestinations.back),
+            ),
+          ),
+        ),
         body: Column(
           children: [
             //settingsTitle(),
             settingsList(),
           ],
-        )
-    );
+        ));
   }
 
   Future<bool?> _logoutDialog(BuildContext context) async {
@@ -169,9 +174,7 @@ class SettingsScreen extends StatelessWidget {
                 style: TextStyle(color: Colors.black),
               ),
               onPressed: () /*=>*/ {
-                context
-                    .read<AppBloc>()
-                    .add(AppLogoutRequested());
+                context.read<AppBloc>().add(AppLogoutRequested());
                 Navigator.of(context).pop(false);
                 //Navigator.of(context).pop(context);
                 //Navigator.of(context).pop(true);
@@ -181,7 +184,8 @@ class SettingsScreen extends StatelessWidget {
                     .read<AuthenticationBloc>()
                     .add(AuthenticationLogoutRequested());
                 Navigator.of(context).pop(true);*/
-              }*/,
+              }*/
+              ,
             ),
             TextButton(
               child: Text(

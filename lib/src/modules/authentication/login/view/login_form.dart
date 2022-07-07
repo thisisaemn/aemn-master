@@ -224,7 +224,7 @@ class _PasswordInput extends StatelessWidget {
                   Text(" password")
                 ]),
                 //helperText: 'password',
-                errorText: state.password.invalid ? 'invalid password' : null,
+                errorText: state.password.invalid ? 'invalid password: 8 characters, at least one number' : null,
               ),
             ));
       },

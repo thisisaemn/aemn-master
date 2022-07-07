@@ -224,7 +224,12 @@ class _NavigationScreenViewState extends State<NavigationScreenView> {
                   return SessionMainView(
                       session: state.session,
                       sessionBody: CommonsView(session: state.session));
-                }else{return ConnectView();}}
+                }else{return ConnectView();}
+              case(NavigationDestinations.importProfileData):{
+                return ImportProfileDataScreen();
+              }
+
+            }
               //default: return HomeLandingScreen();
             }
 

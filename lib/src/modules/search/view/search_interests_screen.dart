@@ -219,15 +219,18 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
             itemCount:
                 BlocProvider.of<SearchBloc>(context).resultsInterests.length,
             itemBuilder: (BuildContext context, int index) {
+              bool added = false;
               return ListTile(
                 title: Text(BlocProvider.of<SearchBloc>(context)
                     .resultsInterests[index]
                     .name),
                 trailing: IconButton(
-                  icon: Icon(Icons.add),
+                  icon: added ? Icon(Icons.check) : Icon(Icons.add),
                   onPressed: () {
                     //print("the id of the interest is \n");
                     //print(BlocProvider.of<SearchBloc>(context).resultsInterests[index].id);
+                    added = true;
+                    print(added);
                     var interestId = BlocProvider.of<SearchBloc>(context)
                         .resultsInterests[index]
                         .id;
@@ -241,5 +244,13 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
             },
           );
         }));
+  }
+
+  Widget addButtonIcon({required bool added}){
+    if(added){
+      return Icon(Icons.check);
+    }else{
+      return Icon(Icons.add);
+    }
   }
 }
