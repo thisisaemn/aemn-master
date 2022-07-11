@@ -115,7 +115,7 @@ class _SearchInterestsScreenState extends State<SearchInterestsScreen> {
   _scrollListener() {
     //Bottom of list
     if (_listViewController.offset >=
-            _listViewController.position.maxScrollExtent &&
+        (_listViewController.position.maxScrollExtent - 100) &&
         !_listViewController.position.outOfRange) {
       BlocProvider.of<SearchBloc>(context).add(
           SearchInterestsKey(key: currentSearchKey, isInitialSearch: false));
