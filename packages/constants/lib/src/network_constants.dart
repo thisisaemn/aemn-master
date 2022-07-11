@@ -3,7 +3,7 @@ class NetworkConstants{
 
   //static const String SERVER_IP = "https://aemn-0.herokuapp.com";
 
-  static const String SERVER_IP =  "http://10.0.4.191:5000";
+  static const String SERVER_IP =  "http://10.0.0.126:5000";
 
 
   static const String APIKEY_PEXELS = "563492ad6f91700001000001a21feb8ede4d4bfbb7d4783e885b483f"; // https://www.pexels.com/api/new/

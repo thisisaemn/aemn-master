@@ -122,31 +122,46 @@ class LoginForm extends StatelessWidget {
         }
       },
       child: Align(
-        alignment: const Alignment(0, -1 / 3),
+        alignment: const Alignment(0, -1 / 2),
         child: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            //mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             //mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(padding: EdgeInsets.all(90)),
-              Image.asset(
-                'lib/src/assets/images/aemn-logo-bare.png',
-                height: 220,
+
+              Container(
+                child: _SignUpButton(),
+                alignment: Alignment.topRight,
+                //height: MediaQuery.of(context).size.height * 0.1,
               ),
-              //const SizedBox(height: 16),
-              _EmailInput(),
-              //const SizedBox(height: 8),
-              Padding(padding: EdgeInsets.all(5)),
-              _PasswordInput(),
-              //const SizedBox(height: 8),
-              Padding(padding: EdgeInsets.all(15)),
-              _LoginButton(),
-              /*const SizedBox(height: 8),
-              _GoogleLoginButton(),*/
-              //const SizedBox(height: 4),
-              Padding(padding: EdgeInsets.all(75)),
-              _SignUpButton(),
+
+              Container(
+                height: MediaQuery.of(context).size.height * 0.32,
+                child: Image.asset(
+                  'lib/src/assets/images/aemn-logo-bare.png',
+                  //height: 220,
+                )
+              ),
+
+              Column(
+                  children: [
+                    Container(
+                      child: _EmailInput(),
+                      height: MediaQuery.of(context).size.height * 0.1,
+                    ),
+
+                    Container(
+                        child: _PasswordInput(),
+                        height: MediaQuery.of(context).size.height * 0.1,
+                    ),
+
+                    Container(
+                      child: _LoginButton(),
+                    )
+
+                  ],
+                ),
             ],
           ),
         ),
@@ -210,6 +225,7 @@ class _PasswordInput extends StatelessWidget {
               obscureText: true,
               cursorColor: Colors.grey,
               decoration: InputDecoration(
+                contentPadding: EdgeInsets.all(10),
                 floatingLabelBehavior: FloatingLabelBehavior.never,
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),

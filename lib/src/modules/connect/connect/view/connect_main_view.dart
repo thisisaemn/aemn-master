@@ -162,21 +162,26 @@ class _HomeLandingViewState extends State<HomeLandingView> {
       itemBuilder: (BuildContext context, int index) {
         return Builder(builder: (context) {
           if (index == 0) {
-            return Container(
-              child: Text(
-                "Invitations".toUpperCase(),
-                textAlign: TextAlign.start,
-                style: TextStyle(
-                    //backgroundColor: Colors.amberAccent.withOpacity(0.4),
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    shadows: [Shadow(blurRadius: 1.5)],
-                    /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:
-                        6.0,
-                    wordSpacing: 5),
-              ),
-              padding: EdgeInsets.all(20),
-            );
+            if ((context.select((ConnectBloc bloc) => bloc.user.box).length) >
+                0) {
+              return Container(
+                child: Text(
+                  "Invitations".toUpperCase(),
+                  textAlign: TextAlign.start,
+                  style: TextStyle(
+                      //backgroundColor: Colors.amberAccent.withOpacity(0.4),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      shadows: [Shadow(blurRadius: 1.5)],
+                      /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:
+                          6.0,
+                      wordSpacing: 5),
+                ),
+                padding: EdgeInsets.all(20),
+              );
+            } else {
+              return Container();
+            }
           } else if (index <=
               (context.select((ConnectBloc bloc) => bloc.user.box).length)) {
             int bindex =
@@ -279,7 +284,8 @@ class _HomeLandingViewState extends State<HomeLandingView> {
   Widget enterSessionTriggersBtn({required String sessionId}) {
     return ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.black38.withOpacity(0.01)),
+          backgroundColor: MaterialStateProperty.all<Color>(
+              Colors.black38.withOpacity(0.01)),
           elevation: MaterialStateProperty.all(0),
         ),
         onPressed: () {
@@ -299,7 +305,8 @@ class _HomeLandingViewState extends State<HomeLandingView> {
   Widget enterSessionCommonsBtn({required String sessionId}) {
     return ElevatedButton(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(Colors.black38.withOpacity(0.01)),
+          backgroundColor: MaterialStateProperty.all<Color>(
+              Colors.black38.withOpacity(0.01)),
           elevation: MaterialStateProperty.all(0),
         ),
         onPressed: () {
@@ -315,7 +322,6 @@ class _HomeLandingViewState extends State<HomeLandingView> {
           Text('commons', style: TextStyle(fontSize: 10.0))
         ])));
   }
-
 
   //sessions the user is already part of
   Widget JoinSessionBtn({
@@ -348,10 +354,9 @@ class _HomeLandingViewState extends State<HomeLandingView> {
           requester = msg.meta.senderUsername!;
         }
         bool? res = await _showDialogConfirmConnection(msg);
-        if(res != null && res){
+        if (res != null && res) {
           BlocProvider.of<ConnectBloc>(context).add(DeleteMsg(msg: msg));
         }
-
       },
     );
   }
@@ -385,11 +390,11 @@ class _HomeLandingViewState extends State<HomeLandingView> {
           requester = msg.meta.senderUsername!;
         }
         //bool? resDialog = await _deleteDialog(context, "");
-       //if( resDialog != null && resDialog){
-         BlocProvider.of<ConnectBloc>(context).add(DeleteMsg(msg: msg));
-         /*BlocProvider.of<ConnectBloc>(context)
+        //if( resDialog != null && resDialog){
+        BlocProvider.of<ConnectBloc>(context).add(DeleteMsg(msg: msg));
+        /*BlocProvider.of<ConnectBloc>(context)
              .add(ExitSession(sessionId: sessionId));*/
-       //}
+        //}
       },
     );
   }
@@ -443,21 +448,19 @@ class _HomeLandingViewState extends State<HomeLandingView> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              padding: EdgeInsets.fromLTRB(20,0,0,0),
-              width: MediaQuery.of(context).size.width *0.66,
-                child:Text(msg.subject, overflow: TextOverflow.fade)
-            ),
+                padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                width: MediaQuery.of(context).size.width * 0.66,
+                child: Text(msg.subject, overflow: TextOverflow.fade)),
             Container(
-              padding: EdgeInsets.fromLTRB(3,0,0,0),
-              width: MediaQuery.of(context).size.width *0.10,
+              padding: EdgeInsets.fromLTRB(3, 0, 0, 0),
+              width: MediaQuery.of(context).size.width * 0.10,
               child: RejectInvitationBtn(msg: msg),
             ),
             Container(
-                padding: EdgeInsets.fromLTRB(3,0,0,0),
-                width: MediaQuery.of(context).size.width *0.10,
-                child: JoinSessionBtn(msg: msg),
+              padding: EdgeInsets.fromLTRB(3, 0, 0, 0),
+              width: MediaQuery.of(context).size.width * 0.10,
+              child: JoinSessionBtn(msg: msg),
             ),
-
           ],
         ),
         decoration: BoxDecoration(
@@ -466,8 +469,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
               width: 0.9,
               color: Colors.black38.withOpacity(0.0),
             ),
-            borderRadius: BorderRadius.circular(13))
-    );
+            borderRadius: BorderRadius.circular(13)));
   }
 
   ///Session Ref Tile
@@ -491,31 +493,32 @@ class _HomeLandingViewState extends State<HomeLandingView> {
         //height: 50,
         child: Column(children: [
           Container(
-            padding: EdgeInsets.all(15),
-              child:Text(sessionName, style: TextStyle(
-              overflow: TextOverflow.fade,
-              //backgroundColor: Colors.amberAccent.withOpacity(0.4),
-              //fontWeight: FontWeight.bold,
-              color: Colors.black,
-              shadows: [Shadow(blurRadius: 1.5)],
-              /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:
-          6.0,
-              wordSpacing: 5))),
+              padding: EdgeInsets.all(15),
+              child: Text(sessionName,
+                  style: TextStyle(
+                      overflow: TextOverflow.fade,
+                      //backgroundColor: Colors.amberAccent.withOpacity(0.4),
+                      //fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      shadows: [Shadow(blurRadius: 1.5)],
+                      /*shadows: [Shadow(blurRadius: 4.0)],*/ /*backgroundColor: Colors.black54,*/ letterSpacing:
+                          6.0,
+                      wordSpacing: 5))),
           Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Container(
-                padding: EdgeInsets.fromLTRB(20,0,0,15),
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                padding: EdgeInsets.fromLTRB(20, 0, 0, 15),
                 //width: MediaQuery.of(context).size.width *0.66,
-                child:enterSessionCommonsBtn(sessionId: sessionId),
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(10,0,20,15),
-              //width: MediaQuery.of(context).size.width *0.10,
-              child: enterSessionTriggersBtn(sessionId: sessionId),
-            ),
-          ],
-        ),
+                child: enterSessionCommonsBtn(sessionId: sessionId),
+              ),
+              Container(
+                padding: EdgeInsets.fromLTRB(10, 0, 20, 15),
+                //width: MediaQuery.of(context).size.width *0.10,
+                child: enterSessionTriggersBtn(sessionId: sessionId),
+              ),
+            ],
+          ),
         ]),
         decoration: BoxDecoration(
             color: Colors.black38.withOpacity(0.03),
@@ -523,8 +526,7 @@ class _HomeLandingViewState extends State<HomeLandingView> {
               width: 0.9,
               color: Colors.black38.withOpacity(0),
             ),
-            borderRadius: BorderRadius.circular(13))
-    );
+            borderRadius: BorderRadius.circular(13)));
 
     /*return ListTile(
       title: Text(sessionName),
@@ -585,7 +587,6 @@ class _HomeLandingViewState extends State<HomeLandingView> {
             .add(JoinSession(sessionId: (sessionId)));
         //Wait for this to enter
         return selectedValue;
-
       }
       return selectedValue;
     }

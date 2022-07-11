@@ -137,6 +137,7 @@ class _ImportProfileDataScreenState extends State<ImportProfileDataScreen> {
           obscureText: true,
           cursorColor: Colors.grey,
           decoration: InputDecoration(
+            contentPadding: EdgeInsets.all(10),
             floatingLabelBehavior: FloatingLabelBehavior.never,
             focusedBorder:
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
@@ -201,7 +202,6 @@ class _ImportProfileDataScreenState extends State<ImportProfileDataScreen> {
               //Image of the Logo may be placed here
              // child: chosenOptionsLogo();
             ),
-
 
             //Credentials section
              CredentialsSection(),
